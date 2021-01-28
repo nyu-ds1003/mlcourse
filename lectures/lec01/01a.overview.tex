@@ -1,0 +1,299 @@
+%% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\usepackage{mathptmx}
+\usepackage{eulervm}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+%\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage{xpatch}
+
+\xpatchcmd{\itemize}
+  {\def\makelabel}
+  {\ifnum\@itemdepth=1\relax
+     \setlength\itemsep{2ex}% separation for first level
+   \else
+     \ifnum\@itemdepth=2\relax
+       \setlength\itemsep{1ex}% separation for second level
+     \else
+       \ifnum\@itemdepth=3\relax
+         \setlength\itemsep{0.5ex}% separation for third level
+   \fi\fi\fi\def\makelabel
+  }
+ {}
+ {}
+
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+\fi
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% this default might be overridden by plain title style
+\newcommand\makebeamertitle{\frame{\maketitle}}%
+% (ERT) argument for the TOC
+\AtBeginDocument{%
+  \let\origtableofcontents=\tableofcontents
+  \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+  \def\gobbletableofcontents#1{\origtableofcontents}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usetheme{CambridgeUS} 
+\beamertemplatenavigationsymbolsempty
+
+
+% Set Color ==============================
+\definecolor{NYUPurple}{RGB}{87,6,140}
+\definecolor{LightPurple}{RGB}{165,11,255}
+
+
+\setbeamercolor{title}{fg=NYUPurple}
+\setbeamercolor{frametitle}{fg=NYUPurple}
+
+\setbeamercolor{background canvas}{fg=NYUPurple, bg=white}
+\setbeamercolor{background}{fg=black, bg=NYUPurple}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=gray!20!white, bg=NYUPurple}
+
+\setbeamertemplate{headline}{}
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+\setbeamercolor{parttitle}{fg=NYUPurple}
+\setbeamercolor{sectiontitle}{fg=NYUPurple}
+\setbeamercolor{sectionname}{fg=NYUPurple}
+\setbeamercolor{section page}{fg=NYUPurple}
+%\setbeamercolor{description item}{fg=NYUPurple}
+%\setbeamercolor{block title}{fg=NYUPurple}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamercolor{block body}{bg=normal text.bg!90!NYUPurple}
+\setbeamercolor{block title}{bg=NYUPurple!30, fg=NYUPurple}
+
+
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+\setbeamercolor{section title}{fg=NYUPurple}
+ \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\makeatother
+
+\setlength{\parskip}{\medskipamount} 
+
+\input ../macros
+
+\begin{document}
+\input ../rosenberg-macros
+
+\title[DS-GA 1003]{Course Overview}
+\author{He He}
+\date{\today}
+\institute{CDS, NYU}
+
+\makebeamertitle
+\mode<article>{Just in article version}
+
+\begin{frame}{Contents}
+\tableofcontents{}
+\end{frame}
+
+\section{Logistics}
+\begin{frame}{Course Staff}
+\begin{itemize}
+\item Instructors:
+    \begin{itemize}
+        \item He He (CS/CDS): most lectures
+        \item Marylou Gabrie (CDS): 2 lectures and assignments
+        \item Ming Liao (NYUSH): in-person sections in Shanghai
+    \end{itemize}
+
+\item Section leaders:
+    \begin{itemize}
+        \item \underline{Xiangyun Chu}, Jatin Khilnani, \underline{Xiaocheng Li}, Haresh Rengaraj Rajamohan, \underline{Daeyoung Kim}
+    \end{itemize}
+
+\item Graders:
+    \begin{itemize}
+        \item Artie Shen, \underline{Daeyoung Kim}, \underline{Xiangyun Chu}, \underline{Xiaocheng Li}, Aniket Bhatnagar, Udit Arora
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Logistics}
+\begin{itemize}
+\item Class webpage: \url{https://nyu-ds1003.github.io/spring2021} 
+\begin{itemize}
+\item Course material will be distributed on the website
+\end{itemize}
+
+\item Piazza: \url{https://piazza.com/class/ki0j413ace3bn}
+\begin{itemize}
+\item \textbf{All class announcements via Piazza}
+\item Ask all questions on Piazza
+\end{itemize}
+
+\item Gradescope: entry code \textbf{ZRWBGD}
+\begin{itemize}
+\item Sign up yourself for assignment submission 
+\end{itemize}
+
+\item Office Hours:
+\begin{itemize}
+\item All office hours will be on Zoom
+\item See course calender for details: \url{https://tinyurl.com/y23zkucf} 
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Evaluation}
+\begin{itemize}
+\item 7 assignments ($1\times 4\% + 6 \times 6\% = 40\%$)
+\item Two tests ($60\%$)
+\begin{itemize}
+\item Midterm Exam ($30\%$) in Week 8 (March 23rd), covering material up to Week 7
+\item Final Exam ($30\%$), time TBD, covering all material
+\end{itemize}
+
+\item These scores determine ``class rank''.
+
+\item Typical grade distribution: A (40\%), A- (20\%), B+ (20\%), B (10\%),
+B- (5\%), <B- (5\%)
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Homework}
+\begin{itemize}
+    \item Assignment 0: Help you get farmiliar with the format (not submitted or graded)
+    \item First assignment out now -- due on \textbf{Feb 10}
+    \item Submit through Gradescope as a \textbf{PDF document}
+    \item Late policy: Assignments are accepted up to \textbf{48 hours} late (see more details on website)
+
+\item Collaboration is fine, but
+\begin{itemize}
+\item Write up solutions and code on your own
+\item List names of who you talked to about each problem
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Exams (60\%)}
+    \begin{itemize}
+        \item Exams will be submitted through Gradescope (similar to assignments)
+        \item Start within \textbf{24 hours} once it's released
+        \item Submit in \textbf{2 hours} once started
+        \item Typesetting or handwritten, but must be submitted in \textbf{PDF}
+        \item No collaboration is allowed
+        \item Exams from previous years will be posted
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Prerequisites}
+\begin{itemize}
+\item DS-GA 1001: Introduction to Data Science 
+\item DS-GA 1002: Statistical and Mathematical Methods
+\item Math
+\begin{itemize}
+\item Multivariate Calculus
+\item Linear Algebra
+\item Probability Theory
+\item Statistics
+\item {[}Preferred{]} Proof-based linear algebra or real analysis
+\end{itemize}
+\item Python programming (numpy)
+\end{itemize}
+\end{frame}
+
+
+\section{Course Overview and Goals}
+\begin{frame}{Syllabus (Tentative)}
+
+13 weeks of instruction + 1 week midterm exam
+\begin{itemize}
+    \item 2 weeks: introduction to \textbf{statistical learning theory}, \textbf{optimization}
+
+\item 2-3 weeks: \textbf{Linear }methods for binary classification
+and regression (also\textbf{ kernel methods)}
+
+\item 2 weeks: \textbf{Probabilistic models}, \textbf{Bayesian}
+methods
+
+\item 1 week: \textbf{Multiclass} classification and introduction to \textbf{structured
+prediction}
+
+\item 3-4 weeks: \textbf{Nonlinear} methods (\textbf{trees}, \textbf{ensemble}
+methods, and \textbf{neural networks})
+
+\item 2 weeks: \textbf{Unsupervised} learning: \textbf{clustering} and \textbf{latent variable} models
+
+\item See tentative schedule on the webpage
+
+\item Applications and practical algorithms may be covered in labs
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{High Level Goals of the Class}
+\begin{itemize}
+\item Learn fundamental building blocks of machine learning
+\item Goal is to start seeing\\
+\begin{itemize}
+\item[] \textbf{fancy new method A ``is just'' familiar thing B + familiar
+thing C + tweak D}
+\end{itemize}
+        \begin{itemize}
+\item SVM ``\textbf{is just}'' ERM with hinge loss with $\ell_{2}$ regularization
+\item Pegasos ``\textbf{is just}'' SVM with SGD with a particular step
+size rule
+\item Random forest ``\textbf{is just}'' bagging with trees, with an interesting
+tweak on choosing splitting variables
+        \end{itemize}
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Level of the Class}
+\begin{itemize}
+\item We will learn how to build all ML algorithms \textbf{from scratch}
+-- no ML libraries, just numpy.
+\item Once we have built it from scratch once, we can use the sklearn version.
+\end{itemize}
+\end{frame}
+\end{document}
