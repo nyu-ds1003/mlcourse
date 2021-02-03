@@ -1,0 +1,90 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in,headsep=0pt,headheight=0pt]{geometry}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{ifthen}
+
+\input ../macros.tex
+\input ../rosenberg-macros.tex
+
+\begin{document}
+\title{DS-GA 1003 Machine Learning \\ Lecture 1}
+\maketitle
+\section{Introduction to Machine Learning}
+\begin{itemize}
+\item In most of our examples of machine learning problems, the outcome/label does not depend on the prediction. However, this is not always the case, e.g.
+\begin{itemize}
+\item Search result ranking (contextual bandit)
+\item Automated driving (reinforcement learning)
+\item Fraud detection (game theory)
+\end{itemize}
+
+\item Even though rule-based systems are largely replaced by machine learning systems now, they still have certain advantages:
+\begin{itemize}
+\item Interpretable and easy to debug (decision trees can be considered as learning a bunch of rules)
+\item Easy to implement business logic, e.g. never delete the email if it is from John
+\end{itemize}
+
+\item For many tasks (especially those with structured data), we can easily collect useful rules, e.g.
+relation extraction (``[A] is married to [B]'' implies that A and B are spouses),
+object recognition (A cat is unlikely to be in the sea).
+How can we incorporate these rules into a machine learning system?
+\begin{itemize}
+    \item Feature engineering: Put the patterns from the rules in the input
+    \item Semi-supervised learning: Use rules to assign noisy labels to unlabeled data (Snorkel)
+    \item Regularization: Penalize predictions too far from the rule-based prediction
+\end{itemize}
+This is usually helpful when we do not have access to large amounts of labeled data, e.g. in medical domains.
+\end{itemize}
+
+\section{Statistical Learning Theory}
+\begin{itemize}
+\item Recall that our framework builds on top of three spaces: input space, action space and outcome space. What are the corresponding spaces for the following models?
+\begin{itemize}
+\item Linear regression (input $\BR^d$, action $\BR$, outcome $\BR$)
+\item Logistic regression (input $\BR^d$, action $(0, 1)$, outcome $\pc{0, 1}$)
+\end{itemize}
+
+\item What are some examples of hypothesis spaces?
+\begin{itemize}
+\item Linear functions from $\BR^d$ to $\BR$
+\item Polynomials of degree less than $n$
+\item Neural networks
+\end{itemize}
+
+\item Excess risk decomposition (draw picture on board):
+\begin{align}
+\text{approximation error} &= R(f_{\sF}) - R(f^*) \\
+\text{estimation error} &= R(\hat{f}_n) - R(f_{\sF}) \\
+\text{optimization error} &= R(\tilde{f}_n) - R(\hat{f}_n)
+\end{align}
+\begin{itemize}
+\item Can the approximation error be negative? [no]
+\item If we make the hypothesis space ``larger'', does the approximation error increase or decrease? [decrease]
+\item Is approximation error random? [no]
+
+\item Can the estimation error be negative? [no] 
+\item If we make the hypothesis space ``larger'', does the estimation error increase or decrease? [We \emph{expect} it to increase given fixed amount of data.]
+\item Is estimation error random? [yes, the training set is random, so the emprical risk minimizer and its risk are both random.] 
+
+\item Can the optimization error be negative? [yes]
+\end{itemize}
+
+\item Given insights from the excess risk decomposition, how can we debug machine learning algorithms in practice?
+\begin{itemize}
+\item Check the gap between training loss and validation loss. If the gap is large, then it's probably overfitting. If the gap is small but the accuracy is low, then it's probably underfitting.
+\item Run the algorithm on a small set first and check if it can overfit. If not, then the hypothesis space may be too ``small'' or the optimizer is not working.
+\item Debug optimization:
+\begin{itemize}
+\item Plot the learning curve: is the loss going down?
+\item Check if gradient norm is close to zero around the solution.
+\item Construct synthetic data where we know the minimizer (or have another way to find the minizer).
+\end{itemize}
+\end{itemize}
+
+\end{itemize}
+\end{document}
