@@ -1,0 +1,387 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage{minted}
+\input{math_commands}
+
+\newcommand{\wipcom}[1]{\textcolor{red}{WIP: #1}}
+\newcommand{\sol}[1]{\textcolor{gray}{Solution: #1}}
+\newcommand{\nyuparagrah}[1]{\textcolor{nyupurple}{\large #1}}
+
+\pagestyle{empty} \addtolength{\textwidth}{1.0in}
+\addtolength{\textheight}{0.5in} \addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{0.5in}
+\newcommand{\ruleskip}{\bigskip\hrule\bigskip}
+\newcommand{\nodify}[1]{{\sc #1}} \newcommand{\points}[1]{{\textbf{[#1
+points]}}}
+
+\newcommand{\bitem}{\begin{list}{$\bullet$}%
+{\setlength{\itemsep}{0pt}\setlength{\topsep}{0pt}%
+\setlength{\rightmargin}{0pt}}} \newcommand{\eitem}{\end{list}}
+
+\definecolor{nyupurple}{RGB}{134, 0, 179}
+\setlength{\parindent}{0pt} \setlength{\parskip}{0.5ex}
+
+\DeclareUnicodeCharacter{2212}{-}
+
+\begin{document}
+\newcounter{saveenum}
+
+\pagestyle{myheadings} \markboth{}{\color{nyupurple} DS-GA-1003 - Spring 2021}
+
+\begin{center}
+{\Large
+Homework 2: Gradient Descent \& Regularization
+} 
+\end{center}
+
+{
+{ \color{nyupurple} \textbf{Due:} Monday, February 22, 2020 at 11:59PM} 
+} 
+
+\textbf{Instructions: }Your answers to the questions below, including plots and mathematical
+ work, should be submitted as a single PDF file.  It's preferred that you write your answers using software that typesets mathematics (e.g.LaTeX, LyX, or MathJax via iPython), though if you need to you may scan handwritten work.  You may find the \href{https://github.com/gpoore/minted}{minted} package convenient for including source code in your LaTeX document.  If you are using LyX, then the \href{https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings}{listings} package tends to work better. The last application is optional.
+
+\ruleskip
+
+This second homework features 2 problems and explores gradient descent algorithms, loss functions (both topics of week 2) and regularization (topic of week 3). Following the instructions in the homework you should be able to solve a lot of questions before the lecture of week 3. 
+
+
+\section{\large Gradient descent for ridge(less) linear regression}
+
+\nyuparagrah{\bf Dataset} 
+
+We have provided you with a file called \texttt{ridge\_regression\_dataset.csv}. Columns \texttt{x0} through \texttt{x47} correspond to the input and column \texttt{y} corresponds to the output. We are trying to fit the data using a linear model and gradient based methods. Please also check the supporting code in \texttt{skeleton\_code.py}. Throughout this problem, we refer to particular blocks of code to help you step by step. 
+
+
+\nyuparagrah{\bf Feature normalization}
+When feature values differ greatly, we can get much slower rates of
+convergence of gradient-based algorithms. Furthermore, when we start
+using regularization, features with
+larger values are treated as ``more important'', which is not usually
+desired.  
+
+One common approach to feature normalization is perform
+an affine transformation (i.e. shift and rescale) on each feature
+so that all feature values in the training set are in $[0,1]$. Each
+feature gets its own transformation. We then apply the same transformations
+to each feature on the validation set or test set. Importantly, the transformation is ``learned'' on the
+training set, and then applied to the test set. It is possible that
+some transformed test set values will lie outside the $[0,1]$ interval.
+
+\begin{enumerate}
+    \item Modify function \texttt{feature\_normalization} to normalize all the
+features to $[0,1]$. Can you use numpy's \href{https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html}{broadcasting} here? Often broadcasting can help to simplify and/or speed up your code. Note that a feature with constant value cannot be normalized in
+this way. Your function should discard features that are constant
+in the training set.
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+At the end of the skeleton code, the function \texttt{load\_data} loads, split into a training and test set, and normalize the data using your \texttt{feature\_normalization}.
+
+\nyuparagrah{\bf Linear regression}
+
+In linear regression, we consider the hypothesis space of linear functions
+$h_{\theta}:\reals^{d}\to\reals$, where
+\[
+h_{\theta}(x)=\theta^{T}x,
+\]
+for $\theta,\bs x\in\reals^{d}$, and we choose $\theta$ that minimizes
+the following ``average square loss'' objective function: 
+\[
+J(\theta)=\frac{1}{m}\sum_{i=1}^{m}\left(h_{\theta}(\bs x_{i})-y_{i}\right)^{2},
+\]
+where $(\bs x_{1},y_{1}),\ldots,(\bs x_{m},y_{m})\in\reals^{d}\times\reals$
+is our training data.
+
+While this formulation of linear regression is very convenient, it's
+more standard to use a hypothesis space of affine functions:
+\[
+h_{\theta,b}(x)=\theta^{T} \bs x+b,
+\]
+which allows a nonzero intercept term $b$ -- sometimes called a ``bias'' term. The standard
+way to achieve this, while still maintaining the convenience of the
+first representation, is to add an extra dimension to $\bs x$ that is
+always a fixed value, such as 1, and use $\theta,x\in\reals^{d+1}$. Convince yourself that
+this is equivalent. 
+We will assume this representation. 
+
+\begin{enumerate}
+  \setcounter{enumi}{\value{saveenum}}
+\item Let $X\in\reals^{m\times\left(d+1\right)}$ be the \emph{design matrix}, where the $i$'th row of $X$ is $\bs x_{i}$. Let $y=\left(y_{1},\ldots,y_{m}\right)^{T}\in\reals^{m\times1}$
+be the \emph{response}. Write the objective function $J(\theta)$ as
+a matrix/vector expression, without using an explicit summation sign.
+\footnote{Being able to write expressions as matrix/vector expressions without
+summations is crucial to making implementations that are useful in
+practice, since you can use numpy (or more generally, an efficient
+numerical linear algebra library) to implement these matrix/vector
+operations orders of magnitude faster than naively implementing with
+loops in Python.} 
+
+\item Write down an expression for the gradient of $J$ without using an explicit summation sign. 
+
+\item Write down the expression for updating $\theta$ in the gradient descent
+algorithm for a step size $\eta$.
+
+\item Modify the function \texttt{compute\_square\_loss}, to compute $J(\theta)$
+for a given $\theta$. You might want to create a small dataset for
+which you can compute $J(\theta)$ by hand, and verify that your \texttt{compute\_square\_loss}
+function returns the correct value.
+
+\item Modify the function \texttt{compute\_square\_loss\_gradient}, to compute
+$\del_{\theta}J(\theta)$. You may again want to use a small dataset
+to verify that your \texttt{compute\_square\_loss\_gradient} function
+returns the correct value.
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+\nyuparagrah{\bf Gradient checker}
+
+Recall from Lab 1 that we can numerically check the
+gradient calculation. If $J:\reals^{d}\to\reals$ is differentiable,
+then for any vector $h\in\reals^{d}$, the directional derivative
+of $J$ at $\theta$ in the direction $h$ is given by
+\[
+\lim_{\eps\to0}\frac{J(\theta+\eps h)-J(\theta-\eps h)}{2\eps}.
+\]
+It is also given by the more standard definition of directional
+derivative, $$\lim_{\eps\to0}\frac{1}{\eps}\left[J(\theta+\eps h)-J(\theta)\right] \ .$$
+The former form gives a better approximation to the derivative when
+we are using small (but not infinitesimally small) $\eps$. We can approximate this directional derivative by choosing a small
+value of $\eps>0$ and evaluating the quotient above. We can get an
+approximation to the gradient by approximating the directional derivatives
+in each coordinate direction and putting them together into a vector.
+In other words, take $h=\left(1,0,0,\ldots,0\right)$ to get the first
+component of the gradient. Then take $h=(0,1,0,\ldots,0)$ to get
+the second component, and so on. 
+
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+\item Complete the function \texttt{grad\_checker} according to the documentation of the function given in the \texttt{skeleton\_code.py}. Alternatively, you may complete the function \texttt{generic\_grad\_checker
+so} which can work for any objective function. 
+
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+You should be able to check that the gradients you computed above remain correct throughout the learning below.
+
+\nyuparagrah{\bf Batch gradient descent}
+
+We will now finish the job of
+running regression on the training set. 
+
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+\item Complete \texttt{batch\_gradient\_descent}. Note the phrase \emph{batch} gradient descent distinguishes between \emph{stochastic} gradient
+descent or more generally \emph{minibatch} gradient descent. 
+
+\item Now let's experiment with the step size. Note that if the step size
+is too large, gradient descent may not converge. Starting with a step-size of $0.1$, try various different fixed
+step sizes to see which converges most quickly and/or which diverge.
+As a minimum, try step sizes 0.5, 0.1, .05, and .01. Plot the average square loss on the training set as a function of the number of steps for
+each step size. Briefly summarize your findings. 
+
+\item For the learning rate you selected above, plot the average test loss as a function of the iterations. You should observe overfitting: the test error first decreases and then increases.
+
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+\vspace{0.3cm}
+\nyuparagrah{\bf Ridge Regression}
+
+We will add $\ell_2$ regularization to linear regression. When we have a large number of features compared to instances, regularization
+can help control overfitting. \emph{Ridge regression} is linear regression
+with $\ell_{2}$ regularization. The regularization term is sometimes
+called a penalty term. The objective function for ridge regression
+is
+\[
+J_\lambda(\theta)=\frac{1}{m}\sum_{i=1}^{m}\left(h_{\theta}(\bs x_{i})-y_{i}\right)^{2}+\lambda\theta^{T}\theta,
+\]
+where $\lambda$ is the regularization parameter, which controls the
+degree of regularization. Note that the bias term (which we included as an extra dimension in $\theta$) is being regularized
+as well as the other parameters. Sometimes it is preferable to treat this term separately.
+
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+\item Compute the gradient of $J_\lambda(\theta)$ and write down the expression
+for updating $\theta$ in the gradient descent algorithm. (Matrix/vector
+expression, without explicit summation)
+\item Implement \texttt{compute\_regularized\_square\_loss\_gradient.}
+\item Implement \texttt{regularized\_grad\_descent.}
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+Our goal is to find $\lambda$
+that gives the minimum average square loss on the test set. So you should start your search very broadly, looking
+over several orders of magnitude. For example, $\lambda\in\left\{ 10^{-7},10^{-5},10^{-3},10^{-1},1,10,100\right\} $.
+Then you can zoom in on the best range. Follow the steps below to proceed.
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+\item 
+Choosing a reasonable step-size, plot training average square loss and
+the test average square loss (just the average square loss part, without the regularization, in each case) as a function of the training iterations for various values of $\lambda$. What do you notice in terms of overfitting?
+
+
+\item Plot the training average square loss and
+the test average square loss at the end of training as a function of $\lambda$. You may
+want to have $\log(\lambda)$ on the $x$-axis rather than $\lambda$.
+Which value of $\lambda$ would you choose ?  
+
+\item Another heuristic of regularization is to \emph{early-stop} the training when the test error reaches a minimum. Add to the last plot the minimum of the test average square loss along training as a function of $\lambda$.
+Is the value $\lambda$ you would select with early stopping the same as before? 
+
+
+\item What $\theta$ would you select in practice and why?
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+\vspace{0.3cm}
+\nyuparagrah{\bf Stochastic Gradient Descent (SGD) (optional)}
+
+When the training data set is very large, evaluating the
+gradient of the objective function can take a long time, since it
+requires looking at each training example to take a single gradient
+step. 
+
+In SGD, rather than taking $-\del_{\theta} J(\theta)$
+as our step direction to minimize 
+\[
+J(\theta)=\frac{1}{m}\sum_{i=1}^{m}f_{i}(\theta), 
+\]
+we take $-\del_\theta f_{i}(\theta)$ for some $i$
+chosen uniformly at random from $\{1,\ldots,m\}$. The approximation
+is poor, but we will show it is unbiased. 
+
+In machine learning applications, each $f_{i}(\theta)$
+would be the loss on the $i$th example. In
+practical implementations for ML, the data points are randomly shuffled, and then we sweep through the whole training set one by
+one, and perform an update for each training example individually.
+One pass through the data is called an \emph{epoch}. Note that each
+epoch of SGD touches as much data as a single step of batch gradient
+descent. You can use the same ordering for each epoch, though optionally
+you could investigate whether reshuffling after each epoch affects
+the convergence speed. 
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+\item Show that the objective function 
+\[
+J_{\lambda}(\theta)=\frac{1}{m}\sum_{i=1}^{m}\left(h_{\theta}(\bs x_{i})-y_{i}\right)^{2}+\lambda\theta^{T}\theta
+\]
+can be written in the form $J_\lambda(\theta)=\frac{1}{m}\sum_{i=1}^{m}f_{i}(\theta)$
+by giving an expression for $f_{i}(\theta)$ that makes the two expressions
+equivalent.
+
+\item Show that the stochastic gradient $\del_\theta f_{i}(\theta)$, for $i$
+chosen uniformly at random from $\{1,\ldots,m\}$, is an \emph{unbiased estimator} of $\del_\theta J_\lambda(\theta)$. In other words, show that $\ex\left[\del f_{i}(\theta)\right]=\del J_\lambda(\theta)$
+for any $\theta$. It will be easier to prove
+this for a general $J(\theta)=\frac{1}{m}\sum_{i=1}^{m}f_{i}(\theta)$,
+rather than the specific case of ridge regression. You can start by
+writing down an expression for $\ex\left[\del f_{i}(\theta)\right]$
+\item Write down the update rule for $\theta$ in SGD for the ridge
+regression objective function.
+\item Implement \texttt{stochastic\_grad\_descent}. 
+
+\item Use SGD to find $\theta_{\lambda}^{*}$ that minimizes the ridge regression
+objective for the $\lambda$ you selected in the previous
+problem. (If you could not solve the previous problem, choose $\lambda=10^{-2}$). Try a few fixed step sizes (at least try $\eta_{t}\in\left\{ 0.05,.005\right\} $).
+Note that SGD may not converge with fixed step size. Simply note your
+results. Next try step sizes that decrease with the step number according
+to the following schedules: $\eta_{t}=\frac{C}{t}$ and $\eta_{t}=\frac{C}{\sqrt{t}}$, $C \leq 1$. Please include $C = 0.1$ in your submissions. You are encouraged to try different values of $C$ (see notes below for details).
+For each step size rule, plot the value of the objective function
+(or the log of the objective function if that is more clear) as a
+function of epoch (or step number, if you prefer). How do the results compare?
+
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+A few remarks about the question above:
+\begin{itemize}
+\item In this case we are investigating the convergence rate of
+the optimization algorithm with different step size schedules, thus
+we're interested in the value of the objective function, which includes
+the regularization term.
+\item Sometimes the initial step size ($C$
+for $C/t$ and $C/\sqrt{t}$) is too aggressive and will get you into
+a part of parameter space from which you can't recover. Try reducing $C$ to counter this problem. 
+\item SGD
+convergence is much slower than GD once we get close to the minimizer
+(remember, the SGD step directions are very noisy versions of the
+GD step direction). If you look at the objective function values on
+a logarithmic scale, it may look like SGD will never find objective
+values that are as low as GD gets. In statistical learning theory terminology, GD has much smaller \emph{optimization} error than SGD. However,
+this difference in optimization error is usually dominated by other
+sources of error (estimation error and approximation error). Moreover,
+for very large datasets, SGD (or minibatch GD) is much faster (by
+wall-clock time) than GD to reach a point close enough
+to the minimizer. 
+\end{itemize}
+
+{\bf Acknowledgement:} This problem set is based on assignments developed by David Rosenberg of NYU and Bloomberg.
+
+
+\section{\large Image classification with regularized logistic regression}
+
+
+{\color{nyupurple} \large \bf Dataset}  
+
+In this second problem set we will examine a classification problem. To do so we will use the MNIST dataset\footnote{\url{http://yann.lecun.com/exdb/mnist/}} which is one of the traditional image benchmark for machine learning algorithms. We will only load the data from the 0 and 1 class, and try to predict the class from the image. You will find the support code for this problem in \texttt{mnist\_classification\_source\_code.py}.
+Before starting, take a little time to inspect the data. Load \texttt{X\_train, y\_train, X\_test, y\_test} with \texttt{pre\_process\_mnist\_01()}. Using the function \texttt{plt.imshow} from \texttt{matplotlib} visualize some data points from \texttt{X\_train} by reshaping the $764$ dimensional vectors into $28 \times 28$ arrays. Note how the class labels `0' and `1' have been encoded in \texttt{y\_train}. No need to report these steps in your submission.
+
+
+{\color{nyupurple} \large \bf Logistic regression}  
+
+We will use here again a linear model, meaning that we will fit an affine function,
+\[
+h_{\theta, b}(\bs x) = \theta^T\bs x + b,
+\]
+with $\bs x \in \reals^{764}$, $\bs \theta \in \reals^{764}$ and $b\in \reals$.
+This time we will use the logistic loss instead of the squared loss. Instead of coding everything from scratch, we will also use the package \texttt{scikit learn} and study the effects of $\ell_1$ regularization. You may want to check that you have a version of the package up to date (0.24.1).
+
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+  \item Recall the definition of the logistic loss between target $y$ and a prediction $h_{\theta, b}(\bs x)$ as a function of the margin $m = y h_{\theta, b}(\bs x)$. Show that given that we chose the convention $y_i\in\{-1,1\}$, our objective function over the training data $\{\bs x_i, y_i\}_{i=1}^m$ can be re-written as
+  \[
+    L(\theta) = \frac 1 {2 m} \sum_{i=1}^m  (1 + y_i) \log ( 1 + e^{- h_{\theta, b}(\bs x_i)}) +  (1 - y) \log(1 + e^{h_{\theta, b}(\bs x_i)}).
+    \]
+
+  \item What will become the loss function if we regularize the coefficients of $\theta$ with an $\ell_1$ penalty using a regularization parameter $\alpha$ ?
+  
+
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+We are going to use the module \texttt{SGDClassifier} from scikit learn. In the code provided we have set a little example of its usage. By checking the online documentation\footnote{\url{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html}}, make sure you understand the meaning of all the keyword arguments that were specified. We will keep the learning rate schedule and the maximum number of iterations fixed to the given values for all the problem. Note that scikit learn is actually implementing a fancy version of SGD to deal with the $\ell_1$ penalty which is not differentiable everywhere, but we will not enter these details here.
+
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+  \item To evaluate the quality of our model we will use the classification error, which corresponds to the fraction of incorrectly labeled examples. For a given sample, the classification error is 1 if no example was labeled correctly and 0 if all examples were perfectly labeled. 
+  Using the method \texttt{clf.predict()} from the classifier write a function that takes as input an \texttt{SGDClassifier} which we will call \texttt{clf}, a design matrix \texttt{X} and a target vector \texttt{y} and returns the classification error. You should check that your function returns the same value as \newline \texttt{1 - clf.score(X, y)}.
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+
+To speed up computations we will subsample the data. Using the function \texttt{sub\_sample}, restrict \texttt{X\_train} and \texttt{y\_train} to \texttt{N\_train = 100}. 
+
+\begin{enumerate}
+\setcounter{enumi}{\value{saveenum}}
+  \item Report the test classification error achieved by the logistic regression as a function of the regularization parameters $\alpha$ (taking 10 values between $10^{-4}$ and $10^{-1}$). You should make a plot with $\alpha$ as the x-axis in log scale. For each value of $\alpha$, you should repeat the experiment 10 times so has to finally report the mean value and the standard deviation. You should use \texttt{plt.errorbar} to plot the standard deviation as error bars.
+  
+  \item Which source(s) of randomness are we averaging over by repeating the experiment?
+
+  
+  \item What is the optimal value of the parameter $\alpha$ among the values you tested? 
+
+  \item Finally, for one run of the fit for each value of $\alpha$ plot the value of the fitted $\theta$. You can access it via \texttt{clf.coef\_}, and should reshape the $764$ dimensional vector to a $28\times 28$ arrray to visualize it with \texttt{plt.imshow}. Defining \texttt{scale = np.abs(clf.coef\_).max()}, you can use the following keyword arguments (\texttt{cmap=plt.cm.RdBu, vmax=scale, vmin=-scale}) which will set the colors nicely in the plot. You should also use a \texttt{plt.colorbar()} to visualize the values associated with the colors.
+  
+  \item What can you note about the pattern in $\theta$? What can you note about the effect of the regularization?
+
+  
+\setcounter{saveenum}{\value{enumi}}
+\end{enumerate}
+
+
+\end{document}
