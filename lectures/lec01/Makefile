@@ -1,5 +1,6 @@
 %.pdf: %.tex
 	pdflatex $<
+	pdflatex $<
 	open $@
 
 clean:

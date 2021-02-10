@@ -1,0 +1,91 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in,headsep=0pt,headheight=0pt]{geometry}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{ifthen}
+
+\input ../macros.tex
+\input ../rosenberg-macros.tex
+
+\begin{document}
+\title{DS-GA 1003 Machine Learning \\ Lecture 2}
+\maketitle
+
+\section{Gradient Descent}
+\begin{itemize}
+    \item Gradient is the steepest ascent direction.
+        \begin{itemize}
+            \item Derivative tells us how much the function value $f(x)$ changes if we move $x$ a tiny bit.
+            \item For multivariable functions, we need directional derivatives to know how fast $f(x)$ changes along $u$.
+            \item The fastest ascent direction is given by
+                $$
+                \argmax_{\|u\|_2=1} \nabla f(x) \cdot u = \frac{\nabla f(x)}{\|\nabla f(x)\|_2}
+                $$
+                \begin{itemize}
+                    \item Show by Cauchy-Schwarz.
+                    \item (draw) Geometric explanation: $a\cdot b = \|a\|_2\|b\|_2\cos\theta$.
+                \end{itemize}
+        \end{itemize}
+
+    \item Where does gradient descent converge?
+        \begin{itemize}
+            \item Stationary/Critical points: $x$ where $\nabla f(x) = 0$.
+            \item (draw) Local/global minimum/maximum, flat region of critical points
+            \item (draw) Are all critical points local minima/maxima? [no, saddle points.]
+            \item In general, GD converges to stationary points. With certain conditions (e.g. $f$ is convex, gradient cannot change arbitrarily fast, small step size), we can reach global minimum.
+        \end{itemize}
+
+    \item What is the true ``step size''?
+        \begin{itemize}
+            \item $\eta\|\nabla f(x)\|_2$. Step is smaller as we move towards the extremum. 
+        \end{itemize}
+
+    \item Line search methods
+        \begin{itemize}
+            \item Exact line search: find the optimize step size along a descent direction
+                $$
+                \argmin_{\eta\ge 0} f(x - \eta\nabla f(x))
+                $$
+                Ususally we cannot minimize it exactly.
+            \item Back-tracking line search: find the step size so that we get the expected amount of decrease in $f(x)$
+                \begin{itemize}
+                    \item Start with $\eta=1$, repeat $\eta\leftarrow \beta \eta$ until
+                        $$
+                        f(x^k - \eta\nabla f(x^k)) \le f(x^k) - \alpha \eta \nabla^T f(x^k) \nabla f(x^k)
+                        = f(x^k)  - \alpha \eta \|\nabla f(x^k)\|_2^2
+                        $$
+                    \item (draw function of the step size)
+                    \item Can prevent step sizes that are too large
+                \end{itemize}
+        \end{itemize}
+\end{itemize}
+
+\section{Case study: Least Square Regression}
+\begin{itemize}
+    \item Closed form solution:
+        $$
+        (X^TX)w = Xy
+        $$
+        \begin{itemize}
+            \item $X^TX$: $O(nd^2)$
+            \item $Xy$: $O(nd)$
+            \item Solving $d\times d$ linear system: $O(d^3)$
+        \end{itemize}
+    \item Gradient descent:
+        \begin{align}
+            f(w) &= \frac{1}{2}\|Xw - y\|_2^2 \\
+            \nabla_w f(w) &= X^T(Xw - y) \\
+            w^{t+1} &= w^t - \eta^t  X^T(Xw - y)
+        \end{align}
+        \begin{itemize}
+            \item Compute the gradient: $O(nd)$
+            \item Gradient descent: $O(ndt)$
+        \end{itemize}
+    \item GD is faster if $d$ is very large.
+\end{itemize}
+
+\end{document}
