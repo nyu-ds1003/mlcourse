@@ -1,0 +1,244 @@
+%% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\usepackage{mathptmx}
+\usepackage{eulervm}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+%\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage{xpatch}
+
+\xpatchcmd{\itemize}
+  {\def\makelabel}
+  {\ifnum\@itemdepth=1\relax
+     \setlength\itemsep{2ex}% separation for first level
+   \else
+     \ifnum\@itemdepth=2\relax
+       \setlength\itemsep{1ex}% separation for second level
+     \else
+       \ifnum\@itemdepth=3\relax
+         \setlength\itemsep{0.5ex}% separation for third level
+   \fi\fi\fi\def\makelabel
+  }
+ {}
+ {}
+
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+\fi
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% this default might be overridden by plain title style
+\newcommand\makebeamertitle{\frame{\maketitle}}%
+% (ERT) argument for the TOC
+\AtBeginDocument{%
+  \let\origtableofcontents=\tableofcontents
+  \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+  \def\gobbletableofcontents#1{\origtableofcontents}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usetheme{CambridgeUS} 
+\beamertemplatenavigationsymbolsempty
+
+
+% Set Color ==============================
+\definecolor{NYUPurple}{RGB}{87,6,140}
+\definecolor{LightPurple}{RGB}{165,11,255}
+
+
+\setbeamercolor{title}{fg=NYUPurple}
+\setbeamercolor{frametitle}{fg=NYUPurple}
+
+\setbeamercolor{background canvas}{fg=NYUPurple, bg=white}
+\setbeamercolor{background}{fg=black, bg=NYUPurple}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=gray!20!white, bg=NYUPurple}
+
+\setbeamertemplate{headline}{}
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+\setbeamercolor{parttitle}{fg=NYUPurple}
+\setbeamercolor{sectiontitle}{fg=NYUPurple}
+\setbeamercolor{sectionname}{fg=NYUPurple}
+\setbeamercolor{section page}{fg=NYUPurple}
+%\setbeamercolor{description item}{fg=NYUPurple}
+%\setbeamercolor{block title}{fg=NYUPurple}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamercolor{block body}{bg=normal text.bg!90!NYUPurple}
+\setbeamercolor{block title}{bg=NYUPurple!30, fg=NYUPurple}
+
+
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+\setbeamercolor{section title}{fg=NYUPurple}
+ \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\makeatother
+
+\setlength{\parskip}{\medskipamount} 
+
+\input ../macros
+
+\begin{document}
+\input ../rosenberg-macros
+
+\title[DS-GA 1003]{Feature Selection}
+\author{He He}
+\date{Feb 16, 2021}
+\institute{CDS, NYU}
+
+\makebeamertitle
+\mode<article>{Just in article version}
+
+\begin{frame}
+    {Complexity of Hypothesis Spaces}
+    Trade-off between approximation error and estimation error:
+    \begin{itemize}
+        \item Bigger $\sF$: better approximation but can overfit
+        \item Smaller $\sF$: less likely to overfit but can be far from the ``true'' model
+    \end{itemize}
+
+    To control the ``size'' of $\sF$, we need some measure of its \hl{complexity}:
+    \begin{itemize}
+        \item Number of variables / features
+        \item Depth of a decision tree
+        \item Degree of polynomial
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {General Approach to Control Complexity}
+    \begin{itemize}
+        \item[1.] Learn \hl{a sequence of models} varying in complexity from the training data
+\[
+\cf_{1}\subset\cf_{2}\subset\cf_{n}\cdots\subset\cf
+\]
+Example: {Polynomial Functions}
+\begin{itemize}
+\item $\cf=\left\{ \mbox{all polynomial functions}\right\} $
+\item $\cf_{d}=\left\{ \mbox{all polynomials of degree }\le d\right\} $
+\end{itemize}
+
+        \item[2.] Select one model according to some ``\hl{score}'' (e.g. validation error)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Feature Selection}
+    Nest sequence of hypothesis spaces:
+$
+\cf_{1}\subset\cf_{2}\subset\cf_{n}\cdots\subset\cf
+$
+    \begin{itemize}
+\item $\cf=\left\{ \mbox{linear functions using all features}\right\} $
+\item $\cf_{d}=\left\{ \mbox{linear functions using fewer than $d$ features}\right\} $
+    \end{itemize}
+
+    \textbf{Best subset selection}:
+    \begin{itemize}
+        \item Choose the subset of features that is best according to the score (e.g. validation error)
+            \begin{itemize}
+                \item Example with 2 features:
+                    Train models using $\pc{}$,
+                $\pc{X_1}$,
+                $\pc{X_2}$,
+                $\pc{X_1, X_2}$, respectively
+            \end{itemize}
+        \item \al{No efficient algorithm} for large number of features 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Greedy Selection Methods}
+    \textbf{Forward selection}:
+    \begin{itemize}
+        \item[1.] Start with an empty set of features $S$
+        \item[2.] For each feature $i$ not in $S$
+            \begin{itemize}
+                \item Learn a model using features $S\cup i$
+                \item Compute score of the model: $\alpha_i$
+            \end{itemize}
+        \item[3.] Find the candidate feature with the highest score: $j = \argmax_i \alpha_i$
+        \item[4.] If $\alpha_j$ improves the current best score, add feature $j$: $S\leftarrow S\cup j$; return $S$ otherwise.
+    \end{itemize}
+
+    \textbf{Backward Selection}:
+    \begin{itemize}
+        \item Start with all features and remove the one that maximally improves the score in each iteration
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Complexity Penalty}
+    \head{Goal}: score a subset of features based on its size and prediction performance
+
+    Subset selection aims to find the smallest subset that minimizes the validation error. Can we formalize the objective?
+
+    \begin{align}
+        \text{score}(S) = \text{training\_loss}(S) + \lambda |S|
+    \end{align}
+
+    $\lambda$ balances the training loss and the number of features used:
+    \begin{itemize}
+        \item Adding 1 feature must be justified by at least $\lambda$ improvement in training loss
+        \item Larger $\lambda$ penalizes complex models more heavily
+        \item Different values gives different criterion (e.g. AIC, BIC) 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Summary}
+    \begin{itemize}
+        \item Number of features as a measure of complexity
+        \item General approach to feature selection
+            \begin{itemize}
+                \item Define a score that balances training error and complexity
+                \item Find the subset of features that maximize the score
+            \end{itemize}
+        \item In practice, forward selection is usually used
+        \item Exercise caution when interpreting the features 
+    \end{itemize}
+\end{frame}
+
+\end{document}

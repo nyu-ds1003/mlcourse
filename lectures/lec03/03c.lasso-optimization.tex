@@ -1,0 +1,349 @@
+%% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\usepackage{mathptmx}
+\usepackage{eulervm}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+%\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage{xpatch}
+
+\xpatchcmd{\itemize}
+  {\def\makelabel}
+  {\ifnum\@itemdepth=1\relax
+     \setlength\itemsep{2ex}% separation for first level
+   \else
+     \ifnum\@itemdepth=2\relax
+       \setlength\itemsep{1ex}% separation for second level
+     \else
+       \ifnum\@itemdepth=3\relax
+         \setlength\itemsep{0.5ex}% separation for third level
+   \fi\fi\fi\def\makelabel
+  }
+ {}
+ {}
+
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+\fi
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% this default might be overridden by plain title style
+\newcommand\makebeamertitle{\frame{\maketitle}}%
+% (ERT) argument for the TOC
+\AtBeginDocument{%
+  \let\origtableofcontents=\tableofcontents
+  \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+  \def\gobbletableofcontents#1{\origtableofcontents}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usetheme{CambridgeUS} 
+\beamertemplatenavigationsymbolsempty
+
+
+% Set Color ==============================
+\definecolor{NYUPurple}{RGB}{87,6,140}
+\definecolor{LightPurple}{RGB}{165,11,255}
+
+
+\setbeamercolor{title}{fg=NYUPurple}
+\setbeamercolor{frametitle}{fg=NYUPurple}
+
+\setbeamercolor{background canvas}{fg=NYUPurple, bg=white}
+\setbeamercolor{background}{fg=black, bg=NYUPurple}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=gray!20!white, bg=NYUPurple}
+
+\setbeamertemplate{headline}{}
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+\setbeamercolor{parttitle}{fg=NYUPurple}
+\setbeamercolor{sectiontitle}{fg=NYUPurple}
+\setbeamercolor{sectionname}{fg=NYUPurple}
+\setbeamercolor{section page}{fg=NYUPurple}
+%\setbeamercolor{description item}{fg=NYUPurple}
+%\setbeamercolor{block title}{fg=NYUPurple}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamercolor{block body}{bg=normal text.bg!90!NYUPurple}
+\setbeamercolor{block title}{bg=NYUPurple!30, fg=NYUPurple}
+
+
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+\setbeamercolor{section title}{fg=NYUPurple}
+ \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\makeatother
+
+\setlength{\parskip}{\medskipamount} 
+
+\input ../macros
+
+\begin{document}
+\input ../rosenberg-macros
+
+\title[DS-GA 1003]{Find the Lasso Solution}
+\author{He He}
+\date{Feb 16, 2021}
+\institute{CDS, NYU}
+
+\makebeamertitle
+\mode<article>{Just in article version}
+
+\section{Quadratic Programming}
+
+\begin{frame}{How to find the Lasso solution?}
+\begin{itemize}
+\item How to solve the Lasso?
+\[
+\min_{w\in\reals^{d}}\sum_{i=1}^{n}\left(w^{T}x_{i}-y_{i}\right)^{2}+\lambda\|w\|_{1}
+\]
+\item $\|w\|_{1}=\left|w_{1}\right|+\left|w_{2}\right|$ is not differentiable!
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Rewrite the Absolute Function}
+\begin{itemize}
+\item Consider any number $a\in\reals$.
+\item Let the \textbf{positive part} of $a$ be
+\[
+a^{+}=a\ind{a\ge0}.
+\]
+
+
+\item Let the \textbf{negative part} of $a$ be
+\[
+a^{-}=-a\ind{a\le0}.
+\]
+
+
+\item Do you see why $a^{+}\ge0$ and $a^{-}\ge0$?
+
+\item How do you write $a$ in terms of $a^{+}$ and $a^{-}$?
+
+\item How do you write $\left|a\right|$ in terms of $a^{+}$ and $a^{-}$?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Lasso as a Quadratic Program}
+
+We will show: substituting $w=w^{+}-w^{-}$ and $\left|w\right|=w^{+}+w^{-}$
+gives an \hl{equivalent} problem:
+\begin{align*}
+\min_{w^{+},w^{-}}\quad & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
+\mbox{subject to}\quad & w_{i}^{+}\ge0\mbox{ for all }i\text{\qquad}w_{i}^{-}\ge0\mbox{ for all }i,
+\end{align*}
+
+
+\begin{itemize}
+\item Objective is \textbf{differentiable} (in fact, \textbf{convex and
+quadratic})
+\item $2d$ variables vs $d$ variables and $2d$ constraints vs no constraints
+\item A \textbf{``quadratic program}'': a convex quadratic objective with
+linear constraints.
+\begin{itemize}
+\item Could plug this into a generic QP solver.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Possible point of confusion}
+
+We have claimed that this objective is equivalent to lasso problem:
+\begin{align*}
+\min_{w^{+},w^{-}}\quad & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
+\mbox{subject to}\quad & w_{i}^{+}\ge0\mbox{ for all }i\text{\qquad}w_{i}^{-}\ge0\mbox{ for all }i,
+\end{align*}
+
+
+\begin{itemize}
+\item When we plug this optimization problem into a QP solver,
+\begin{itemize}
+\item it just sees $2d$ variables and $2d$ constraints.
+\item \al{Doesn't know we want $w_{i}^{+}$ and $w_{i}^{-}$ to be positive
+    and negative parts of $w_{i}$}.
+\end{itemize}
+\item Turns out -- they will come out that way as a result of the optimization!
+\item But to eliminate confusion, let's start by calling them $a_{i}$ and
+$b_{i}$ and prove our claim...
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Lasso as a Quadratic Program}
+
+Lasso problem is trivially equivalent to the following: 
+\begin{align*}
+\min_{w}\;\min_{a,b}\quad & \sum_{i=1}^{n}\left(\left(a-b\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(a+b\right)\\
+\mbox{subject to}\quad & a_{i}\ge0\mbox{ for all }i\text{\qquad}b_{i}\ge0\mbox{ for all }i,\\
+ & a-b=w\\
+ & a+b=|w|
+\end{align*}
+
+
+    \head{Claim}: Don't need constraint $a+b=|w|$. 
+
+    \head{Exercise}: rove by showing that the optimal solutions $a^*$ and $b^*$ satisfies $\min(a^*, b^*)=0$, hence $a^*+b^*=|w|$.
+\end{frame}
+
+\begin{frame}{The Lasso as a Quadratic Program}
+
+\begin{align*}
+\min_{w}\;\min_{a,b}\quad & \sum_{i=1}^{n}\left(\left(a-b\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(a+b\right)\\
+\mbox{subject to}\quad & a_{i}\ge0\mbox{ for all }i\text{\qquad}b_{i}\ge0\mbox{ for all }i,\\
+ & a-b=w
+\end{align*}
+
+    \head{Claim}: Can remove $\min_{w}$ and the constraint $a-b=w$. 
+
+    \head{Exercise}: Prove by switching the order of the minimization.
+\end{frame}
+
+\begin{frame}{Projected SGD}
+    Now the objective is differentiable, but how do we handle the \hl{constraints}?
+\begin{align*}
+\min_{w^{+},w^{-}\in\reals^{d}} & \sum_{i=1}^{n}\left(\left(w^{+}-w^{-}\right)^{T}x_{i}-y_{i}\right)^{2}+\lambda1^{T}\left(w^{+}+w^{-}\right)\\
+\mbox{subject to } & w_{i}^{+}\ge0\mbox{ for all }i\\
+ & w_{i}^{-}\ge0\mbox{ for all }i
+\end{align*}
+
+\begin{itemize}
+\item Just like SGD, but after each step
+\begin{itemize}
+\item Project $w^{+}$ and $w^{-}$ into the constraint set.
+\item In other words, if any component of $w^{+}$ or $w^{-}$ becomes negative,
+set it back to 0.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Coordinate Descent (Shooting Method)}
+
+\begin{frame}{Coordinate Descent Method}
+
+\head{Goal}: Minimize $L(w)=L(w_{1},\ldots,w_{d})$ over $w=\left(w_{1},\ldots,w_{d}\right)\in\reals^{d}$.
+
+In gradient descent or SGD, 
+    each step potentially changes \hl{all entries} of $w$.
+
+In \textbf{coordinate descent}, 
+    each step adjusts only a \hl{single coordinate} $w_{i}$.
+
+\[
+w_{i}^{\mbox{new}}=\argmin_{w_{i}}L(w_{1},\ldots,w_{i-1},\mathbf{w_{i}},w_{i+1},\ldots,w_{d})
+\]
+
+\begin{itemize}
+\item Solving this argmin may itself be an iterative process. 
+\item Coordinate descent is great when 
+it's easy or easier to minimize w.r.t. one coordinate at a time 
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Coordinate Descent Method}
+
+    \begin{block}{}
+\textbf{Goal: }Minimize $L(w)=L(w_{1},\ldots w_{d})$ over $w=\left(w_{1},\ldots,w_{d}\right)\in\reals^{d}$.
+\begin{itemize}
+\item \textbf{Initialize} $w^{(0)}=0$
+\item \textbf{while} not converged:
+\begin{itemize}
+\item Choose a coordinate $j\in\left\{ 1,\ldots,d\right\} $
+\item $w_{j}^{\mbox{new}}\gets\argmin_{w_{j}}L(w_{1}^{(t)},\ldots,w_{j-1}^{(t)},\mathbf{w_{j}},w_{j+1}^{(t)},\ldots,w_{d}^{(t)})$
+\item $w_{j}^{(t+1)}\gets w_{j}^{\mbox{new}}$ and $w^{(t+1)}\gets w^{(t)}$
+\item $t\gets t+1$
+\end{itemize}
+\end{itemize}
+    \end{block}
+
+\begin{itemize}
+\item Random coordinate choice $\implies$\textbf{stochastic coordinate
+descent}
+\item Cyclic coordinate choice $\implies$ \textbf{cyclic coordinate descent}
+\end{itemize}
+In general, we will adjust each coordinate several times.
+\end{frame}
+
+\begin{frame}{Coordinate Descent Method for Lasso}
+\begin{itemize}
+\item Why mention coordinate descent for Lasso?
+\item In Lasso, the coordinate minimization has a \textbf{closed form solution}!
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Coordinate Descent Method for Lasso}
+
+Closed Form Coordinate Minimization for Lasso
+
+\[
+\hat{w}_{j}=\argmin_{w_{j}\in\reals}\sum_{i=1}^{n}\left(w^{T}x_{i}-y_{i}\right)^{2}+\lambda\left|w\right|_{1}
+\]
+
+
+Then
+\[
+\hat{w}_{j}=\begin{cases}
+(c_{j}+\lambda)/a_{j} & \mbox{if }c_{j}<-\lambda\\
+0 & \mbox{if }c_{j}\in[-\lambda,\lambda]\\
+(c_{j}-\lambda)/a_{j} & \mbox{if }c_{j}>\lambda
+\end{cases}
+\]
+
+\begin{align*}
+a_{j} & =2\sum_{i=1}^{n}x_{i,j}^{2}\qquad & c_{j} & =2\sum_{i=1}^{n}x_{i,j}(y_{i}-w_{-j}^{T}x_{i,-j})
+\end{align*}
+where $w_{-j}$ is $w$ without component $j$ and similarly for $x_{i,-j}$.
+\end{frame}
+
+\begin{frame}
+    {Coordinate Descent in General}
+    \begin{itemize}
+        \item Theoretically, coordinate descent is not competitive, e.g. its convergence rate is slower than GD and the iteration cost is similar
+        \item But it works very well for certain problems
+        \item Very simple and easy to implement
+        \item Example applications: lasso regression, SVMs
+    \end{itemize}
+\end{frame}
+
+\end{document}
