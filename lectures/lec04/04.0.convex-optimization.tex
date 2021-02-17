@@ -1,3 +1,4 @@
+
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
 \documentclass[english,aspectratio=169]{beamer}
@@ -32,11 +33,11 @@
 % this default might be overridden by plain title style
 \newcommand\makebeamertitle{\frame{\maketitle}}%
 % (ERT) argument for the TOC
-\AtBeginDocument{%
-  \let\origtableofcontents=\tableofcontents
-  \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
-  \def\gobbletableofcontents#1{\origtableofcontents}
-}
+% \AtBeginDocument{%
+%   \let\origtableofcontents=\tableofcontents
+%   \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+%   \def\gobbletableofcontents#1{\origtableofcontents}
+% }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
 \usetheme{CambridgeUS} 
@@ -256,13 +257,94 @@
 \global\long\def\ber{\text{Ber}}%
 
 \title[DS-GA 1003 ]{Lagrangian Duality and Convex Optimization}
-\author{Julia Kempe \& David Rosenberg}
+\author[M.G. H.H. D.R. \& J. K.]{Marylou Gabri\'e \& He He \\ Material originally designed by: \\ Julia Kempe \& David Rosenberg}
 \institute{CDS, NYU}
 
-\makebeamertitle
- 
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+\fi
 
-\section{Introduction}
+% Set Color ==============================
+\definecolor{NYUPurple}{RGB}{87,6,140}
+\definecolor{LightPurple}{RGB}{165,11,255}
+
+
+\setbeamercolor{title}{fg=NYUPurple}
+\setbeamercolor{frametitle}{fg=NYUPurple}
+
+\setbeamercolor{background canvas}{fg=NYUPurple, bg=white}
+\setbeamercolor{background}{fg=black, bg=NYUPurple}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=gray!20!white, bg=NYUPurple}
+
+\setbeamertemplate{headline}{}
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+\setbeamercolor{parttitle}{fg=NYUPurple}
+\setbeamercolor{sectiontitle}{fg=NYUPurple}
+\setbeamercolor{sectionname}{fg=NYUPurple}
+\setbeamercolor{section page}{fg=NYUPurple}
+%\setbeamercolor{description item}{fg=NYUPurple}
+%\setbeamercolor{block title}{fg=NYUPurple}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamercolor{block body}{bg=normal text.bg!90!NYUPurple}
+\setbeamercolor{block title}{bg=NYUPurple!30, fg=NYUPurple}
+
+
+
+\AtBeginSection[]{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+
+  \begin{frame}
+  \vfill
+  \centering
+\setbeamercolor{section title}{fg=NYUPurple}
+ \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\makebeamertitle
+
+
+% \section{Introduction}
+\begin{frame}{Optimization}
+  \begin{block}{General Optimization Problem: Standard Form}
+    $x\in\reals^{n}$ are the \textbf{optimization variables }and\textbf{
+      }$f_{0}$ is the \textbf{objective function.}
+    \begin{eqnarray*}
+    \textrm{minimize} &  & f_{0}(x)\\
+    \pause{}
+    \textrm{subject to} &  & f_{i}(x)\le0,\;\;i=1,\ldots,m\\
+     &  & h_{i}(x)=0,\;\;i=1,\ldots p,
+    \end{eqnarray*}
+    \end{block}
+    \pause{}
+    \begin{itemize}
+      \item Can you think of examples?
+    \end{itemize}
+\end{frame}
+
+
 \begin{frame}{Why Convex Optimization?}
 \begin{itemize}
 \item Historically:
@@ -317,6 +399,14 @@ problems
 
 \end{frame}
 
+
+\begin{frame}{What we will quickly review today}
+  \tableofcontents
+\end{frame}
+
+
+\section{Convex Sets and Functions}
+
 \begin{frame}{Notation from Boyd and Vandenberghe}
 \begin{itemize}
 \item $f:\reals^{p}\to\reals^{q}$ to mean that $f$ maps from some \emph{subset}
@@ -329,7 +419,6 @@ $f$
 \end{frame}
 
 
-\section{Convex Sets and Functions}
 
 \mode<article>{What is the set $\left\{ \theta x_{1}+(1-\theta)x_{2}\mid\theta\in\reals\right\} $?
 A line through $x_{1}$ and $x_{2}$. What is $\left\{ \theta x_{1}+(1-\theta)x_{2}\mid\theta\in[0,1]\right\} $?
@@ -344,7 +433,7 @@ $\theta$ with $0\le\theta\le1$ we have
 \end{definition}
 
 \begin{center}
-\includegraphics[height=0.45\textheight]{figures/fig7.4a}\includegraphics[height=0.45\textheight]{figures/fig7.4b}\let\thefootnote\relax\footnotetext{\tiny{KPM Fig. 7.4}}
+\includegraphics[height=0.45\textheight]{figures/{fig7.4a}.pdf}\includegraphics[height=0.45\textheight]{figures/{fig7.4b}.pdf}\let\thefootnote\relax\footnotetext{\tiny{KPM Fig. 7.4}}
 \par\end{center}
 
 \end{frame}
@@ -360,7 +449,7 @@ f(\theta x+(1-\theta)y)\le\theta f(x)+(1-\theta)f(y).
 \end{definition}
 
 \begin{center}
-\includegraphics[height=0.45\textheight]{figures/fig7.5a}\includegraphics[height=0.45\textheight]{figures/fig7.5b}\let\thefootnote\relax\footnotetext{\tiny{KPM Fig. 7.5}}
+\includegraphics[height=0.45\textheight]{figures/{fig7.5a}.pdf}\includegraphics[height=0.45\textheight]{{figures/fig7.5b}.pdf}\let\thefootnote\relax\footnotetext{\tiny{KPM Fig. 7.5}}
 \par\end{center}
 
 \end{frame}
@@ -431,6 +520,9 @@ is nonempty.
 \item The set of points satisfying the constraints is called the \textbf{feasible
 set}.
 \item A point $x$ in the feasible set is called a \textbf{feasible point.}
+
+\pause{}
+
 \item If $x$ is feasible and $f_{i}(x)=0$, 
 \begin{itemize}
 \item then we say the inequality constraint $f_{i}(x)\le0$ is \textbf{active}
@@ -454,14 +546,7 @@ if $x^{*}$ is feasible and $f(x^{*})=p^{*}$.
 \end{frame}
 
 \begin{frame}{Do We Need Equality Constraints?}
-\begin{itemize}
-\item Note that
-\[
-h(x)=0\;\iff\;\left(h(x)\ge0\mbox{ AND}\;h(x)\le0\right)
-\]
-\end{itemize}
 
-\pause{}
 \begin{itemize}
 \item Consider an equality-constrained problem: 
 \begin{eqnarray*}
@@ -471,6 +556,15 @@ h(x)=0\;\iff\;\left(h(x)\ge0\mbox{ AND}\;h(x)\le0\right)
 \end{itemize}
 
 \pause{}
+\begin{itemize}
+  \item Note that
+  \[
+  h(x)=0\;\iff\;\left(h(x)\ge0\mbox{ AND}\;h(x)\le0\right)
+  \]
+\end{itemize}
+  
+\pause{}
+
 \begin{itemize}
 \item Can be rewritten as
 \begin{eqnarray*}
@@ -565,7 +659,8 @@ For \textbf{any} $f:W\times Z\to\reals$, we have
 
 \end{theorem}
 
-\begin{proof}
+% \begin{proof}
+\textbf{Proof} \\
 For any $w_{0}\in W$ and $z_{0}\in Z$, we clearly have
 \[
 \inf_{w\in W}f(w,z_{0})\le f(w_{0},z_{0})\le\sup_{z\in Z}f(w_{0},z).
@@ -578,7 +673,7 @@ $w_{0}$ and $z_{0}$, we must also have
 \[
 \sup_{z_{0}\in Z}\inf_{w\in W}f(w,z_{0})\le\inf_{w_{0}\in W}\sup_{z\in Z}f(w_{0},z).
 \]
-\end{proof}
+% \end{proof}
 
 \end{frame}
 
@@ -680,6 +775,26 @@ if they are optimal for the Lagrange dual problem.
 \pause{}
 \item Dual can reveal hidden structure in the solution.
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Recap Lagrangian Duality}
+  \begin{itemize}
+    \item {\bf Lagrangian} $L(x,\lambda)=f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_{i}(x),$ with $\lambda_i$ multipliers / dual variables
+    \pause{}
+    \item Equivalence to original optimization problem:
+    \begin{align*}
+      \begin{aligned}
+        \textrm{minimize} & \quad  f_{0}(x)\\
+      \textrm{subject to} & \quad  f_{i}(x)\le0,\;\;i=1,\ldots,m
+      \end{aligned} \qquad \Rightarrow  p^{*} = \inf_{x}\sup_{\lambda\succeq0}\left[L(x, \lambda)\right] 
+    \end{align*}
+    \pause{}
+    \item {\bf Weak duality} $ p^{*} \ge \sup_{\lambda\succeq0,\nu}\inf_{x}\left[L(x, \lambda)\right]=d^{*} $
+    \pause{}
+    \item {\bf Dual function}  $g(\lambda)=\inf_{x}L(x,\lambda)=\inf_{x}\left(f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_{i}(x)\right)$ is always concave
+    \pause{}
+    \item Convex problems ($f_i$ convex) have {\bf strong duality} $p^{*} = d^{*}$
+  \end{itemize}
 \end{frame}
 
 
@@ -787,14 +902,14 @@ be $0$. That is
 This condition is known as \textbf{complementary slackness}. 
 \end{frame}
 %
-\begin{frame}{Consequences of our ``Sandwich Proof''}
+\begin{frame}{Result of ``Sandwich Proof'' and Consequences}
 \begin{itemize}
 \item Let $x^{*}$ be primal optimal and $\lambda^{*}$ be dual optimal. 
 \item If we have strong duality, then 
 \[
 p^{*}=d^{*}=f_{0}(x^{*})=g(\lambda^{*})=L(x^{*},\lambda^{*})
 \]
-and we have complementary slackness
+and we have {\bf complementary slackness}
 \end{itemize}
 \[
 \lambda_{i}^{*}f_{i}(x^{*})=0,\quad i=1,\ldots,m.
