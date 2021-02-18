@@ -24,7 +24,7 @@
 \setbeamertemplate{note page}{\pagecolor{yellow!5}\insertnote}
 %\setbeameroption{hide notes} % Only slides
 %\setbeameroption{show only notes} % Only notes
-\setbeameroption{show notes on second screen=right} % Both
+%\setbeameroption{show notes on second screen=right} % Both
 
 
 \xpatchcmd{\itemize}
@@ -138,6 +138,26 @@
 \makebeamertitle
 \mode<article>{Just in article version}
 
+\begin{frame}
+    {Logistics}
+    \begin{itemize}
+        \item Thanks for the course feedback!
+        \item Piazza posting instructions
+            \begin{itemize}
+                \item Search for similar questions
+                \item Describe your progress and clarify confusion points
+            \end{itemize}
+        \item Feel free to turn on video (when talking)
+        \item Tutorial for convex optimization (preparation for SVM) 
+            on \textbf{Thursday 9:30am--10:30am} during Marylou's OH
+            \begin{itemize}
+                \item Convex functions
+                \item Primal/Dual problem, strong/weak duality
+                \item Complementary slackness, KKT conditions
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
 \section{Model Selection}
 
 \begin{frame}
@@ -220,14 +240,14 @@
 \begin{frame}
     {Bias-Variance Decomposition}
     \begin{itemize}
-        \item Note that the test error is is a random variabl. Why?
+        \item Note that the test error is a random variable. Why?
         \item Assume the true model is $y = f(x) + \epsilon$ and 
             $\BE{\epsilon} = 0$ and $\var(\epsilon)=\sigma^2$
         \item Consider the expected square loss over \textit{training sets}:
             \begin{align}
                 \text{err}(x) &= 
                 \BE\pb{\p{y - \hat{f}(x)}^2} \\
-                &= \epsilon^2 + \BE\pb{\hat{f}(x) - \BE\hat{f}(x)}^2
+                &= \sigma^2 + \BE\pb{\hat{f}(x) - \BE\hat{f}(x)}^2
                 + \pb{f(x) - \BE\hat{f}(x)}^2
             \end{align}
             \note[item]{irreducible error + variance($\hat{f}(x)$)
@@ -247,7 +267,7 @@
     \end{figure}
 \end{frame}
 
-\section{$\ell_1$ and $\ell_2$ Regularization}
+\section{Regularization and Dependent Features}
 \begin{frame}
     {$\ell_p$ Regularization}
         $\ell_0$ regularization (subset selection)
@@ -436,5 +456,90 @@ corner. (Which one?)
 \end{itemize}
 \end{itemize}
 \end{frame}
+
+\begin{frame}{Elastic Net}
+The \textbf{elastic net} combines lasso and ridge penalties:
+\[
+\hat{w}=\argmin_{w\in\reals^{d}}\frac{1}{n}\sum_{i=1}^{n}\left\{ w^{T}x_{i}-y_{i}\right\} ^{2}+\lambda_{1}\|w\|_{1}+\lambda_{2}\|w\|_{2}^{2}
+\]
+
+What are the coefficients for correlated variables?
+
+\note[item]{We expect correlated random variables to have similar coefficients.}
+\end{frame}
+
+\begin{frame}{Highly Correlated Features, Elastic Net Constraint}
+\begin{center}
+\includegraphics[height=0.5\textheight]{figures/EnetCorr}
+\par\end{center}
+\begin{itemize}
+\item Elastic net solution is closer to $w_{2}=w_{1}$ line, despite high
+correlation.
+\item Elastic net selects variables like Lasso
+\item And shrinks coefficients of correlated varialbes like Ridge
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+    {Elastic Net vs $\ell_q$ Constraints}
+    What if we use $\ell_q$ penalty where $q\in(1,2)$?
+    \begin{figure}
+        \includegraphics[height=0.5\textheight]{figures/elastic-lq}
+    \end{figure}
+    \note[item]{Although they look very similar, $\ell_q$ does not have sharp/non-differentiable corners thus cannot push weights to exactly zero.}
+\end{frame}
+
+\section{Sparsity}
+
+\begin{frame}
+    {Why doesn't $\ell_2$ give sparsity}
+    Consider $\ell_2$ regularized least squares:
+    \begin{align}
+        L(w) = \frac{1}{2}\|Xw-y\|^2 + \frac{1}{2}\|w\|^2 .
+    \end{align}
+
+    Let $w^*$ be the optimal solution. What's the condition for $w_j^*=0$?
+    \vspace{10em}
+    \note[item]{We need
+        \begin{align}
+            \frac{\partial}{\partial w_j} L(w)\bigg|_{w_j=0} &= x_{\cdot j}^T(Xw - y) = 0
+        \end{align}
+        when $w_{-j}$ takes the optimal value.
+        This requires the $j$-th features, $x_{\cdot j}$,
+        to be orthogonal to the residual without using feature $j$,
+        $X_{-j}w^*_{-j} - y$.
+    }
+    \note[item]{Note that the condition does not depend on $\lambda$.}
+\end{frame}
+
+\begin{frame}
+    {Why does $\ell_1$ give sparsity}
+    Consider $\ell_1$ regularized least squares:
+    \begin{align}
+        L(w) = \frac{1}{2}\|Xw-y\|^2 + \|w\|_1 .
+    \end{align}
+    Let $w^*$ be the optimal solution. What's the condition for $w_j^*=0$?
+    \vspace{10em}
+    \note[item]{We need
+        \begin{align}
+            \frac{\partial}{\partial w_j} L(w)\bigg|_{w_j=0} &= x_{\cdot j}^T(Xw - y) + \lambda [-1, 1]= 0
+        \end{align}
+        because subderivative $\partial |w_j|$ at $w_j=0$ is $[-1, 1]$.
+        This only requires the $j-th$ features to be close to orthogonal to the residual, specifically the inner product is within $[-\lambda, \lambda]$.
+        }
+        \note[item]{Thus increasing $\lambda$ sets more weights to zero.} 
+\end{frame}
+
+\begin{frame}
+    {Do we always want sparsity or simpler models?}
+    \pause
+    \begin{itemize}
+        \item Subjective desire for parsimony: Occam's razor
+        \item Avoid overfit: approximatin/estimation error trade-off
+        \item No free lunch theorem
+    \end{itemize}
+    \vspace{9em}
+\end{frame}
+
 
 \end{document}
