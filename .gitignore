@@ -4,6 +4,7 @@
 *.out
 *.snm
 *.toc
+Makefile
 
 .DS_Store
 .ipynb_checkpoints
