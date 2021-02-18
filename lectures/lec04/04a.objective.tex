@@ -255,7 +255,7 @@
     \end{array}$$
     It's equivalent to solving the minimization problem
       $$\begin{array}{ll}
-          \text{minimize}_{w,b} & {\frac{1}{2}\|w\|_2^2}\\
+          \text{minimize} & {\frac{1}{2}\|w\|_2^2}\\
       \text{subject to} & y_i(w^Tx_i+b) \geq 1 \quad\text{for all
         $i$}
     \end{array}$$
@@ -273,7 +273,7 @@
 
     Introduce \textbf{slack variables} to penalize small margin:
       $$\begin{array}{ll}
-          \text{minimize}_{w,b,\xi} & {\frac{1}{2}\|w\|_2^2}
+          \text{minimize} & {\frac{1}{2}\|w\|_2^2}
            + \frac{C}{n}\sum_{i=1}^n \xi_i \\
       \text{subject to} & y_i(w^Tx_i+b) \geq 1 - \xi_i \quad\text{for all
         $i$}\\
@@ -345,14 +345,14 @@ We have a \textbf{``margin error''} when $m<1$.
 \begin{itemize}
 \item The SVM optimization problem is equivalent to
 \begin{eqnarray*}
-    \textrm{minimize}_{w, \xi} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
 \textrm{subject to} &  & \xi_{i}\ge\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
 \end{eqnarray*}
 
 
 \item Which is equivalent to
 \begin{eqnarray*}
-    \textrm{minimize}_{w, \xi} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
 \textrm{subject to} &  & \xi_{i}\ge\left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)\;\mbox{for }i=1,\ldots,n\\
  &  & \xi_{i}\ge0\;\mbox{for }i=1,\ldots,n
 \end{eqnarray*}
