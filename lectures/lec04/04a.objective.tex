@@ -234,11 +234,11 @@
     $$
     Given separating hyperplane $H=\pc{v\mid w^Tv + b = 0}$, we have
     $$
-    \text{maximize}_{w,b} \; \min_{i} \frac{y_i(w^Tx_i + b)}{\|w\|_2} .
+    \text{maximize} \; \min_{i} \frac{y_i(w^Tx_i + b)}{\|w\|_2} .
     $$
     Let's remove the inner minimization problem by
       $$\begin{array}{ll}
-      \text{maximize}_{w,b,M} & M\\
+      \text{maximize} & M\\
           \text{subject to} & \frac{y_i(w^Tx_i+b)}{\|w\|_2} \geq M \quad\text{for all
         $i$}
     \end{array}$$
@@ -249,7 +249,7 @@
     {Maximize the Margin}
     Let's fix the norm $\|w\|_2$ to $1/M$ to obtain:
       $$\begin{array}{ll}
-          \text{maximize}_{w,b} & \frac{1}{\|w\|_2}\\
+          \text{maximize} & \frac{1}{\|w\|_2}\\
       \text{subject to} & y_i(w^Tx_i+b) \geq 1 \quad\text{for all
         $i$}
     \end{array}$$
