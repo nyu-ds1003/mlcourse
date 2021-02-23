@@ -20,6 +20,12 @@
 \usepackage{booktabs}
 \usepackage{xpatch}
 
+\usepackage{pgfpages}
+\setbeamertemplate{note page}{\pagecolor{yellow!5}\insertnote}
+%\setbeameroption{hide notes} % Only slides
+%\setbeameroption{show only notes} % Only notes
+%\setbeameroption{show notes on second screen=right} % Both
+
 \xpatchcmd{\itemize}
   {\def\makelabel}
   {\ifnum\@itemdepth=1\relax
@@ -136,9 +142,9 @@
 \begin{itemize}
 \item The SVM optimization problem is equivalent to
 \begin{eqnarray*}
-    \textrm{minimize}_{w, \xi} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
-\textrm{subject to} &  & -\xi_{i}\le0\;\mbox{for }i=1,\ldots,n\\
- &  & \left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)-\xi_{i}\le0\;\mbox{for }i=1,\ldots,n
+    \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
+\textrm{subject to} &  & -\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n\\
+ &  & \left(1-y_{i}\left[w^{T}x_{i}+b\right]\right)-\xi_{i}\le0\quad\mbox{for }i=1,\ldots,n
 \end{eqnarray*}
 
 \item Differentiable objective function
@@ -182,10 +188,15 @@ L(x,\lambda)=f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_{i}(x).
         $$
     \end{definition}
     \begin{itemize}
-        \item $g(\lambda)$ is \hl{concave} (infimum of affine functions)
+        \item $g(\lambda)$ is \hl{concave} (why?)
+            \note[item]{$g$ is concave because it is the infimum of affine functions. Note that we are not assuming convexity of $f_0$.}
         \item \textbf{Lower bound property}: if $\lambda \succeq 0$, $g(\lambda) \le p^*$ where $p^*$ is the optimal value of the optimization problem.
+            \note[item]{Note that the proof is straightforward: $\sum_i\lambda_i f_i(x)$ is always negative.}
         \item $g(\lambda)$ can be $-\infty$ (uninformative lower bound)
+            \note[item]{For example when $L(x,\lambda)$ is affine is $x$.}
     \end{itemize}
+    \note[item]{We can consider $g(\lambda)$ as a parametrized lower bound that depends on $\lambda$. 
+    So we might want to find $\lambda$ that gives us the best lower bound, which motivates the dual problem.}
 \end{frame}
 
 \begin{frame}{The Primal and the Dual}
@@ -281,6 +292,7 @@ L(w,b,\xi,\alpha,\lambda)=\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}+
 
     \head{Dual optimum value}:
     $d^* = \sup_{\alpha,\lambda\succeq0}\inf_{w,b,\xi}L(w,b,\xi,\alpha,\lambda)$
+    \note[item]{What are the primal and dual variables?}
 \end{frame}
 
 \begin{frame}
@@ -298,23 +310,9 @@ Slater's constraint qualification:\\
 problem is feasible 
 \item Do we have a feasible point?
     \note[item]{Constraints are satisfied by $w=b=0$ and $\xi_{i}=1$ for $i=1,\ldots,n$}
-\item For SVM, we have strong duality.
+\item For SVM, we have \hl{strong duality}.
     \end{itemize}
 \end{frame}
-
-%\begin{frame}
-%    {KKT Conditions}
-%    For \hl{convex} problems, if \hl{Slater condition} is satisfied, then \textbf{KKT conditions} provide \hl{necessary and sufficient} conditions for the optimal solution.
-%    \begin{itemize}
-%        \item Primal constraints: $f_i(x) \le 0 \quad \forall i$
-%        \item Dual constraints: $\lambda \succeq 0$
-%        \item Complementary slackness: $\lambda_i f_i(x)=0$
-%        \item First-order condition:
-%            $$
-%            \frac{\partial}{\partial x} L(x, \lambda) = 0
-%            $$
-%    \end{itemize}
-%\end{frame}
 
 \begin{frame}{SVM Dual Function: First Order Conditions}
 
@@ -326,7 +324,6 @@ Lagrange dual function is the inf over primal variables of $L$:
     \note[item]{How do we solve the minimization problem?}
     \note[item]{Is it convex? [yes, quadratic term]}
 
-\pause{}
     \vspace{-2em}
 \begin{eqnarray*}
 \partial_{w}L=0 & \iff & w-\sum_{i=1}^{n}\alpha_{i}y_{i}x_{i}=0\;\iff\;\boxed{w=\sum_{i=1}^{n}\alpha_{i}y_{i}x_{i}}\\
@@ -386,6 +383,21 @@ g(\alpha,\lambda)=\begin{cases}
 \end{frame}
 
 \section{Insights from the Dual Problem}
+\begin{frame}
+    {KKT Conditions}
+    For \hl{convex} problems, if \hl{Slater's condition} is satisfied, then \textbf{KKT conditions} provide \hl{necessary and sufficient} conditions for the optimal solution.
+    \begin{itemize}
+        \item Primal feasibility: $f_i(x) \le 0 \quad \forall i$
+        \item Dual feasibility: $\lambda \succeq 0$
+        \item Complementary slackness: $\lambda_i f_i(x)=0$
+        \item First-order condition:
+            $$
+            \frac{\partial}{\partial x} L(x, \lambda) = 0
+            $$
+            \note[item]{$x$ needs to be a stationary point of the Lagrangian.}
+    \end{itemize}
+\end{frame}
+
 \begin{frame}{The SVM Dual Solution}
 \begin{itemize}
 \item We found the SVM dual problem can be written as:
@@ -403,6 +415,7 @@ g(\alpha,\lambda)=\begin{cases}
 on each example. (\textbf{Robustness}!)
         \begin{itemize}
             \item What's the relation between $c$ and regularization?
+                \note[item]{If $c$ is small, the solution is not sensitive to any single example---strong regularization. We can also see this in the primal problem: small $c$ corresponds to larger coefficients for the regularization term.}
         \end{itemize}
 \end{itemize}
 \end{frame}
@@ -537,5 +550,24 @@ an MIT AI Lab Technical Report.} ($w^{*}=0$).
 \end{itemize}
 \end{frame}
 
+\section{Teaser for Kernelization}
 
+\begin{frame}{Dual Problem: Dependence on $x$ through inner products}
+\begin{itemize}
+\item SVM Dual Problem:
+\begin{eqnarray*}
+\sup_{\alpha} &  & \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}x_{j}^{T}x_{i}\\
+\mbox{s.t.} &  & \sum_{i=1}^{n}\alpha_{i}y_{i}=0\\
+ & \quad & \alpha_{i}\in\left[0,\frac{c}{n}\right]\;i=1,\ldots,n.
+\end{eqnarray*}
+
+
+\item Note that all dependence on inputs $x_{i}$ and $x_{j}$ is through
+their inner product: $\left\langle x_{j},x_{i}\right\rangle =x_{j}^{T}x_{i}$.
+
+\item We can replace $x_{j}^{T}x_{i}$ by other products... 
+
+\item This is a ``kernelized'' objective function. 
+\end{itemize}
+\end{frame}
 \end{document}
