@@ -1,0 +1,513 @@
+%% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\usepackage{mathptmx}
+\usepackage{eulervm}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+%\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage{xpatch}
+
+\usepackage{pgfpages}
+\setbeamertemplate{note page}{\pagecolor{yellow!5}\insertnote}
+%\setbeameroption{hide notes} % Only slides
+%\setbeameroption{show only notes} % Only notes
+%\setbeameroption{show notes on second screen=right} % Both
+
+\xpatchcmd{\itemize}
+  {\def\makelabel}
+  {\ifnum\@itemdepth=1\relax
+     \setlength\itemsep{2ex}% separation for first level
+   \else
+     \ifnum\@itemdepth=2\relax
+       \setlength\itemsep{1ex}% separation for second level
+     \else
+       \ifnum\@itemdepth=3\relax
+         \setlength\itemsep{0.5ex}% separation for third level
+   \fi\fi\fi\def\makelabel
+  }
+ {}
+ {}
+
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+\fi
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% this default might be overridden by plain title style
+\newcommand\makebeamertitle{\frame{\maketitle}}%
+% (ERT) argument for the TOC
+\AtBeginDocument{%
+  \let\origtableofcontents=\tableofcontents
+  \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+  \def\gobbletableofcontents#1{\origtableofcontents}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usetheme{CambridgeUS} 
+\beamertemplatenavigationsymbolsempty
+
+
+% Set Color ==============================
+\definecolor{NYUPurple}{RGB}{87,6,140}
+\definecolor{LightPurple}{RGB}{165,11,255}
+
+
+\setbeamercolor{title}{fg=NYUPurple}
+\setbeamercolor{frametitle}{fg=NYUPurple}
+
+\setbeamercolor{background canvas}{fg=NYUPurple, bg=white}
+\setbeamercolor{background}{fg=black, bg=NYUPurple}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=gray!20!white, bg=NYUPurple}
+
+\setbeamertemplate{headline}{}
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\normalsize}
+
+\setbeamercolor{parttitle}{fg=NYUPurple}
+\setbeamercolor{sectiontitle}{fg=NYUPurple}
+\setbeamercolor{sectionname}{fg=NYUPurple}
+\setbeamercolor{section page}{fg=NYUPurple}
+%\setbeamercolor{description item}{fg=NYUPurple}
+%\setbeamercolor{block title}{fg=NYUPurple}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamercolor{block body}{bg=normal text.bg!90!NYUPurple}
+\setbeamercolor{block title}{bg=NYUPurple!30, fg=NYUPurple}
+
+
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+\setbeamercolor{section title}{fg=NYUPurple}
+ \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\makeatother
+
+\setlength{\parskip}{\medskipamount} 
+
+\input ../macros
+
+\begin{document}
+\input ../rosenberg-macros
+
+\title[DS-GA 1003]{Kernel Trick}
+\author{He He}
+\date{March 2, 2021}
+\institute{CDS, NYU}
+
+\makebeamertitle
+\mode<article>{Just in article version}
+\begin{frame}{SVM with Explicit Feature Map}
+\begin{itemize}
+\item Let $\psi:\cx\to\reals^{d}$ be a feature map.
+
+\item The SVM objective (with explicit feature map):
+\[
+\min_{w\in\reals^{d}}\frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\max\left(0,1-y_{i}w^{T}\psi(x_{i})\right).
+\]
+
+\item Computation is costly if $d$ is large (e.g. with high-degree monomials) 
+\item Last time we mentioned an equivalent optimization problem from Lagrangian
+duality.
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{SVM Dual Problem}
+\begin{itemize}
+\item By Lagrangian duality, it is equivalent to solve the following dual problem:
+\end{itemize}
+\begin{eqnarray*}
+    \text{maximize} &  & \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}
+    {\color{blue}\psi\left(x_{j}\right)^{T}\psi(x_{i})}\\
+\mbox{s.t.} &  & \sum_{i=1}^{n}\alpha_{i}y_{i}=0\qquad\text{and}\qquad\alpha_{i}\in\left[0,\frac{c}{n}\right]\quad\forall i.
+\end{eqnarray*}
+
+\begin{itemize}
+\item If $\alpha^{*}$ is an optimal value, then
+\[
+w^{*}=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}\psi(x_{i})\qquad\text{and}\qquad\hat{f}(x)=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}
+        {\color{blue}\psi(x_{i})^{T}\psi(x)}.
+\]
+\end{itemize}
+
+\begin{itemize}
+    \item \head{Key observation}: $\psi\left(x\right)$ only shows up in \hl{inner products} with
+        another $\psi(x')$ \emph{for both training and inference}.
+\end{itemize}
+\end{frame}
+%
+\begin{frame}
+    {Compute the Inner Products}
+    Consider 2D data. Let's introduce \hl{degree-2 monomials} using $\psi:\reals^2\rightarrow\reals^3$.
+    $$
+    (x_1, x_2) \mapsto (x_1^2, \sqrt{2}x_1x_2, x_2^2) .
+    $$
+    The inner product is
+    \begin{align*}
+        \psi(x)^T\psi(x') &= x_{1}^2 {x'_{1}}^2 +
+        (\sqrt{2}x_{1}x_{2})(\sqrt{2}x'_{1}x'_{2}) +
+        x_{2}^2 {x'_{2}}^2 \\
+        &= (x_{1} x'_{1})^2 + 2(x_{1} x'_{1})(x_{2} x'_{2}) + (x_{2} x'_{2})^2 \\
+        &= (x_{1}x'_{1} + x_{2}x'_{2})^2 \\
+        &= (x^Tx')^2
+    \end{align*}
+    We can calculate the inner product $\psi(x)^T\psi(x')$ without accessing the features $\psi(x)$!
+\end{frame}
+%
+\begin{frame}
+    {Compute the Inner Products}
+    Now, consider \hl{monomials up to degree-2}:
+    $$
+    (x_1, x_2) \mapsto (1, \sqrt{2}x_1, \sqrt{2}x_2, x_1^2, \sqrt{2}x_1x_2, x_2^2) .
+    $$
+    The inner product can be computed by
+    $$
+    \psi(x)^T\psi(x') = (1 + x^Tx')^2 \quad \text{(check)}.
+    $$
+    More generally, for features maps producing monomials up to degree-$p$, we have
+    $$
+    \psi(x)^T\psi(x') = (1 + x^Tx')^p . 
+    $$
+    (Note that the coefficients of each monomial in $\psi$ may not be 1)
+
+    \textbf{Kernel trick}: we do not need explicit features to calculate inner products.
+    \begin{itemize}
+        \setlength\itemsep{1ex}
+        \item Using explicit features: $O(d^p)$
+        \item Using implicit computation: $O(d)$
+    \end{itemize}
+\end{frame}
+%
+\section{Kernel Function}
+\begin{frame}{The Kernel Function}
+\begin{itemize}
+    \setlength\itemsep{1ex}
+\item \textbf{Input space}: $\cx$
+
+\item \textbf{Feature space}: $\ch$ (a Hilbert space, e.g. $\reals^{d}$)
+
+\item \textbf{Feature map}: $\psi:\cx\to\ch$
+
+\item The \textbf{kernel function} corresponding to $\psi$ is 
+\[
+k(x,x')=\left\langle \psi(x),\psi(x')\right\rangle ,
+\]
+where $\left\langle \cdot,\cdot\right\rangle $ is the inner product
+associated with $\ch$.
+\end{itemize}
+
+Why introduce this new notation $k(x,x')$?
+\begin{itemize}
+    \item We can often evaluate $k(x,x')$ without explicitly computing $\psi(x)$ and $\psi(x')$.
+\end{itemize}
+When can we use the kernel trick?
+\end{frame}
+%
+\begin{frame}{Some Methods Can Be ``Kernelized''}
+\begin{definition}
+A method is \textbf{kernelized }if every feature vector $\psi(x)$
+only appears inside an inner product with another feature vector $\psi(x')$.
+This applies to both the optimization problem and the prediction function.
+\end{definition}
+
+The SVM Dual is a kernelization of the original SVM formulation. 
+
+Optimization:
+    \vspace{-1ex}
+\begin{eqnarray*}
+    \text{maximize} &  & \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}
+    {\color{blue}\psi\left(x_{j}\right)^{T}\psi(x_{i})}\\
+\mbox{s.t.} &  & \sum_{i=1}^{n}\alpha_{i}y_{i}=0\qquad\text{and}\qquad\alpha_{i}\in\left[0,\frac{c}{n}\right]\quad\forall i.
+\end{eqnarray*}
+
+Prediction:
+    \vspace{-1ex}
+\[
+\hat{f}(x)=\sum_{i=1}^{n}\alpha_{i}^{*}y_{i}
+        {\color{blue}\psi(x_{i})^{T}\psi(x)}.
+\]
+
+\end{frame}
+%
+\begin{frame}{The Kernel Matrix}
+\begin{definition}
+The \textbf{kernel matrix} for a kernel $k$ on $x_{1},\ldots,x_{n}\in\cx$
+is
+\[
+K=\begin{pmatrix}k(x_{i},x_{j})\end{pmatrix}_{i,j}=\begin{pmatrix}k(x_{1},x_{1}) & \cdots & k(x_{1},x_{n})\\
+\vdots & \ddots & \cdots\\
+k(x_{n},x_{1}) & \cdots & k(x_{n},x_{n})
+\end{pmatrix}\in\reals^{n\times n}.
+\]
+\end{definition}
+
+\begin{itemize}
+\item In ML this is also called a \textbf{Gram matrix}, but traditionally
+(in linear algebra),
+Gram matrices are defined without reference to a kernel or feature
+map.
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{The Kernel Matrix}
+\begin{itemize}
+    \item The kernel matrix \hl{summarizes all the information} we need about the
+training inputs $x_{1},\ldots,x_{n}$ to solve a kernelized optimization
+problem.
+\item In the kernelized SVM, we can replace $\psi(x_{i})^{T}\psi(x_{j})$
+with $K_{ij}$:
+\begin{eqnarray*}
+    \text{maximize}_{\alpha} &  & \sum_{i=1}^{n}\alpha_{i}-\frac{1}{2}\sum_{i,j=1}^{n}\alpha_{i}\alpha_{j}y_{i}y_{j}{\color{blue}K_{ij}}\\
+\mbox{s.t.} &  & \sum_{i=1}^{n}\alpha_{i}y_{i}=0\qquad\text{and}\qquad\alpha_{i}\in\left[0,\frac{c}{n}\right]\;i=1,\ldots,n.
+\end{eqnarray*}
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Kernel Methods}
+Given a kernelized ML algorithm (i.e. all $\psi(x)$'s show up as
+$\left\langle \psi(x),\psi(x')\right\rangle $),
+
+\begin{itemize}
+
+\item Can swap out the inner product for a new kernel function.
+
+\item New kernel may correspond to a \al{very high-dimensional} feature space.
+
+\item Once the kernel matrix is computed, the computational cost \hl{depends
+    on number of data points} $n$, rather than the dimension of feature space $d$.
+
+\item Useful when $d >> n$.
+
+\item Computing the kernel matrix may still depend on $d$
+    and the essence of the \textbf{trick} is getting around this $O(d)$ dependence.
+\end{itemize}
+\end{frame}
+%
+\section{Example Kernels}
+\begin{frame}{Kernels as Similarity Scores}
+\begin{itemize}
+    \item Often useful to think of the $k(x, x')$ as a \textbf{similarity
+score} for $x$ and $x'$.
+\item We can design similarity functions without thinking about the explicit feature map, e.g. ``string kernels'', ``graph kerners''.
+\item How do we know that our kernel functions actually correspond to inner products in
+    some feature space?
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{How to Get Kernels?}
+\begin{itemize}
+    \item Explicitly construct $\psi(x):\cx\to\reals^{d}$ (e.g. monomials) and define $k(x,x')=\psi(x)^{T}\psi(x')$.
+
+\item Directly define the kernel function $k(x,x')$ (``similarity score''), and \hl{verify it corresponds
+    to $\left\langle \psi(x),\psi(x')\right\rangle $ for some $\psi$}.
+\end{itemize}
+
+There are many theorems to help us with the second approach.
+
+\end{frame}
+
+\begin{frame}{Linear Algebra Review: Positive Semidefinite Matrices}
+\begin{definition}
+A real, symmetric matrix $M\in\reals^{n\times n}$ is \textbf{positive
+semidefinite (psd)} if for any $x\in\reals^{n}$, 
+\[
+x^{T}Mx\ge0.
+\]
+
+\end{definition}
+
+\begin{theorem}
+The following conditions are each necessary and sufficient for a symmetric
+matrix $M$ to be positive semidefinite:
+\begin{itemize}
+\item $M$ can be factorized as $M=R^{T}R$, for some matrix $R$.
+\item All eigenvalues of $M$ are greater than or equal to $0$.
+\end{itemize}
+\end{theorem}
+\end{frame}
+%
+\begin{frame}{Positive Definite Kernel}
+\begin{definition}
+A symmetric function $k:\cx\times\cx\to\reals$ is a \textbf{positive
+    definite (pd)} kernel on $\cx$ if for any finite set $\left\{ x_{1},\ldots,x_{n}\right\} \in\cx$ ($n\in\BN$),
+the kernel matrix on this set 
+\[
+K=\begin{pmatrix}k(x_{i},x_{j})\end{pmatrix}_{i,j}=\begin{pmatrix}k(x_{1},x_{1}) & \cdots & k(x_{1},x_{n})\\
+\vdots & \ddots & \cdots\\
+k(x_{n},x_{1}) & \cdots & k(x_{n},x_{n})
+\end{pmatrix}
+\]
+is a positive semidefinite matrix.
+\end{definition}
+
+\begin{itemize}
+    \item Symmetric: $k(x, x') = k(x', x)$
+    \item The kernel matrix needs to be positive semidefinite for \hl{any} finite set of points.
+    \item Equivalent definition: $\sum_{i=1}^n\sum_{j=1}^n \alpha_i\alpha_j k(x_i, x_j) \ge 0$ given $\alpha_i\in\reals\;\forall i$.
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Mercer's Theorem}
+\begin{theorem}
+A symmetric function $k(x,x')$ can be expressed as an inner product
+\[
+k(x,x')=\left\langle \psi(x),\psi(x')\right\rangle 
+\]
+for some $\psi$ if and only if $k(x,x')$ is \textbf{positive definite}.
+\end{theorem}
+
+    \begin{itemize}
+        \item Proving a kernel function is positive definite is typically not easy.
+        \item But we can construct new kernels from valid kernels.
+    \end{itemize}
+\end{frame}
+%
+\begin{frame}{Generating New Kernels from Old}
+\begin{itemize}
+\item Suppose $k,k_{1},k_{2}:\cx\times\cx\to\reals$ are pd kernels. Then
+so are the following:
+\begin{eqnarray*}
+    k_{\mbox{new}}(x,x') & = & \alpha k(x,x') \quad \text{for } \alpha \ge 0 \quad \text{(non-negative scaling)}\\
+    k_{\mbox{new}}(x,x') & = & k_{1}(x,x')+k_{2}(x,x') \quad\text{(sum)}\\
+    k_{\mbox{new}}(x,x') & = & k_{1}(x,x')k_{2}(x,x') \quad\text{(product)}\\
+    k_{\mbox{new}}(x,x') & = & k(\psi(x), \psi(x'))\mbox{ for any function \ensuremath{\psi(\cdot)}} \quad\text{(recursion)}\\
+    k_{\mbox{new}}(x,x') & = & f(x)f(x')\mbox{ for any function \ensuremath{f(\cdot)}} \quad\text{($f$ as 1D feature map)}\\
+\end{eqnarray*}
+\item Lots more theorems to help you construct new kernels from old.
+\end{itemize}
+    \let\thefootnote\relax\footnotetext{\tiny{Based on Mark Schmidt's slides:\url{https://www.cs.ubc.ca/~schmidtm/Courses/540-W19/L12.5.pdf}}}
+\end{frame}
+
+\begin{frame}{Linear Kernel}
+ 
+\begin{itemize}
+\item Input space: $\cx=\reals^{d}$
+\item Feature space: $\ch=\reals^{d}$, with standard inner product
+
+\item Feature map
+\[
+\psi(x)=x
+\]
+\item Kernel: 
+\[
+k(x,x')=x^{T}x'
+\]
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Quadratic Kernel in $\reals^{d}$}
+ 
+\begin{itemize}
+\item Input space $\cx=\reals^{d}$
+\item Feature space: $\ch=\reals^{D}$, where $D=d+{d \choose 2}\approx d^{2}/2$.
+\item Feature map:
+\[
+\ensuremath{\psi(x)=(x_{1},\ldots,x_{d},x_{1}^{2},\ldots,x_{d}^{2},\sqrt{2}x_{1}x_{2},\ldots,\sqrt{2}x_{i}x_{j},\ldots\sqrt{2}x_{d-1}x_{d})^{T}}
+\]
+
+
+\item Then for $\forall x,x'\in\reals^{d}$
+\begin{eqnarray*}
+k(x,x') & = & \left\langle \psi(x),\psi(x')\right\rangle \\
+& = & \left\langle x,x'\right\rangle +\left\langle x,x'\right\rangle ^{2}
+\end{eqnarray*}
+
+
+\item Computation for inner product with explicit mapping: $O(d^{2})$
+\item Computation for implicit kernel calculation: $O(d)$.
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Polynomial Kernel in $\reals^{d}$}
+ 
+\begin{itemize}
+\item Input space $\cx=\reals^{d}$
+\item Kernel function:
+\[
+k(x,x')=\left(1+\left\langle x,x'\right\rangle \right)^{M}
+\]
+
+
+\item Corresponds to a feature map with all monomials up to degree $M$.
+
+\item For any $M$, computing the kernel has same computational cost
+
+\item Cost of explicit inner product computation grows rapidly in $M$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Radial Basis Function (RBF) / Gaussian Kernel}
+Input space $\cx=\reals^{d}$
+\[
+k(x,x')=\exp\left(-\frac{\|x-x'\|^{2}}{2\sigma^{2}}\right),
+\]
+where $\sigma^{2}$ is known as the bandwidth parameter.
+ 
+\begin{itemize}
+
+\item Probably the most common nonlinear kernel.
+
+\item Does it act like a similarity score?
+
+\item Why ``radial''?
+
+\item Have we departed from our ``inner product of feature vector'' recipe?
+    \begin{itemize}
+\item Yes and no: corresponds to an infinite dimensional feature vector
+    \end{itemize}
+\end{itemize}
+\end{frame}
+%
+\begin{frame}
+    {Remaining Questions}
+    Our current recipe:\\
+    \begin{itemize}
+        \item Recognize kernelized problem: $\psi(x)$ only occur in inner products $\psi(x)^T\psi(x')$
+        \item Pick a kernel function (``similarity score'')
+        \item Compute the kernel matrix ($n$ by $n$ where $n$ is the dataset size)
+        \item Optimize the model and make predictions by accessing the kernel matrix
+    \end{itemize}
+    Next: When can we apply kernelization?
+\end{frame}
+
+\end{document}
