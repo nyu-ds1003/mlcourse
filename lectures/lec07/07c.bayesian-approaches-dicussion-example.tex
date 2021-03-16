@@ -1,0 +1,200 @@
+%% LyX 2.3.6.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,aspectratio=169]{beamer}
+\usepackage{mathptmx}
+\usepackage{eulervm}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+\fi
+
+\makeatletter
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% this default might be overridden by plain title style
+\newcommand\makebeamertitle{\frame{\maketitle}}%
+% (ERT) argument for the TOC
+\AtBeginDocument{%
+  \let\origtableofcontents=\tableofcontents
+  \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+  \def\gobbletableofcontents#1{\origtableofcontents}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usetheme{CambridgeUS} 
+\beamertemplatenavigationsymbolsempty
+
+
+% Set Color ==============================
+\definecolor{NYUPurple}{RGB}{87,6,140}
+\definecolor{LightPurple}{RGB}{165,11,255}
+
+
+\setbeamercolor{title}{fg=NYUPurple}
+%\setbeamercolor{frametitle}{fg=NYUPurple}
+\setbeamercolor{frametitle}{fg=NYUPurple}
+
+\setbeamercolor{background canvas}{fg=NYUPurple, bg=white}
+\setbeamercolor{background}{fg=black, bg=NYUPurple}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=gray!20!white, bg=NYUPurple}
+
+\setbeamertemplate{headline}{}
+
+\setbeamercolor{parttitle}{fg=NYUPurple}
+\setbeamercolor{sectiontitle}{fg=NYUPurple}
+\setbeamercolor{sectionname}{fg=NYUPurple}
+\setbeamercolor{section page}{fg=NYUPurple}
+
+\AtBeginSection[]{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+
+  % \begin{frame}
+  % \vfill
+  % \centering
+  % \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+  %   \usebeamerfont{title}\insertsectionhead\par%
+  % \end{beamercolorbox}
+  % \vfill
+  % \end{frame}
+}
+
+\makeatother
+
+\begin{document}
+\input{../rosenberg-macros.tex}
+\title[DS-GA 1003 ]{Probabilistic models\\
+- \\
+Bayesian Methods \\
+- \\
+Discussion}
+\author{Marylou Gabri\'e}
+\date{March 16, 2021}
+\institute{CDS, NYU}
+
+% \title[DS-GA 1003]{Bayesian Methods}
+% \author{Julia Kempe \& David S. Rosenberg }
+% \date{March 26, 2019}
+% \institute{CDS, NYU}
+
+\makebeamertitle
+\mode<article>{Just in article version}
+\begin{frame}{Bayesian decision for absolute loss is median}
+   
+ \end{frame}
+% 
+\begin{frame}{Hours of sun during January in Vienna}
+\begin{itemize}
+    \item $N=30$ measurements $y_i$
+    \item What could you choose as a parametric family?
+    \item What is the MLE?
+\end{itemize}
+
+\begin{center}
+    \includegraphics[height=0.75\textheight]{figs/histogram.pdf}
+    \par\end{center}
+\end{frame}
+%
+\begin{frame}{Hours of sun during January in Vienna}
+    \begin{itemize}
+        \item $N=30$ measurements $y_i$
+        \item What could you choose as a parametric family?
+        \item What is the MLE?
+    \end{itemize}
+    
+    \begin{center}
+        \includegraphics[height=0.75\textheight]{figs/histogram_density.pdf}
+        \par\end{center}
+\end{frame}
+%
+\begin{frame}{Hours of sun during January in Vienna}
+        \begin{itemize}
+            \item $N=30$ measurements $y_i$
+            \item Now meteorologists tells you they have a prior: $p(\mu) = \mathcal{N}(\mu; \mu_0,1)$
+            \item What is the posterior?
+            \item[] 
+            \item[] 
+            \item[] 
+            \item[] 
+            \item[] 
+            \item[] 
+            \item[] 
+            \item[] 
+            \item[] 
+            \item[] 
+        \end{itemize}
+        
+%         \begin{center}
+%             \includegraphics[height=0.75\textheight]{figs/histogram.pdf}
+%             \par\end{center}
+\end{frame}
+%
+\begin{frame}{Hours of sun during January in Vienna}
+    \begin{itemize}
+            \item $N=30$ measurements $y_i$
+            \item Now meteorologists tells you they have a prior: $p(\mu) = \mathcal{N}(\mu; \mu_0,1)$
+            \item What is the posterior?
+    \end{itemize}
+    \begin{center}
+        \includegraphics[height=0.55\textheight]{figs/histogram_density.pdf}
+        \includegraphics[height=0.55\textheight]{figs/histogram_posterior.pdf}
+    \par\end{center}
+\end{frame}
+
+\begin{frame}{Hours of sun during January in Vienna}
+    \begin{itemize}
+            \item $N=30$ measurements $y_i$
+            \item Now meteorologists tells you they have a prior: $p(\mu) = \mathcal{N}(\mu; \mu_0,1)$
+            \item What is the posterior? What is the credible set?
+    \end{itemize}
+    \begin{center}
+        \includegraphics[height=0.55\textheight]{figs/histogram_density.pdf}
+        \includegraphics[height=0.55\textheight]{figs/histogram_posterior_zoom.pdf}
+    \par\end{center}
+\end{frame}
+
+\begin{frame}{Hours of sun during January in Vienna}
+    \begin{itemize}
+        \item $N=30$ measurements $y_i$
+        \item Now meteorologists tells you they have a prior: $p(\mu) = \mathcal{N}(\mu; \mu_0,1)$
+        \item The posterior is $p(\mu|\{y_i\}_{i=1}^N, \sigma^2) = \mathcal{N}(\mu; \mu', \sigma'^2)$.
+        \item What are the point estimates of $\mu$ minimizing squared loss, absolute loss and 0-1 loss?
+        \item[] 
+        \item[] 
+        \item[] 
+        \item[] 
+        \item[] 
+        \item[] 
+        \item[] 
+        \item[] 
+        \item[] 
+    \end{itemize}
+\end{frame}
+
+\end{document}
+
