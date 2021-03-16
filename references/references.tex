@@ -1,0 +1,84 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage{minted}
+\input{math_commands}
+
+\newcommand{\wipcom}[1]{\textcolor{red}{WIP: #1}}
+\newcommand{\sol}[1]{\textcolor{gray}{Solution: #1}}
+\newcommand{\nyuparagrah}[1]{\textcolor{nyupurple}{\large #1}}
+
+\pagestyle{empty} \addtolength{\textwidth}{1.0in}
+\addtolength{\textheight}{0.5in} \addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{0.5in}
+\newcommand{\ruleskip}{\bigskip\hrule\bigskip}
+\newcommand{\nodify}[1]{{\sc #1}} \newcommand{\points}[1]{{\textbf{[#1
+points]}}}
+
+\newcommand{\bitem}{\begin{list}{$\bullet$}%
+{\setlength{\itemsep}{0pt}\setlength{\topsep}{0pt}%
+\setlength{\rightmargin}{0pt}}} \newcommand{\eitem}{\end{list}}
+
+\definecolor{nyupurple}{RGB}{134, 0, 179}
+\setlength{\parindent}{0pt} \setlength{\parskip}{0.5ex}
+
+\DeclareUnicodeCharacter{2212}{-}
+
+\begin{document}
+\newcounter{saveenum}
+
+\pagestyle{myheadings} \markboth{}{\color{nyupurple} DS-GA-1003 - Spring 2021}
+
+\begin{center}
+{\Large
+Useful background references
+} 
+\end{center}
+
+Textbooks and notes covering multiple topics referenced multiple times below:
+\begin{itemize}
+    \item PSDS = \url{https://cims.nyu.edu/~cfgranda/pages/stuff/probability_stats_for_DS.pdf}
+    \item MLPP = P. Murphy, K. (1991). Machine Learning: A Probabilistic Perspective. \url{http://noiselab.ucsd.edu/ECE228/Murphy_Machine_Learning.pdf} (more advanced)
+    \item CO = \url{https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf}
+\end{itemize}
+
+
+\nyuparagrah{Linear Algebra} 
+\begin{itemize}
+    \item General short reference -  Appendix B of PSDS
+    \item Matrix properties - 3 of \url{http://cs229.stanford.edu/section/cs229-linalg.pdf} 
+    \item Matrix calculus 
+    \begin{itemize}
+        \item 4 of  \url{http://cs229.stanford.edu/section/cs229-linalg.pdf} 
+        \item Matrix cookbook \url{https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf}
+    \end{itemize}
+    \item Vector spaces, spans and dimensions - B.1 of PSDS
+    \item Inner products and norms - B.2 of PSDS
+    \item Linear regression - 12 of PSDS
+\end{itemize}
+
+\nyuparagrah{Optimization} 
+\begin{itemize}
+    \item General quick note - \url{https://davidrosenberg.github.io/mlcourse/Notes/convex-optimization.pdf}
+    \item Convex functions - 3 of CO
+    \item Lagrangian formulation and duality - 5 of CO
+    % \item Gradient descent?
+\end{itemize}
+
+\nyuparagrah{Probabilities and Statistics}
+    
+\begin{itemize}
+    \item Quick note: Review of Probability Theory, Arian Maleki and Tom DoStanford University \url{http://cs229.stanford.edu/section/cs229-prob.pdf}
+    \item Conditional expectations - 4.4. of PSDS
+    \item Multivariate Gaussian distributions - 2.5.2 of MLPP
+    \item Bayesian Statistics - 10 of PSDS
+    \item Random variables and important simple laws - 2.1 to 2.5 of PSDS - 2.3 and 2.4 of MLPP
+\end{itemize}
+
+
+\end{document}
