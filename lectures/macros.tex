@@ -3,6 +3,19 @@
 \newcommand{\head}[1]{\textcolor{beamer@blendedblue}{#1}}
 \newcommand{\hl}[1]{\textcolor{blue}{#1}}
 \newcommand{\al}[1]{\textcolor{red}{#1}}
+\newcommand{\think}[1]{\textcolor{ForestGreen}{#1}}
+\newcommand{\dis}{{\textcolor{ForestGreen}{[discussion]}\xspace}}
+
+\newenvironment<>{simpleblock}[1]{%
+   \begin{actionenv}#2%
+       \def\insertblocktitle{#1}%
+       \par%
+       \mode<presentation>{%
+         \setbeamercolor{block title}{fg=normal text.fg, bg=normal text.bg}
+        \setbeamercolor{block body}{bg=normal text.bg}
+      }%
+       \usebeamertemplate{block begin}}
+     {\par\usebeamertemplate{block end}\end{actionenv}}
 
 
 % abbrev
