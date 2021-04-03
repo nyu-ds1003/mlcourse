@@ -22,6 +22,9 @@
 \usepackage{xpatch}
 \usepackage{multirow}
 \usepackage{colortbl}
+\usepackage{pgfpages}
+
+%\setbeameroption{show notes on second screen}
 
 \xpatchcmd{\itemize}
   {\def\makelabel}
@@ -178,7 +181,6 @@ h_i(x) > h_j(x) \qquad \forall j \neq i .
   	}
   	}
 \end{algorithm}
-\item (Geometric interpretation)
 \end{itemize}
 \end{frame}
 
@@ -285,9 +287,9 @@ Multiclass perceptron using the multivector construction.
 \note{$w^T(\phi(x,i)-\phi(x,j)) > 0$.}
 \end{frame}
 
-\begin{frame}
-    {\dis Geometric interpretation}
-\end{frame}
+%\begin{frame}
+%    {\dis Geometric interpretation}
+%\end{frame}
 
 \begin{frame}
 {Features}
@@ -324,7 +326,7 @@ The boy grabbed the apple and ran away quickly .
 \end{center}
 \pause
 
-Feature templates:
+Feature:
 \begin{eqnarray*}
 \psi_{1}(x,y) & = & \ind{x=\mbox{apple AND }y=\mbox{NOUN}}\\
 \psi_{2}(x,y) & = & \ind{x=\mbox{run AND }y=\mbox{NOUN}}\\
@@ -462,8 +464,8 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \left\langle w, \Psi(x, \hat{y}) \right\rangle \\
 }
 \onslide<+->{
-\implies & \Delta(y, \hat{y}) \leq \Delta(y, \hat{y}) +
-\left\langle w, \p{\Psi(x, \hat{y}) - \Psi(x, {y}}) \right\rangle
+\implies & \Delta(y, \hat{y}) \leq \Delta(y, \hat{y}) -
+\left\langle w, \p{\Psi(x, {y}) - \Psi(x, \hat{y}}) \right\rangle
 && \text{When are they equal?}
 }
 \end{align}
@@ -472,8 +474,8 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \begin{align}
 \ell_\text{hinge}(y, x, w) \eqdef
 \max_{y'\in\sY}\p{
-\Delta(y, {y'}) +
-\left\langle w, \p{\Psi(x, {y'}) - \Psi(x, {y}}) \right\rangle
+\Delta(y, {y'}) -
+\left\langle w, \p{\Psi(x, {y}) - \Psi(x, {y'}}) \right\rangle
 }
 \end{align}
 \note<+->{When $y'=y$, $\ell_{\text{hinge}}=0$.}
