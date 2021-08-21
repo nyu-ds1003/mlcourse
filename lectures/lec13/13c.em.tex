@@ -132,7 +132,10 @@
 %\setbeameroption{show notes on second screen}
 
 \title[DS-GA 1003]{Gaussian Mixture Model}
-\author{He He}
+\author{He He  \\
+Slides based on Lecture
+\href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/13b.mixture-models.pdf}{13b} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
+}
 \date{April 27, 2021}
 \institute{CDS, NYU}
 
@@ -459,18 +462,45 @@ $\cl(q,\theta)$.
     \end{itemize}
 \end{frame}
 
+\begin{frame}{Maximizing over $q$ for fixed $\theta$.}
+\begin{itemize}
+\item Find $q$ maximizing
+\begin{eqnarray*}
+\cl(q,\theta) & = & -\kl[q(z),p(z\mid x,\theta)]+\underbrace{\log p(x\mid\theta)\pause}_{\text{no }q\text{ here}}
+\end{eqnarray*}
 
-\begin{frame}
-    {\dis Justification for maximizing ELBO}
-    $
-    \sL(q, \theta) = -\KL{q(z)}{p(z\mid x;\theta)} + \log p(x;\theta)
-    $
 
-    Fix $\theta=\theta_0$ and $\max_q \sL(q, \theta_0)$: $q^* = p(z\mid x;\theta_0)$ 
-    \vspace{10em}
+\pause{}
+\item Recall $\kl(p\|q)\ge0$, and $\kl(p\|p)=0$.
 
-    Let $\theta^*, q^*$ be the global optimzer of $\sL(q, \theta)$, then $\theta^*$ is the global optimizer of $\log p(x;\theta)$. (Proof: exercise)
+\pause{}
+\item Best $q$ is $q^{*}(z)=p(z\mid x,\theta)$ and
+\[
+\pause\cl(q^{*},\theta)=-\underbrace{\kl[p(z\mid x,\theta),p(z\mid x,\theta)]}_{=0}+\log p(x\mid\theta)
+\]
+
+
+\pause{}
+\item Summary:
+\[
+\log p(x\mid\theta)=\sup_{q}\cl(q,\theta)\qquad\forall\theta
+\]
+\item For any $\theta$, \textbf{sup is attained} at $q(z)=p(z\mid x,\theta)$. 
+\end{itemize}
 \end{frame}
+%
+
+%\begin{frame}
+%    {\dis Justification for maximizing ELBO}
+%    $
+%    \sL(q, \theta) = -\KL{q(z)}{p(z\mid x;\theta)} + \log p(x;\theta)
+%    $
+%
+%    Fix $\theta=\theta_0$ and $\max_q \sL(q, \theta_0)$: $q^* = p(z\mid x;\theta_0)$ 
+%    \vspace{10em}
+%
+%    Let $\theta^*, q^*$ be the global optimzer of $\sL(q, \theta)$, then $\theta^*$ is the global optimizer of $\log p(x;\theta)$. (Proof: exercise)
+%\end{frame}
 
 \begin{frame}{Marginal Log-Likelihood \textbf{IS}\textbf{\textcolor{blue}{\LARGE{}
 }}the Supremum over Lower Bounds}

@@ -132,7 +132,10 @@
 %\setbeameroption{show notes on second screen}
 
 \title[DS-GA 1003]{Gaussian Mixture Model}
-\author{He He}
+\author{He He \\
+Slides based on Lecture
+\href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/13b.mixture-models.pdf}{13b} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
+}
 \date{April 27, 2021}
 \institute{CDS, NYU}
 
@@ -206,6 +209,39 @@
 \note[item]{Marginalization: expectation of conditional distribution: $\mathbb{E}_{Y}\pb{X\mid Y} = p(X)$.}
 \end{frame}
 
+\begin{frame}{Identifiability Issues for GMM}
+\begin{itemize}
+\item Suppose we have found parameters 
+\begin{eqnarray*}
+\text{Cluster probabilities}: &  & \pi=\left(\pi_{1},\ldots,\pi_{k}\right)\\
+\text{Cluster means}: &  & \mu=\left(\mu_{1},\ldots,\mu_{k}\right)\\
+\text{Cluster covariance matrices:} &  & \Sigma=\left(\Sigma_{1},\ldots\Sigma_{k}\right)
+\end{eqnarray*}
+ that are at a local minimum.
+\end{itemize}
+
+\pause{}
+\begin{itemize}
+\item What happens if we shuffle the clusters? e.g. Switch the labels for
+clusters 1 and 2.
+\end{itemize}
+
+\pause{}
+\begin{itemize}
+\item We'll get the same likelihood. How many such equivalent settings are
+there?
+\end{itemize}
+
+\pause{}
+\begin{itemize}
+\item Assuming all clusters are distinct, there are $k!$ equivalent solutions.
+\end{itemize}
+
+\pause{}
+\begin{itemize}
+\item Not a problem \emph{per se}, but something to be aware of.
+\end{itemize}
+\end{frame}
 \begin{frame}
 {Learning GMMs}
 \begin{simpleblock}
@@ -229,6 +265,39 @@ L(\theta) &= \sum_{i=1}^n \log p(x_i; \theta) \\
 \note[item]{The log likelihood is just the log probability of the marginals, so it's also called MML when you have latent variables.}
 \note[item]{The log sum term is annoying... That means that $z$ and $x$ are coupled and we probably don't have closed form solution. Recall that previously when we take derivative wrt some parameter $\theta_i$, we can ignore all terms whose subscript is not $i$ and the sums would be simplified.}
 \end{frame}
+
+\begin{frame}{Gradient Descent / SGD for GMM}
+\begin{itemize}
+\item What about running gradient descent or SGD on
+\begin{eqnarray*}
+J(\pi,\mu,\Sigma) & = & -\sum_{i=1}^{n}\log\left\{ \sum_{z=1}^{k}\pi_{z}\cn\left(x_{i}\mid\mu_{z},\Sigma_{z}\right)\right\} ?
+\end{eqnarray*}
+
+
+\pause{}
+\item Can be done, in principle -- but need to be clever about it.
+
+\pause{}
+\item Each matrix $\Sigma_{1},\ldots,\Sigma_{k}$ has to be positive semidefinite.
+
+\pause{}
+\item How to maintain that constraint?
+
+\pause{}
+\begin{itemize}
+\item Rewrite $\Sigma_{i}=M_{i}M_{i}^{T}$, where $M_{i}$ is an unconstrained
+matrix. 
+
+\pause{}
+\item Then $\Sigma_{i}$ is positive semidefinite. 
+
+\pause{}
+\end{itemize}
+\item Even then, pure gradient-based methods have trouble.\footnote{See Hosseini and Sra's \href{https://arxiv.org/abs/1506.07677}{Manifold Optimization for Gaussian Mixture Models}
+for discussion and further references.}
+\end{itemize}
+\end{frame}
+
 
 \begin{frame}
 {Learning GMMs: observable case}
