@@ -4,6 +4,7 @@
 *.out
 *.snm
 *.toc
+*-with-notes.pdf
 Makefile
 
 .DS_Store
