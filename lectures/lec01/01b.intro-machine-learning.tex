@@ -124,29 +124,25 @@
 \input ../rosenberg-macros
 
 \title[DS-GA 1003]{What is Machine Learning}
-\author{He He\\\vspace{2em}{
+\author{Tal Linzen\\\vspace{2em}{
     Slides based on Lecture \href{https://davidrosenberg.github.io/mlcourse/Archive/2017Fall/Lectures/01.black-box-ML.pdf}{1}
     from David Rosenberg's \href{https://github.com/davidrosenberg/mlcourse}{course material}.
 }}
-\date{Feb 2, 2021}
-\institute{CDS, NYU}
+\date{Jan 25, 2022}
+\institute{Center for Data Science, NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
 
-\begin{frame}{Contents}
-\tableofcontents{}
-\end{frame}
-
 \begin{frame}{Machine Learning Problems}
 
-\textbf{Common theme} is to solve a prediction problem:
+Typically our goal is to solve a prediction problem of the format:
 \begin{itemize}
-\item given an \textbf{input} $x$,
-\item \textbf{predict} an \textbf{output $y$.} 
+\item Given an \textbf{input} $x$,
+\item \textbf{Predict} an \textbf{output $y$.} 
 \end{itemize}
 
-We'll start with a few canonical examples...
+We'll start with a few canonical examples.
 \end{frame}
 %
 
@@ -161,7 +157,7 @@ We'll start with a few canonical examples...
 
 \begin{itemize}
 \item \textbf{Output: }``SPAM'' or ``NOT SPAM''
-\item A \textbf{binary classification} problem, because only 2
+\item This is a \textbf{binary classification} problem: there are two 
 possible outputs.
 \end{itemize}
 \end{frame}
@@ -172,11 +168,11 @@ possible outputs.
 
 \item \textbf{Output:} Diagnosis (pneumonia, flu, common cold, bronchitis, ...)
 
-\item A \textbf{multiclass classification} problem: choosing one of several \emph{discrete} outputs.
+\item A \textbf{multiclass classification} problem: choosing an output out of a \emph{discrete} set of possible outputs.
 \end{itemize}
 
 \medskip
-How to express uncertainty?
+How do we express uncertainty about the output?
 \begin{itemize}
 \item \textbf{Probabilistic classification} or \textbf{soft classification}:
 \begin{eqnarray*}
@@ -189,23 +185,22 @@ How to express uncertainty?
 
 \begin{frame}{Example: Predicting a Stock Price}
 \begin{itemize}
-\item \textbf{Input:} History of stock's prices
-\item \textbf{Output:} Predict stock's price at close of next day
+\item \textbf{Input:} History of the stock's prices
+\item \textbf{Output:} Predict the price of the stock at the close of the next day
 \end{itemize}
 
 \begin{itemize}
-    \item A \textbf{regression} problem, because the output is \emph{continuous}.
+    \item A \textbf{regression} problem: the output is \emph{continuous}.
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}{The Prediction Function}
 \begin{itemize}
-\item A \textbf{prediction function} takes input $x$ and produces an output
+\item A \textbf{prediction function} takes an input $x$ and produces an output
 $y$.
-\item We're looking for prediction functions that solve particular problems.
 \item \textbf{Machine learning} helps find the ``best'' prediction function 
-    \textbf{automatically with data}
+    \textbf{automatically, using training data}
         \begin{itemize}
             \item What does ``best'' mean?
         \end{itemize}
