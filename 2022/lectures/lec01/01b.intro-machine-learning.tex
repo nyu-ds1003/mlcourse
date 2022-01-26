@@ -124,29 +124,25 @@
 \input ../rosenberg-macros
 
 \title[DS-GA 1003]{What is Machine Learning}
-\author{He He\\\vspace{2em}{
-    Slides based on Lecture \href{https://davidrosenberg.github.io/mlcourse/Archive/2017Fall/Lectures/01.black-box-ML.pdf}{1}
-    from David Rosenberg's \href{https://github.com/davidrosenberg/mlcourse}{course material}.
-}}
-\date{Feb 2, 2021}
-\institute{CDS, NYU}
+\author{Tal Linzen}%\\\vspace{2em}{
+    %Slides based on Lecture \href{https://davidrosenberg.github.io/mlcourse/Archive/2017Fall/Lectures/01.black-box-ML.pdf}{1}
+    %from David Rosenberg's \href{https://github.com/davidrosenberg/mlcourse}{course material}.
+%}}
+\date{Jan 25, 2022}
+\institute{Center for Data Science, NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
 
-\begin{frame}{Contents}
-\tableofcontents{}
-\end{frame}
-
 \begin{frame}{Machine Learning Problems}
 
-\textbf{Common theme} is to solve a prediction problem:
+Typically our goal is to solve a prediction problem of the format:
 \begin{itemize}
-\item given an \textbf{input} $x$,
-\item \textbf{predict} an \textbf{output $y$.} 
+\item Given an \textbf{input} $x$,
+\item \textbf{Predict} an \textbf{output $y$.} 
 \end{itemize}
 
-We'll start with a few canonical examples...
+We'll start with a few canonical examples.
 \end{frame}
 %
 
@@ -161,7 +157,7 @@ We'll start with a few canonical examples...
 
 \begin{itemize}
 \item \textbf{Output: }``SPAM'' or ``NOT SPAM''
-\item A \textbf{binary classification} problem, because only 2
+\item This is a \textbf{binary classification} problem: there are two 
 possible outputs.
 \end{itemize}
 \end{frame}
@@ -172,11 +168,11 @@ possible outputs.
 
 \item \textbf{Output:} Diagnosis (pneumonia, flu, common cold, bronchitis, ...)
 
-\item A \textbf{multiclass classification} problem: choosing one of several \emph{discrete} outputs.
+\item A \textbf{multiclass classification} problem: choosing an output out of a \emph{discrete} set of possible outputs.
 \end{itemize}
 
 \medskip
-How to express uncertainty?
+How do we express uncertainty about the output?
 \begin{itemize}
 \item \textbf{Probabilistic classification} or \textbf{soft classification}:
 \begin{eqnarray*}
@@ -189,46 +185,27 @@ How to express uncertainty?
 
 \begin{frame}{Example: Predicting a Stock Price}
 \begin{itemize}
-\item \textbf{Input:} History of stock's prices
-\item \textbf{Output:} Predict stock's price at close of next day
+\item \textbf{Input:} History of the stock's prices
+\item \textbf{Output:} The price of the stock at the close of the next day
 \end{itemize}
 
 \begin{itemize}
-    \item A \textbf{regression} problem, because the output is \emph{continuous}.
+    \item This is called a \textbf{regression} problem (for historical reasons): the output is \emph{continuous}.
 \end{itemize}
 
 \end{frame}
 
-\begin{frame}{The Prediction Function}
+\begin{frame}{Comparison to Rule-Based Approaches (Expert Systems)}
 \begin{itemize}
-\item A \textbf{prediction function} takes input $x$ and produces an output
-$y$.
-\item We're looking for prediction functions that solve particular problems.
-\item \textbf{Machine learning} helps find the ``best'' prediction function 
-    \textbf{automatically with data}
-        \begin{itemize}
-            \item What does ``best'' mean?
-        \end{itemize}
-\end{itemize}
-\end{frame}
-%
-
-\begin{frame}{What is \textbf{not} ML: Rule-Based Approaches}
-\begin{itemize}
-\item Consider medical diagnosis.
+\item Consider the problem of medical diagnosis.
 
 \begin{enumerate}
-\item Consult textbooks and medical doctors (i.e. ``experts'').
-\item Understand their diagnosis process.
-\item Implement this as an algorithm (a ``\textbf{rule-based system}''\textbf{)}
-\end{enumerate}
-\item Doesn't sound too bad... 
-\item Very popular in the 1980s.
+    \item Talk to experts (in this case, medical doctors).
+    \item Understand how the experts come up with a diagnosis.
+    \item Implement this process as an algorithm (a \textbf{rule-based system}): e.g., a set of symptoms $\rightarrow$ a particular diagnosis.
+    \item Potentially use logical deduction to infer new rules from the rules that are stored in the knowledge base.  
+\end{enumerate} 
 \end{itemize}
-
-(To be fair, \textbf{expert systems} could be much more
-    sophisticated than they sound here. For example, through \textbf{inference}
-they could make new logical deductions from knowledge bases.)
 \end{frame}
 
 \begin{frame}{Rule-Based Approach}
@@ -238,33 +215,38 @@ they could make new logical deductions from knowledge bases.)
 
 \end{frame}
 
-\begin{frame}{Rule-Based Systems}
-
-Issues with rule-based systems:
+\begin{frame}{Advantages of Rule-Based Approaches}
 \begin{itemize}
-\item Very labor intensive to build.
-\item Rules work very well for areas they cover, but \textbf{cannot generalize} to unanticipated input combinations. 
-\item Don't naturally handle uncertainty.
-\item Expert systems seen as brittle
+    \item Leverage existing domain expertise.
+    \item Generally \textbf{interpretable}: We can describe the rule to another human
+    \item Produce reliable answers for the scenarios that are included in the knowledge bases.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Modern AI: Machine Learning}
-\begin{itemize}
-\item Don't reverse engineer an expert's decision process.
+\begin{frame}{Limitations of Rule-Based Systems}
 
-\item Machine \textbf{learns} on its own.
+\begin{itemize}
+\item Labor intensive to build: experts' time is expensive.
+\item Rules work very well for areas they cover, but often do not \textbf{generalize} to unanticipated input combinations.
+\item Don't naturally handle uncertainty.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The Machine Learning Approach}
+\begin{itemize}
+    \item Instead of explicitly engineering the process that a human expert would use to make the decision...
+
+    \item We have the machine \textbf{learn} on its own from inputs and outputs (decisions).
 
 \item We provide \textbf{training data}:
 many examples of (input $x$ , output $y$) pairs, e.g.
 
 \begin{itemize}
-\item A set of videos, and whether or not each has a cat.
-\item A set of emails, and whether or not each is SPAM. 
+\item A set of videos, and whether or not each has a cat in it.
+\item A set of emails, and whether or not each one should go to the spam folder.
 \end{itemize}
 
-\item Learning from training data of this form is called \textbf{supervised
-learning}.
+\item Learning from training data of this form (inputs and outputs) is called \textbf{supervised learning}.
 \end{itemize}
 \end{frame}
 
@@ -272,15 +254,18 @@ learning}.
 \begin{itemize}
 \item A \textbf{machine learning algorithm} learns from the training data:
 \begin{itemize}
-\item \textbf{Input}: Training Data
+\item \textbf{Input}: Training Data (e.g., emails $x$ and their labels $y$)
 \item \textbf{Output}: A prediction function that produces output
 $y$ given input $x$.
 \end{itemize}
 
+\item The goal of machine learning is to find the ``best'' (to be defined) prediction function \textbf{automatically, based on the training data}
+%
+
 \item The success of ML depends on
     \begin{itemize}
-        \item Availability of large amounts of data
-        \item \textbf{Generalization} to unseen samples (the test set)
+        \item The availability of large amounts of data;
+        \item \textbf{Generalization} to unseen samples (the test set): just memorizing the training set will not be useful.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -299,22 +284,22 @@ does adjust the ML training process by analyzing errors?}
 \end{frame}
 
 \begin{frame}{Key concepts}
-\begin{itemize}
-    \item Most common \textbf{ML problem types}
+    \begin{itemize}[<+->]
+    \item The most common \textbf{ML problem types}:
 
 \begin{itemize}
-    \item classification (binary and multiclass)
-\item regression
+    \item Classification (binary and multiclass)
+\item Regression
 \end{itemize}
 
-\item \textbf{prediction function}: predicts output $y$ given input $x$
-\item \textbf{training data}: a set of (input $x$, output $y$) pairs
-\item \textbf{supervised learning algorithm}: takes training data and produces a prediction function
+\item \textbf{Prediction function}: predicts output $y$ (e.g. spam or not?) given input $x$ (e.g. email)
+\item \textbf{Training data}: a set of (input $x$, output $y$) pairs
+\item \textbf{Supervised learning algorithm}: takes training data and produces a prediction function
 \item Beyond prediction
     \begin{itemize}
         \item \textbf{Unsupervised learning}: finding structures in data, e.g. clustering
         \item \textbf{Reinforcement learning}: optimizing long-term objective, e.g. Go  
-        \item \textbf{Representation learning}: learning good featurs of real-world objects, e.g. text
+        \item \textbf{Representation learning}: learning good features of real-world objects, e.g. text
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -323,9 +308,9 @@ does adjust the ML training process by analyzing errors?}
     {Core Questions in Machine Learning}
     Given any task, the following questions need to be answered:
     \begin{itemize}
-        \item \textbf{Modeling}: What is the prediction function?
-        \item \textbf{Learning}: How to learn the prediction function from data?
-        \item \textbf{Inference}: Given a learned model, how to make predictions?
+        \item \textbf{Modeling}: What class of prediction functions are we considering?
+        \item \textbf{Learning}: How do we learn the ``best'' prediction function in this class from our training data?
+        \item \textbf{Inference}: How do we compute the output of the prediction function for a new input?
     \end{itemize}
 \end{frame}
 
