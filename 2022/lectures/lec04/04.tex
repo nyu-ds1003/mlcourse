@@ -376,7 +376,7 @@ We have a \textbf{``margin error''} when $m<1$.
 \item The SVM optimization problem is equivalent to
 \begin{eqnarray*}
     \textrm{minimize} &  & \frac{1}{2}||w||^{2}+\frac{c}{n}\sum_{i=1}^{n}\xi_{i}\\
-\textrm{subject to} &  & \xi_{i}\ge\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right).
+\textrm{subject to} &  & \xi_{i}\ge\max\left(0,1-y_{i}\left[w^{T}x_{i}+b\right]\right) \;\mbox{for }i=1,\ldots,n.
 \end{eqnarray*}
 
 
@@ -799,7 +799,7 @@ L(x,\lambda)=f_{0}(x)+\sum_{i=1}^{m}\lambda_{i}f_{i}(x).
         $$
     \end{definition}
     \begin{itemize}
-        \item $g(\lambda)$ is \hl{concave} (why?)
+        \item $g(\lambda)$ is \hl{concave}
             \note[item]{$g$ is concave because it is the infimum of affine functions. Note that we are not assuming convexity of $f_0$.}
         \item \textbf{Lower bound property}: if $\lambda \succeq 0$, $g(\lambda) \le p^*$ where $p^*$ is the optimal value of the optimization problem.
             \note[item]{Note that the proof is straightforward: $\sum_i\lambda_i f_i(x)$ is always negative.}
@@ -826,7 +826,7 @@ dual problem:}
 
 \item The dual problem is always a convex optimization problem.
 \item The dual variables often have interesting and relevant interpretations.
-\item The dual variables provide certificate for optimality.
+\item The dual variables provide certificates for optimality.
 \end{itemize}
 \end{frame}
 
@@ -1119,47 +1119,47 @@ in input examples}.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{The Bias Term: $b$}
-\begin{itemize}
-\item For our SVM primal, the complementary slackness conditions are:
-\begin{align}
-\alpha_{i}^{*}\left(1-y_{i}\left[x_{i}^{T}w^{*}+b\right]-\xi_{i}^{*}\right) & =0\label{eq:lossNonNegativeSlackCondition-1}\\
-\lambda_{i}^{*}\xi_{i}^{*}=\left(\frac{c}{n}-\alpha_{i}^{*}\right)\xi_{i}^{*} & =0\label{eq:marginLossSlackCondition-1}
-\end{align}
-
-
-\item Suppose there's an $i$ such that $\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)$.
-
-\item \eqref{eq:marginLossSlackCondition-1} implies $\xi_{i}^{*}=0$.
-
-\item \eqref{eq:lossNonNegativeSlackCondition-1} implies 
-\begin{eqnarray*}
- &  & y_{i}\left[x_{i}^{T}w^{*}+b^{*}\right]=1\\
- & \iff & x_{i}^{T}w^{*}+b^{*}=y_{i}\mbox{ (use }y_{i}\in\left\{ -1,1\right\} )\\
- & \iff & \boxed{b^{*}=y_{i}-x_{i}^{T}w^{*}}
-\end{eqnarray*}
-\end{itemize}
-\end{frame}
-
-\begin{frame}{The Bias Term: $b$}
-\begin{itemize}
-\item We get the same $b^{*}$ for any choice of $i$ with $\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)$ 
-\[
-b^{*}=y_{i}-x_{i}^{T}w^{*}
-\]
-
-\item With numerical error, more robust to average over all eligible $i$'s:
-\[
-b^{*}=\text{mean}\left\{ y_{i}-x_{i}^{T}w^{*}\mid\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)\right\} .
-\]
-
-\item If there are no $\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)$?
-\begin{itemize}
-\item Then we have a \textbf{degenerate SVM training problem}\footnote{See Rifkin et al.'s ``A Note on Support Vector Machine Degeneracy'',
-an MIT AI Lab Technical Report.} ($w^{*}=0$).
-\end{itemize}
-\end{itemize}
-\end{frame}
+%\begin{frame}{The Bias Term: $b$}
+%\begin{itemize}
+%\item For our SVM primal, the complementary slackness conditions are:
+%\begin{align}
+%\alpha_{i}^{*}\left(1-y_{i}\left[x_{i}^{T}w^{*}+b\right]-\xi_{i}^{*}\right) & =0\label{eq:lossNonNegativeSlackCondition-1}\\
+%\lambda_{i}^{*}\xi_{i}^{*}=\left(\frac{c}{n}-\alpha_{i}^{*}\right)\xi_{i}^{*} & =0\label{eq:marginLossSlackCondition-1}
+%\end{align}
+%
+%
+%\item Suppose there's an $i$ such that $\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)$.
+%
+%\item \eqref{eq:marginLossSlackCondition-1} implies $\xi_{i}^{*}=0$.
+%
+%\item \eqref{eq:lossNonNegativeSlackCondition-1} implies 
+%\begin{eqnarray*}
+% &  & y_{i}\left[x_{i}^{T}w^{*}+b^{*}\right]=1\\
+% & \iff & x_{i}^{T}w^{*}+b^{*}=y_{i}\mbox{ (use }y_{i}\in\left\{ -1,1\right\} )\\
+% & \iff & \boxed{b^{*}=y_{i}-x_{i}^{T}w^{*}}
+%\end{eqnarray*}
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}{The Bias Term: $b$}
+%\begin{itemize}
+%\item We get the same $b^{*}$ for any choice of $i$ with $\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)$ 
+%\[
+%b^{*}=y_{i}-x_{i}^{T}w^{*}
+%\]
+%
+%\item With numerical error, more robust to average over all eligible $i$'s:
+%\[
+%b^{*}=\text{mean}\left\{ y_{i}-x_{i}^{T}w^{*}\mid\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)\right\} .
+%\]
+%
+%\item If there are no $\alpha_{i}^{*}\in\left(0,\frac{c}{n}\right)$?
+%\begin{itemize}
+%\item Then we have a \textbf{degenerate SVM training problem}\footnote{See Rifkin et al.'s ``A Note on Support Vector Machine Degeneracy'',
+%an MIT AI Lab Technical Report.} ($w^{*}=0$).
+%\end{itemize}
+%\end{itemize}
+%\end{frame}
 
 \section{Teaser for Kernelization}
 
