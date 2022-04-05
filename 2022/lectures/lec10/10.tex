@@ -186,12 +186,10 @@ Slides based on Lecture
 \note<.>{Explain depth of a tree.}
 \end{column}
 \begin{column}{0.5\textwidth}
-\begin{itemize}
+    \begin{itemize}[<+->]
 \item We focus on \emph{binary} trees (as opposed to multiway trees where nodes can have more
 than two children)
-\pause
 \item Each node contains a subset of data points
-\pause
 \item The data splits created by each node involve only a \emph{single} feature
 \item For continuous variables, the splits are always of the form $x_{i}\le t$
 \item For discrete variables, we partition values into two sets (not covered today)
@@ -213,13 +211,15 @@ than two children)
 \begin{description}[<+->]
         \item[Goal] Find boxes $R_1, \ldots, R_J$ that minimize $\sum\limits_{j=1}^{J}\sum\limits_{i\in R_j} (y_i - \hat y_{R_j})^2$, subject to complexity constraints.
 \item[Problem] Finding the optimal binary tree is computationally intractable.
-\item[Solution] \emph{Greedy} algorithm: starting from the root, and repeating until a stopping criterion is reached (\eg max depth),
-\begin{itemize}[<+->]
-    \item Find the non-terminal node that results in the ``best'' split (We only split regions defined by previous non-terminal nodes)
+\item[Solution] Greedy algorithm: starting from the root, and repeating until a stopping criterion is reached (\eg max depth), find the non-terminal node that results in the ``best'' split
+    \begin{itemize}
+        \item We only split regions defined by previous non-terminal nodes
+    \end{itemize}
+\item[Prediction] Our prediction is the mean value of a terminal node: $\hat y_{R_m} = \text{mean}(y_i \mid x_i \in R_m)$
+    \begin{itemize}
 \item A greedy algorithm is the one that make the best \textbf{local} decisions, without lookahead to evaluate their downstream consequences
-    \item This procedure will very likely not result in the globally optimal tree
-\end{itemize}
-\item[Prediction] Our prediction is the mean value of a node: $\hat y_{R_m} = \text{mean}(y_i \mid x_i \in R_m)$
+    \item This procedure is not very likely to result in the globally optimal tree
+    \end{itemize}
 \end{description}
 \note[item]{Given some stopping criteria, the next question is how do we find the split that will minimize our task loss in the end.}
 \note[item]{In general, this is intractable.}
@@ -238,12 +238,10 @@ than two children)
 
 \begin{frame}{Finding the Best Split Point}
 \begin{itemize}[<+->]
-\item<.-> We enumerate all features and all possible split points for each feature. There are infinitely many split points, but...
-\item Consider splitting on the $j$-th feature $x_{j}$.
-\item Let $x_{j(1)},\ldots,x_{j(n)}$ be the sorted values of the $j$-th
+\item We enumerate all features and all possible split points for each feature. There are infinitely many split points, but...
+\item Suppose we are now considering splitting on the $j$-th feature $x_{j}$, and let $x_{j(1)},\ldots,x_{j(n)}$ be the sorted values of the $j$-th
 feature.
-\item We only need to consider split points between two adjacent values.
-\item Any split point in the interval $(x_{j(r)}, x_{(j(r+1)})$ will result in the same loss 
+\item We only need to consider split points between two adjacent values, and any split point in the interval $(x_{j(r)}, x_{(j(r+1)})$ will result in the same loss 
 \item It is common to split half way between two adjacent values:
 \begin{align}
 s_{j}\in\left\{ \frac{1}{2}\left(x_{j(r)}+x_{j(r+1)}\right)\mid r=1,\ldots,n-1\right\} .
@@ -265,11 +263,10 @@ s_{j}\in\left\{ \frac{1}{2}\left(x_{j(r)}+x_{j(r+1)}\right)\mid r=1,\ldots,n-1\r
 
 \item When should we stop splitting? (Controlling the complexity of the hypothesis space)
 \begin{itemize}[<.->]
-\item<+-> Limit total number of nodes.
+\item Limit total number of nodes.
 \item Limit number of terminal nodes.
 \item Limit tree depth.
 \item Require minimum number of data points in a terminal node.
-    \pause
 \item \textbf{Backward pruning} (the approach used in \textbf{CART}; Breiman et al 1984): 
 \begin{enumerate}
 \item Build a really big tree (e.g. until all regions have $\le5$ points).
@@ -281,13 +278,13 @@ until validation performance starts decreasing.
 \note[item]{A common approach in practice is backward pruning, similar to backward feature selection. The advantage is that we get the global view once the entire tree is built, where as in the other approaches we might stop too early and miss an important split that only comes later.}
 \end{frame}
 
-\begin{frame}{Pruning: example}
+\begin{frame}{Pruning: Example}
     \centering
     \includegraphics[height=0.8\textheight]{figures/pruning}
 \end{frame}
 
 \begin{frame}
-{What makes a good split for classification?}
+{What Makes a Good Split for Classification?}
 
 Our plan is to predict the \textbf{majority label} in each region.
 \onslide<+->{
@@ -317,7 +314,7 @@ Intuition: we want to produce \emph{pure} nodes,
 
 \begin{frame}
 {Misclassification error in a node}
-\begin{itemize}[<+->]
+\begin{itemize}
 \item Let's consider the multiclass classification case: $\cy=\left\{ 1,2,\ldots,K\right\} $.
 
 \item Let node $m$ represent region $R_{m}$, with $N_{m}$ observations
@@ -357,7 +354,7 @@ $m$:
 -\sum_{k=1}^{K}\hat{p}_{mk}\log\hat{p}_{mk}.
 \]
 \end{description}
-\item The Gini index and entropy are numerically similar and work better in practice than the misclassification error.
+\item The Gini index and entropy are numerically similar to each other, and both work better in practice than the misclassification error.
 
 \note[item]{We would like a metric that gives high scores to nodes containing examples from many different classes, and low scores to nodes with few or a single class of examples.}
 \note[item]{We've seen that the error rate can indicate node purity. When is it minimized? When $p$ is 1, i.e., all examples are in the same class. Note that this is different from the Gini index that measure inequality you might learn in economics.}
@@ -370,6 +367,7 @@ $m$:
 
 \begin{frame}{Impurity Measures for Binary Classification}
 
+    \centering
     ($p$ is the relative frequency of class 1)
 \begin{figure}
 \includegraphics[height=0.5\textheight]{figures/impurityMeasureTwoClass}
@@ -383,7 +381,7 @@ $w_1Q(p_1) + w_2Q(p_2) = Q(w_1p_1 + w_2p_2)$.}
 
 \begin{frame}{Quantifying the Impurity of a Split}
 Scoring a potential split that produces the nodes $R_{L}$ and $R_{R}$:
-\begin{itemize}[<+->]
+\begin{itemize}
 \item Suppose we have $N_{L}$ points in $R_{L}$ and $N_{R}$ points in
 $R_{R}$.
 
@@ -450,7 +448,10 @@ impurities}:
 
 \begin{frame}
 {Discussion: Interpretability of Decision Trees}
-\begin{itemize}
+
+    \centering
+        \includegraphics[width=0.2\textwidth]{figures/basketball_decision_tree}
+    \begin{itemize}[<+->]
     \item Trees are easier to visualize and explain than other classifiers (even linear regression)
 \item Small trees are interpretable -- large trees, maybe not so much
 %\item Approximate neural network decision boundaries to gain interpretability
@@ -471,29 +472,29 @@ Trees may have to work hard to capture linear decision boundaries, but can easil
 
 \begin{frame}
 {Discussion: Review}
-\begin{simpleblock}{Decision trees:}
+\begin{simpleblock}{Decision trees are:}
 \begin{itemize}
-\item \emph{Non-linear} classifiers that recursively partition the input space.
-\item Non-metric: they make no use of geometry, \ie they do not rely on inner products or distances.
-\item Non-parametric: they make no assumptions about the data distribution.
+\item Non-linear: the decision boundary that results from splitting may end up being quite complicated
+\item Non-metric: they do not rely on the geometry of the space (inner products or distances)
+\item Non-parametric: they make no assumptions about the distribution of the data
 \end{itemize}
 \end{simpleblock}
 
-\onslide<+->{
-\begin{simpleblock}{Pros:}
+\pause
+\begin{simpleblock}{Additional pros:}
 \begin{itemize}
-\item Simple to understand: interpretable.
+\item Interpretable and simple to understand
 \end{itemize}
 \end{simpleblock}
-}
-\onslide<.->{
+
+\pause
 \begin{simpleblock}{Cons:}
 \begin{itemize}
-\item Struggle to capture linear decision boundaries.
-\item They have high variance and tend to \al{overfit} (sensitive to small changes in the training data). The ensemble techniques we discuss next can mitigate this issues.
+\item Struggle to capture linear decision boundaries
+\item They have high variance and tend to \al{overfit}: they are sensitive to small changes in the training data (The ensemble techniques we discuss next can mitigate these issues)
 \end{itemize}
 \end{simpleblock}
-}
+
 \note[item]{What are some pros and cons of trees?}
 \note[item]{One big issue with trees is that they are very unstable, meaning that if the training data is changed slightly, our classifier will be quite different, and this makes the performance of a single tree not competitive.}
 \end{frame}
@@ -501,29 +502,29 @@ Trees may have to work hard to capture linear decision boundaries, but can easil
 \section{Bagging and Random Forests}
 \subsection{Variance of an Estimator}
 \begin{frame}
-{Recap: statistic and point estimator}
+{Recap: Statistics and Point Estimators}
     \begin{itemize}[<+->]
-\item We observe data $\cd=\left(x_{1},x_{2},\ldots,x_{n}\right)$ sampled i.i.d. from a parametric distribution $p(\cdot\mid \theta)$.
+\item We observe data $\cd=\left(x_{1},x_{2},\ldots,x_{n}\right)$ sampled i.i.d. from a parametric distribution $p(\cdot\mid \theta)$
 
-\item A \textbf{statistic} $s=s(\cd)$ is any function of the data.
+\item A \textbf{statistic} $s=s(\cd)$ is any function of the data:
 \begin{itemize}
 \item E.g., sample mean, sample variance, histogram, empirical data distribution
 \end{itemize}
 
 \item A statistic $\hat{\theta}=\hat{\theta}(\cd)$ is a \textbf{point estimator}
-of $\theta$ if $\hat{\theta}\approx\theta$.
+of $\theta$ if $\hat{\theta}\approx\theta$
 \end{itemize}
 
-\onslide<+->{
-\begin{block}{Review questions}
-In frequentist statistics,
-\begin{itemize}
-\item Is $\theta$ random?
-\item Is $\hat{\theta}$ random?
-\item Is the function $s(\cdot)$ random?
-\end{itemize}
-\end{block}
-}
+%\onslide<+->{
+%\begin{block}{Review questions}
+%In frequentist statistics,
+%\begin{itemize}
+%\item Is $\theta$ random?
+%\item Is $\hat{\theta}$ random?
+%\item Is the function $s(\cdot)$ random?
+%\end{itemize}
+%\end{block}
+%}
 
 \note[item]{When we say trees are not stable or have high variance, what do we mean by that precisely? Let's recall properties of point estimators we talked about in frequentist statistics.}
 \note[item]{We call a statistic a point estimator if it approximates some unknown parameter.}
@@ -531,13 +532,13 @@ In frequentist statistics,
 \end{frame}
 
 \begin{frame}
-{Recap: bias and variance of an estimator}
+{Recap: Bias and Variance of an Estimator}
 \begin{itemize}[<.->]
     \setlength\itemsep{2pt}
 \item Statistics are random, so they have probability distributions.
 \item The distribution of a statistic is called a \textbf{sampling distribution}. 
 \item<+-> The standard deviation of the sampling distribution is called the \textbf{standard error}.
-\item<+-> What are some parameters of the sampling distribution we might be interested in?
+\item<+-> Some parameters of the sampling distribution we might be interested in:
 \begin{description}
 \item[Bias]  $\mbox{Bias}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}}-\theta$.
 \item[Variance] $\mbox{Var}(\hat{\theta})\eqdef \ex\pb{\hat{\theta}^{2}} - \ex^2\pb{\hat{\theta}}$.
@@ -558,19 +559,18 @@ In frequentist statistics,
 \subsection{The Benefits of Averaging}
 \begin{frame}
 {Variance of a Mean}
-\begin{simpleblock}{Using a single estimate may have large standard error}
 \begin{itemize}
 \item Let $\hat{\theta}(\sD)$ be an unbiased estimator with variance $\sigma^2$:
 $\BE\pb{\hat{\theta}} = \theta$, $\mbox{Var}(\hat{\theta}) = \sigma^2$.
 \item<+-> So far we have used a single statistic $\hat{\theta} = \hat{\theta}(\sD)$ to estimate $\theta$.
-\item<+-> Its standard error is $\sqrt{\mbox{Var}(\hat{\theta})} = \sigma$.
+\item<+-> Its standard error is $\sqrt{\mbox{Var}(\hat{\theta})} = \sigma$
 \end{itemize}
-\end{simpleblock}
 
 \onslide<+->{
 \begin{itemize}
 \item Consider a new estimator that takes the average of i.i.d. $\hat{\theta}_1, \ldots, \hat{\theta}_n$ where $\hat{\theta}_i = \hat{\theta}(\sD^{i})$.
-\item The average has the same expected value but smaller standard error (recall that $Var(cX) = c^2 Var(X)$, and that the $\hat{\theta}_i$s are uncorrelated):
+    \pause
+\item The average has the same expected value but smaller standard error (recall that $Var(cX) = c^2 Var(X)$, and that the $\hat{\theta}_i$-s are uncorrelated):
 \begin{align}
 \BE\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \theta \qquad
 \mbox{Var}\pb{\frac{1}{n}\sum_{i=1}^n \hat{\theta}_i} = \frac{\sigma^2}{n}
@@ -585,10 +585,9 @@ $\BE\pb{\hat{\theta}} = \theta$, $\mbox{Var}(\hat{\theta}) = \sigma^2$.
 \end{frame}
 
 \begin{frame}{Averaging Independent Prediction Functions }
-\begin{itemize}
+    \begin{itemize}[<+->]
 \item Suppose we have $B$ independent training sets, all drawn from the same distribution ($\sD \sim p(\cdot\mid \theta)$).
 
-    m
 \item Our learning algorithm gives us $B$ prediction functions: $\hat{f}_{1}(x),\hat{f}_{2}(x),\ldots,\hat{f}_{B}(x)$
 
 \item We will define the average prediction function as:
@@ -610,9 +609,9 @@ $\BE\pb{\hat{\theta}} = \theta$, $\mbox{Var}(\hat{\theta}) = \sigma^2$.
 \end{frame}
 
 %
-\begin{frame}{Averaging reduce variance of predictions}
+\begin{frame}{Averaging Reduces Variance of Predictions}
 \begin{itemize}
-\item The average prediction on $x_{0}$ is
+\item The average prediction for $x_{0}$ is
 \[
 \hat{f}_{\text{avg}}(x_{0})=\frac{1}{B}\sum_{b=1}^{B}\hat{f}_{b}(x_{0}).
 \]
@@ -639,11 +638,11 @@ same expected value, but
 {How do we simulate multiple samples when we only have one?}
 \begin{itemize}[<+->]
 \item A \textbf{bootstrap sample} from $\cd_{n}=\left(x_{1},\ldots,x_{n}\right)$
-is a sample of size $n$ drawn \emph{with replacement} from $\cd_{n}$.
+is a sample of size $n$ drawn \emph{with replacement} from $\cd_{n}$
 
-\item<.-> Some elements of $\cd_{n}$ 
+\item Some elements of $\cd_{n}$ 
 will show up multiple times, and
-some won't show up at all. 
+some won't show up at all 
 \end{itemize}
 \end{simpleblock}
 
@@ -670,7 +669,7 @@ up at least once.
 %
 \begin{frame}{The Bootstrap Method}
 \begin{definition}
-A \textbf{bootstrap method } simulate having $B$
+A \textbf{bootstrap method } simulates $B$
 independent samples from $P$ by taking $B$ bootstrap samples from
 the sample $\cd_{n}$.
 
@@ -694,12 +693,12 @@ i.i.d. samples from $P$.
 \begin{frame}{Independent Samples vs. Bootstrap Samples}
 \begin{itemize}
 \item Point estimator $\hat{\alpha}=\hat{\alpha}(\cd_{100})$ for samples
-of size $100$, for a synthetic case where the data generating distribution is known.
+of size $100$, for a synthetic case where the data generating distribution is known
 
-\item Histogram of $\hat{\alpha}$ based on
+\item Histograms of $\hat{\alpha}$ based on
 \begin{itemize}
-\item 1000 independent samples of size 100, vs
-\item 1000 bootstrap samples of size 100
+    \item 1000 independent samples of size 100 (left), vs.
+    \item 1000 bootstrap samples of size 100 (right)
 
 \end{itemize}
 \end{itemize}
@@ -732,19 +731,16 @@ of size $100$, for a synthetic case where the data generating distribution is kn
 %\end{itemize}
 %\end{frame}
 
-\begin{frame}{Ensemble methods}
+\begin{frame}{Ensemble Methods}
 
 {\textbf{Key ideas:}}
 
-\begin{itemize}
-\item Averaging i.i.d. estimates reduces variance without changing bias.
-\item We can use bootstrap to simulate multiple data samples and average them.
-\end{itemize}
-
-\begin{itemize}
-    \item In general, \textbf{ensemble methods} combine multiple weak models into a single, more powerful model.
-    \item Parallel ensemble: models are built independently, \eg bagging
-    \item Sequential ensemble: models are built sequentially, \eg boosting: 
+    \begin{itemize}[<+->]
+    \item In general, \textbf{ensemble methods} combine multiple weak models into a single, more powerful model
+    \item Averaging i.i.d. estimates reduces variance without changing bias
+    \item We can use bootstrap to simulate multiple data samples and average them
+    \item Parallel ensemble (\eg bagging): models are built independently
+    \item Sequential ensemble (\eg boosting): models are built sequentially
         \begin{itemize}
         \item We try to find new learners that do well where previous learners fall short
         \end{itemize}
@@ -756,10 +752,10 @@ of size $100$, for a synthetic case where the data generating distribution is kn
 \begin{frame}{Bagging: Bootstrap Aggregation}
     \begin{itemize}[<+->]
 \item We draw $B$ bootstrap samples $D^{1},\ldots,D^{B}$ from original data
-$\cd$. 
+$\cd$
 
 \item Let $\hat{f}_{1},\hat{f}_{2},\ldots,\hat{f}_{B}$ be the prediction
-functions resulting from training on $D^{1},\ldots,D^{B}$, respectively.
+functions resulting from training on $D^{1},\ldots,D^{B}$, respectively
 
 \item The \textbf{bagged prediction function} is a \emph{combination }of
 these:
@@ -786,11 +782,11 @@ these:
 
 \item For classification, averaging doesn't make sense; we can take a \textbf{majority vote} instead
 
-\item Increasing the number of trees does not lead to overfitting
+\item Increasing the number of trees we use in bagging does not lead to overfitting
 
-\item Is there a downside, compared to a single decision tree?
+\item Is there a downside, compared to having a single decision tree?
 
-\item The bagged predictor is much less interpretable
+\item Yes: if we have many trees, the bagged predictor is much less interpretable
 
 \end{itemize}
 \end{frame}
@@ -803,18 +799,18 @@ these:
 \pause{}
 \item For $i$th training point, let 
 \[
-S_{i}=\left\{ b\mid D^{b}\text{ does not contain }i\text{th point}\right\} .
+S_{i}=\left\{ b\mid D^{b}\text{ does not contain }i\text{th point}\right\} 
 \]
 
 \item The \textbf{OOB prediction} on $x_{i}$ is
 \[
-\hat{f}_{\text{OOB}}(x_{i})=\frac{1}{\left|S_{i}\right|}\sum_{b\in S_{i}}\hat{f}_{b}(x_{i}).
+\hat{f}_{\text{OOB}}(x_{i})=\frac{1}{\left|S_{i}\right|}\sum_{b\in S_{i}}\hat{f}_{b}(x_{i})
 \]
 
-\item The OOB error is a good estimate of the test error.
+\item The OOB error is a good estimate of the test error
 
-\item OOB error is similar to cross validation error -- both are computed
-on the training set.
+\item Similar to cross validation error: both are computed
+on the training set
 \end{itemize}
 \end{frame}
 
@@ -832,13 +828,12 @@ Sample size $n=30$.
 
 \column{.6\textwidth}
 \begin{itemize}[<+->]
-\item Each bootstrap tree is quite different: different splitting variable at the root
+\item Each bootstrap tree is quite different: different splitting variable at the root!
 
-\item \textbf{High variance}: high degree of model variability from small perturbations of the training
-data.
+\item \textbf{High variance}: small perturbations of the training data lead to a high degree of model variability
 
 \item Bagging helps most when the base learners are relatively unbiased but have high variance (exactly the case for
-    decision trees.)
+    decision trees)
 
 \end{itemize}
 \end{columns}
@@ -864,40 +859,27 @@ Recall the motivating principle of bagging:
 %\var\left[\frac{1}{n}\sum_{i=1}^{n}\hat{\theta}_{i}\right]=\rho\sigma^{2}+\frac{1-\rho}{n}\sigma^{2}.
 %\]
 
-\item For large $n$, the covariance term dominates -- limits benefit of averaging.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Correlation Between Bootstrap Samples}
-\begin{itemize}
-\item Averaging $\hat{f}_{1},\ldots,\hat{f}_{B}$ reduces variance if they're
-based on \emph{i.i.d.} samples from $P_{\cx\times\cy}$
-
+\item For large $n$, the covariance term dominates, limiting the benefits of averaging
 \item Bootstrap samples are 
 \begin{itemize}
 \item independent samples from the training set, but
-\item are \al{not} independent samples from $P_{\cx\times\cy}$.
+\item \al{not} independent samples from $P_{\cx\times\cy}$
 \end{itemize}
 
-\item This dependence limits the amount of variance reduction we can get.
-
-\pause{}
-\item Solution: reduce the dependence between $\hat{f}_{i}$'s by randomization.
-\note<.>{How to reduce dependence? Randomization.}
+\item Can we reduce the dependence between $\hat{f}_{i}$'s?
 \end{itemize}
-
 \end{frame}
-%
-\begin{frame}{Random Forest}
+
+\begin{frame}{Random Forests}
 \begin{simpleblock}{\textbf{Key idea}}
 Use bagged decision trees, but modify the tree-growing procedure
 to reduce the dependence between trees.
 \end{simpleblock}
 
 \begin{itemize}[<+->]
-\item Build a collection of trees independently (in parallel).
+\item Build a collection of trees independently (in parallel), as before
 \item When constructing each tree node, restrict choice of splitting
-variable to a randomly chosen subset of features of size $m$.
+variable to a randomly chosen subset of features of size $m$
 \begin{itemize}
     \item<.-> This prevents a situation where all trees are dominated by the same small number of strong features (and are therefore too similar to each other)
 \end{itemize}
@@ -908,7 +890,7 @@ variable to a randomly chosen subset of features of size $m$.
 \note[item]{When $m$ is too small, you might underfit. When $m$ is too large, it won't be effective at reducing dependence.}
 \end{frame}
 %
-\begin{frame}{Random Forest: Effect of $m$} 
+\begin{frame}{Random Forests: Effect of $m$} 
 \begin{figure}
 \includegraphics[height=0.7\textheight]{figures/randomForestVsBagging}
 \end{figure}
@@ -918,20 +900,20 @@ variable to a randomly chosen subset of features of size $m$.
 
 \begin{frame}{Review}
 \begin{itemize}[<+->]
-\item Usual approach is to build very deep trees---low bias but \al{high variance}
+\item The usual approach is to build very deep trees---low bias but \al{high variance}
 \item Ensembling many models reduces variance
 \begin{itemize}[<.->]
-\item Motivation: Mean of i.i.d. estimates has smaller variance than single estimate.
+\item Motivation: Mean of i.i.d. estimates has smaller variance than single estimate
 \end{itemize}
 \item Use bootstrap to simulate many data samples from one dataset
 \begin{itemize}[<.->]
 \item $\implies$ Bagged decision trees
 \end{itemize}
-\item But bootstrap samples (and the induced models) are correlated.
-\item Bagging works better when we combine a diverse set of
-prediction functions.
+\item But bootstrap samples (and the induced models) are correlated
+\item Ensembling works better when we combine a diverse set of
+prediction functions
 \begin{itemize}[<.->]
-    \item $\implies$ Random forests (select a random subset of features for each decision tree)
+    \item $\implies$ Random forests: select a random subset of features for each decision tree
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -950,7 +932,7 @@ prediction functions.
 \end{frame}
 
     \begin{frame}{Boosting: Overview}
-\begin{itemize}
+        \begin{itemize}[<+->]
 \item A \textbf{weak/base learner} is a classifier that does slightly better than chance.
 \item<.-> Weak learners are like rules of thumb:
 \begin{itemize}[<.->]
@@ -961,16 +943,17 @@ prediction functions.
 \begin{itemize}
 \item Each weak learner focuses on different training examples (\emph{reweighted data})
 \item Weak learners make different contributions to the final prediction (\emph{reweighted classifier})
-\end{itemize} 
-        \item A set of smaller, simpler trees may improve interpretability
 \end{itemize}
+        \item A set of smaller, simpler trees may improve interpretability
+        \item We'll focus on a specific implementation, AdaBoost (Freund \& Schapire, 1997)
+\end{itemize} 
 \end{frame}
 
 \subsection{Adaboost: The Algorithm}
 \begin{frame}{AdaBoost: Setting}
 
 \begin{itemize}[<+->]
-\item \emph{Binary} classification: $\cy=\left\{ -1,1\right\} $ 
+\item Binary classification: $\cy=\left\{ -1,1\right\} $ 
 
 \item {Base hypothesis space} $\ch=\left\{ h:\cx\to {\color{blue}\left\{ -1,1\right\}} \right\} $. 
 
@@ -995,30 +978,11 @@ Each base learner is trained on weighted data.
 \hat{R}_{n}^{w}(f)\eqdef \frac{1}{W}\sum_{i=1}^{n}w_{i}\ell\left(f(x_{i}),y_{i}\right)\quad\mbox{where}\;W=\sum_{i=1}^{n}w_{i}
 \]
 
-\item Examples with larger weights have greater influence on the loss.
+\item Examples with larger weights affect the loss more.
 
 \end{itemize}
 \end{frame}
 
-\begin{frame}{AdaBoost - Rough Sketch}
-
-\begin{itemize}[<+->]
-\item Training set $\cd=\left(\left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right)$.
-\item Start with equal weights for all training points $w_{1}=\cdots=w_{n}=1$.
-
-\item Repeat for $m=1,\ldots,M$:
-
-\begin{itemize}
-\item Find base classifier $G_{m}(x)$ that on weighted
-training data (this classifier may not fit the data well)
-
-\item Increase weight on the points that $G_{m}(x)$ misclassifies (key idea of boosting)
-
-\end{itemize}
-\item So far, we've generated $M$ classifiers: $G_{1},\ldots,G_{M}:\cx\to\left\{ -1,1\right\} $.
-\end{itemize}
-\end{frame}
-%
 \begin{frame}{AdaBoost: Schematic}
 \begin{center}
 \includegraphics[height=0.7\textheight]{figures/adaboostSchematic}
@@ -1026,53 +990,44 @@ training data (this classifier may not fit the data well)
 
 \let\thefootnote\relax\footnotetext{\tiny{From ESL Figure 10.1}}
 \end{frame}
-%
-\begin{frame}{AdaBoost - Rough Sketch}
+
+\begin{frame}{AdaBoost: Sketch of the Algorithm}
+
+\begin{itemize}[<+->]
+%\item Training set $\cd=\left(\left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right)$.
+\item Start with equal weights for all training points $w_{1}=\cdots=w_{n}=1$.
+
+\item Repeat for $m=1,\ldots,M$ (where $M$ is the number of classifiers we plan to generate):
 
 \begin{itemize}
-\item Training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
-\item Start with equal weight on all training points $w_{1}=\cdots=w_{n}=1$.
-\item Repeat for $m=1,\ldots,M$:
-\begin{itemize}
-\item Base learner fits weighted training data and returns $G_{m}(x)$
-\item Increase weight on the points $G_{m}(x)$ misclassifies 
-\end{itemize}
-\item Final prediction $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
-(recall $G_{m}(x)\in\left\{ -1,1\right\} $)
+\item Train base classifier $G_{m}(x)$ on the weighted training data; this classifier may not fit the data well
 
-\item What are desirable $\alpha_{m}$'s?
-\pause
-\begin{itemize}
-\item nonnegative
-\item larger when $G_{m}$ fits its weighted $\cd$ well
-\item smaller when $G_{m}$ fits its weighted $\cd$ less well
+\item Increase the weight of the points misclassified by $G_{m}(x)$ (this is the key idea of boosting!)
+
 \end{itemize}
+%\item So far, we've generated $M$ classifiers: $G_{1},\ldots,G_{M}:\cx\to\left\{ -1,1\right\} $.
+\item Our final prediction is $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
 \end{itemize}
 
 \end{frame}
 
-%
-\begin{frame}{Adaboost: Weighted Classification Error}
+\begin{frame}{AdaBoost: Classifier Weights}
+    \begin{itemize}
+\item Our final prediction is $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
+\item We would like $\alpha_{m}$ to be:
 \begin{itemize}
-\item Weights of base learners depend on their performance. How to evaluate each base learner?
-\item In round $m$, base learner gets a weighted training set.
-\begin{itemize}
-\item Returns a base classifier $G_{m}(x)$ that minimizes weighted $0-1$
-error.
-
-\pause{}
+\item Nonnegative
+\item Larger when $G_{m}$ fits its weighted training data well
 \end{itemize}
 \item The \textbf{weighted 0-1 error} of $G_{m}(x)$ is
 \[
 \mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
 \]
-
-\item Notice: $\text{err}_{m}\in[0,1]$.
+\item $\text{err}_{m}\in[0,1]$
 \end{itemize}
 \end{frame}
 %
 \begin{frame}{AdaBoost: Classifier Weights}
-
 \begin{itemize}
 \item The weight of classifier $G_{m}(x)$ is $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right).$
 
@@ -1083,24 +1038,24 @@ error.
 \par\end{center}
 \begin{itemize}
 \item Higher weighted error $\implies$ lower weight
-\item When is $\alpha_m < 0$?
+%\item When is $\alpha_m < 0$?
 \end{itemize}
 
 \end{frame}
 %
 \begin{frame}{Adaboost: Example Reweighting}
 \begin{itemize}
-    \item We train $G_{m}$ to minimize weighted error, and it achieves $\text{err}_{m}$.
+    \item We train $G_{m}$ to minimize weighted error; the resulting error rate is $\text{err}_{m}$.
 
 \item<.-> Then $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$
-is the weight of $G_{m}$ in final ensemble.
+is the weight of $G_{m}$ in the final ensemble.
 \end{itemize}
 
 \onslide<+->{
-We want the base learner to focus more on examples misclassified by the previous learner.
+We want the next base learner to focus more on examples misclassified by the previous learner.
 }
 \begin{itemize}[<+->]
-\item Suppose $w_{i}$ is weight of example $i$ before training:
+\item Suppose $w_{i}$ is the weight of example $x_i$ before training:
 \begin{itemize}
 \item If $G_{m}$ classifies $x_{i}$ correctly, then $w_{i}$ is unchanged.
 
@@ -1110,8 +1065,7 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 & = & w_{i}\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)
 \end{eqnarray*}
 
-\item If $G_m$ is good, then $\alpha_m$ will be large, so if $x_i$ is misclassified,
-    its weight will increase to a greater extent.
+\item If $G_m$ is an overall strong classifier, then its $\alpha_m$ will be large; this means that if $x_i$ is misclassified, $w_i$ will increase to a greater extent.
 %\item<.-> For $\mbox{err}_{m}<0.5$ (weak learner), this always increases the weight.
 \end{itemize}
 \end{itemize}
@@ -1130,35 +1084,35 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 %\end{itemize}
 %\end{frame}
 %
-\begin{frame}{AdaBoost: Algorithm}
+%\begin{frame}{AdaBoost: Algorithm}
 
-Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
-\begin{enumerate}
-\item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
+%Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
+%\begin{enumerate}
+%\item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
 
-\pause{}
-\item For $m=1$ to $M$:
-\begin{enumerate}
-\item Base learner fits weighted training data and returns $G_{m}(x)$
+%\pause{}
+%\item For $m=1$ to $M$:
+%\begin{enumerate}
+%\item Base learner fits weighted training data and returns $G_{m}(x)$
 
-\pause{}
-\item Compute \emph{weighted empirical 0-1 risk}:
-\[
-\mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
-\]
+%\pause{}
+%\item Compute \emph{weighted empirical 0-1 risk}:
+%\[
+%\mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
+%\]
 
 
-\pause{}
-\item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
+%\pause{}
+%\item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
 
-\pause{}
-\item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
+%\pause{}
+%\item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
 
-\pause{}
-\end{enumerate}
-\item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
-\end{enumerate}
-\end{frame}
+%\pause{}
+%\end{enumerate}
+%\item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
+%\end{enumerate}
+%\end{frame}
 %
 \begin{frame}{AdaBoost with Decision Stumps}
 \begin{itemize}
@@ -1168,8 +1122,7 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
 \begin{centering}
 \includegraphics[height=0.5\textheight]{{figures/fig16.10a}.pdf}
 \par\end{centering}
-\caption{{\footnotesize{}Size represents weight. Shade of grey represents
-score for red class.}}
+\caption{{\footnotesize{}Size of plus sign represents weight of example. Blackness represents preference for red class; whiteness represents preference for blue class.}}
 \end{figure}
 
 \let\thefootnote\relax\footnotetext{\tiny{KPM Figure 16.10}}
@@ -1183,8 +1136,7 @@ score for red class.}}
 \begin{centering}
 \includegraphics[clip,height=0.5\textheight]{{figures/fig16.10b}.pdf}
 \par\end{centering}
-\caption{{\footnotesize{}Size represents weight. Shade of grey represents
-score for red class.}}
+\caption{{\footnotesize{}Size of plus sign represents weight of example. Blackness represents preference for red class; whiteness represents preference for blue class.}}
 \end{figure}
 
 \let\thefootnote\relax\footnotetext{\tiny{KPM Figure 16.10}}
@@ -1198,8 +1150,7 @@ score for red class.}}
 \begin{centering}
 \includegraphics[height=0.5\textheight]{{figures/fig16.10c}.pdf}
 \par\end{centering}
-\caption{{\footnotesize{}Plus size represents weight. Blackness represents
-score for red class.}}
+\caption{{\footnotesize{}Size of plus sign represents weight of example. Blackness represents preference for red class; whiteness represents preference for blue class.}}
 \end{figure}
 
 \let\thefootnote\relax\footnotetext{\tiny{KPM Figure 16.10}}
@@ -1211,7 +1162,7 @@ score for red class.}}
 \item If we were overfitting, the learning curves would look like:
 \end{itemize}
 \begin{center}
-\includegraphics[height=0.65\textheight]{figures/typicalTrainTestCurve}
+\includegraphics[height=0.55\textheight]{figures/typicalTrainTestCurve}
 \par\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Rob Schapire's NIPS 2007 Boosting tutorial.}}
@@ -1219,11 +1170,11 @@ score for red class.}}
 %
 \begin{frame}{Learning Curves for AdaBoost}
 \begin{itemize}
-\item In typical performance, AdaBoost is surprisingly resistant to overfitting.
-\item Test continues to improve even after training error is zero!
+\item AdaBoost is usually quite resistant to overfitting.
+\item The test error continues to decrease even after the training error drops to zero!
 \end{itemize}
 \begin{center}
-\includegraphics[height=0.65\textheight]{figures/actualTrainTestCurves}
+\includegraphics[height=0.55\textheight]{figures/actualTrainTestCurves}
 \par\end{center}
 
 \let\thefootnote\relax\footnotetext{\tiny{From Rob Schapire's NIPS 2007 Boosting tutorial.}}
@@ -1232,13 +1183,13 @@ score for red class.}}
 
 \begin{frame}
 {Summary}
-\begin{itemize}
+    \begin{itemize}[<+->]
 \item Boosting is used to reduced bias from shallow decision trees
-\item Very powerful off-the-self classifier
+\item AdaBoost is a very powerful off-the-self classifier!
 \item Next week
 \begin{itemize}
-\item What is the objective function of Adaboost?
-\item Generalize to other loss functions. 
+\item What is the objective function of AdaBoost?
+\item Generalizations to other loss functions 
 \end{itemize}
 \end{itemize}
 \end{frame}
