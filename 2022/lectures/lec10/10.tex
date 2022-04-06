@@ -995,9 +995,9 @@ Each base learner is trained on weighted data.
 
 \begin{itemize}[<+->]
 %\item Training set $\cd=\left(\left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right)$.
-\item Start with equal weights for all training points $w_{1}=\cdots=w_{n}=1$.
+\item Start with equal weights for all training points: $w_{1}=\cdots=w_{n}=1$
 
-\item Repeat for $m=1,\ldots,M$ (where $M$ is the number of classifiers we plan to generate):
+\item Repeat for $m=1,\ldots,M$ (where $M$ is the number of classifiers we plan to train):
 
 \begin{itemize}
 \item Train base classifier $G_{m}(x)$ on the weighted training data; this classifier may not fit the data well
@@ -1006,7 +1006,7 @@ Each base learner is trained on weighted data.
 
 \end{itemize}
 %\item So far, we've generated $M$ classifiers: $G_{1},\ldots,G_{M}:\cx\to\left\{ -1,1\right\} $.
-\item Our final prediction is $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
+\item Our final prediction is $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$
 \end{itemize}
 
 \end{frame}
@@ -1029,7 +1029,7 @@ Each base learner is trained on weighted data.
 %
 \begin{frame}{AdaBoost: Classifier Weights}
 \begin{itemize}
-\item The weight of classifier $G_{m}(x)$ is $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right).$
+\item The weight of classifier $G_{m}(x)$ is $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$
 
 \pause{}
 \end{itemize}
@@ -1045,10 +1045,10 @@ Each base learner is trained on weighted data.
 %
 \begin{frame}{Adaboost: Example Reweighting}
 \begin{itemize}
-    \item We train $G_{m}$ to minimize weighted error; the resulting error rate is $\text{err}_{m}$.
+    \item We train $G_{m}$ to minimize weighted error; the resulting error rate is $\text{err}_{m}$
 
 \item<.-> Then $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$
-is the weight of $G_{m}$ in the final ensemble.
+is the weight of $G_{m}$ in the final ensemble
 \end{itemize}
 
 \onslide<+->{
@@ -1057,15 +1057,15 @@ We want the next base learner to focus more on examples misclassified by the pre
 \begin{itemize}[<+->]
 \item Suppose $w_{i}$ is the weight of example $x_i$ before training:
 \begin{itemize}
-\item If $G_{m}$ classifies $x_{i}$ correctly, then $w_{i}$ is unchanged.
+\item If $G_{m}$ classifies $x_{i}$ correctly, keep $w_{i}$ as is
 
-\item Otherwise, $w_{i}$ is increased as 
+\item Otherwise, increase $w_{i}$:
 \begin{eqnarray*}
 w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 & = & w_{i}\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)
 \end{eqnarray*}
 
-\item If $G_m$ is an overall strong classifier, then its $\alpha_m$ will be large; this means that if $x_i$ is misclassified, $w_i$ will increase to a greater extent.
+\item If $G_m$ is a strong classifier overall, then its $\alpha_m$ will be large; this means that if $x_i$ is misclassified, $w_i$ will increase to a greater extent
 %\item<.-> For $\mbox{err}_{m}<0.5$ (weak learner), this always increases the weight.
 \end{itemize}
 \end{itemize}
@@ -1170,7 +1170,7 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 %
 \begin{frame}{Learning Curves for AdaBoost}
 \begin{itemize}
-\item AdaBoost is usually quite resistant to overfitting.
+\item AdaBoost is usually quite resistant to overfitting
 \item The test error continues to decrease even after the training error drops to zero!
 \end{itemize}
 \begin{center}
@@ -1184,7 +1184,7 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 \begin{frame}
 {Summary}
     \begin{itemize}[<+->]
-\item Boosting is used to reduced bias from shallow decision trees
+\item Boosting is used to reduce bias from shallow decision trees
 \item AdaBoost is a very powerful off-the-self classifier!
 \item Next week
 \begin{itemize}
