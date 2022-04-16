@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -133,11 +133,11 @@
 %\setbeameroption{show notes on second screen}
 
 \title[DS-GA 1003]{Feature Learning}
-\author{He He \\
+\author{Tal Linzen\\
 Slides based on Lecture
 \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/12a.neural-networks.pdf}{12a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
 }
-\date{April 20, 2021}
+\date{April 26, 2022}
 \institute{CDS, NYU}
 
 \makebeamertitle
@@ -160,27 +160,22 @@ Instead, we're going to cover the basic idea, representation learning, and the b
 \begin{frame}
 {Feature engineering}
 \begin{itemize}
-\item Learning non-linear models in a linear form:
+\item Many problems are non-linear
+\item We can express certain non-linear models in a linear form:
 \begin{align}
 f(x) = w^T\phi(x) .
 \end{align}
-\item What are possible $\phi$'s we have seen?
-\pause
-\begin{itemize}
-\item Feature maps that define a kernel, \eg polynomials of $x$
-\item Feature templates, \eg $x_i \text{ AND } x_{i-1}$
-\item Basis functions, \eg (shallow) decision trees
-\end{itemize}
+\item This model is not linear in the inputs $x$
+\item For example, we can use a feature map that define a kernel, \eg polynomial in $x$
 \end{itemize}
 \note[item]{How do we learn a nonlinear model in a linear form? By now we should be pretty familiar with this equation. We use nonlinear feature functions, such that our model is linear in the parameters $w$, although it's nonlinear in the inputs $x$.}
 \end{frame}
 
 \begin{frame}
-{Decompose the problem}
+{Decomposing the problem}
 \begin{itemize}[<+->]
 \item Example:
 \begin{description}[<.->]
-\item[Task] Predict popularity of restaurants.
 \item[Raw features] \#dishes, price, wine option, zip code, \#seats, size 
 \end{description}
 \item Decompose into subproblems:
@@ -189,7 +184,8 @@ f(x) = w^T\phi(x) .
 \item ${\color{blue}h_2}(\pb{\text{zip code}}) = \text{walkable}$
 \item ${\color{blue}h_3}(\pb{\text{\#seats, size}}) = \text{nosie}$
 \end{itemize}
-\item Final \textit{linear} predictor uses \textbf{intermediate features} computed by $h_i$'s:
+\item Each intermediate models solves one of the subproblems
+\item Final \textit{linear} predictor uses the \textbf{intermediate features} computed by $h_i$'s:
 \[
 w_1\cdot\text{food quality} + w_2\cdot\text{walkable} + w_3\cdot\text{nosie}
 \]
@@ -200,7 +196,7 @@ w_1\cdot\text{food quality} + w_2\cdot\text{walkable} + w_3\cdot\text{nosie}
 \end{frame}
 
 \begin{frame}
-{Predefined subproblems}
+{Decomposing the problem into predefined subproblems}
 \begin{center}
 \def\layersep{2.5cm}
 \begin{tikzpicture}[shorten >=1pt,->,draw=black!50, node distance=\layersep]
@@ -455,6 +451,7 @@ satisfies $\vert \hat{F}(x) - F(x)\vert < \epsilon$.
 \begin{itemize}
 \item Number of hidden units needs to be exponential in $d$.
 \item Doesn't say how to learn these parameters.
+\item This doesn't explain why practical neural networks work, or tell us how to build them
 \end{itemize}
 \note[item]{\footnotesize{It turns out this nonlinearity gives us a lot of additional expressive power. The universal approximation theorem says that a neural network with one hidden layer can basically approximate any continuous function arbitrarily close. The number of hidden units could be huge though, more specifically it's exponential in the input dimension $d$. You can read the more formal description offline.}}
 \note[item]{Let's think about what this theorem means for a minute. Is this the reason why neural networks work so well?
@@ -467,11 +464,11 @@ First of all, there are many other universal approximates; many non-parametric m
 
 
 
-\subsection{Multilayer Perceptron}
+\subsection{Deep neural networks}
 \begin{frame}
-{Multilayer perceptron / Feed-forward neural networks}
+    {Deep neural networks}
 \begin{itemize}
-\item Wider: more hidden units.
+    \item Wider: more hidden units (as in the approximation theorem).
 \item Deeper: more hidden layers.
 \end{itemize}
 \begin{center}
@@ -570,7 +567,7 @@ layers:
 f(x) &= \left(a\circ h^{(L)}\circ\cdots\circ h^{(1)}\right)(x)
 \end{align}
 
-\item Last layer typically gives us a score. How to do classification?
+\item Last layer typically gives us a score. How do we perform classification?
 \end{itemize}
 \end{frame}
 %
@@ -600,7 +597,7 @@ to a categorical distribution\textbf{:
 \[
 x\mapsto\left(f_1(x) ,\ldots, f_k(x) \right)\in\reals^{k}
 \]
-where $f_i$'s are outputs of the last hidden layer of a neural network.
+where $f_i$'s are the outputs of the last hidden layer of a neural network.
 \item {Learning}: Maximize the log-likelihood of training data
 \[
 \argmax_{f_{1},\ldots,f_{k}}\sum_{i=1}^{n}\log\left[\softmax\left(f_{1}(x),\ldots,f_{k}(x)\right)_{y_{i}}\right].
@@ -610,28 +607,6 @@ where $f_i$'s are outputs of the last hidden layer of a neural network.
 %
 %\item But we can still use gradient methods to find a good local optimum.
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Neural network as a feature extractor}
-
-\begin{itemize}
-\item OverFeat is a neural network for object classification, localization, and detection.
-\begin{itemize}
-\item Trained on the huge ImageNet dataset
-\item Lots of computing resources used for training the network.
-\end{itemize}
-
-\item All those hidden layers of the network are very valuable \emph{features}.
-
-\begin{itemize}
-\item Paper: ``\href{https://arxiv.org/pdf/1312.6229.pdf}{CNN Features off-the-shelf: an Astounding Baseline
-for Recognition}''
-\item Showed that using features from OverFeat makes it easy to achieve
-state-of-the-art performance on new vision tasks.
-\end{itemize}
-\end{itemize}
-\let\thefootnote\relax\footnotetext{\tiny{OverFeat code is at \url{https://github.com/sermanet/OverFeat}}}
-\note[item]{In general it's not easy to tell what features have been learned by the neural network. However, sometimes the representations learned by a model can be useful for tasks the model is not trained on, which is evidence that it has learned something useful.}
 \end{frame}
 
 \begin{frame}
