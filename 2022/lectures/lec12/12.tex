@@ -109,18 +109,6 @@
 
 
 
-\AtBeginSection[]{
-  \begin{frame}
-  \vfill
-  \centering
-\setbeamercolor{section title}{fg=NYUPurple}
- \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
-    \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
-  \end{beamercolorbox}
-  \vfill
-  \end{frame}
-}
-
 \makeatother
 
 \setlength{\parskip}{\medskipamount} 
@@ -132,7 +120,7 @@
 
 %\setbeameroption{show notes on second screen}
 
-\title[DS-GA 1003]{Feature Learning}
+\title[DS-GA 1003]{Feature learning, neural networks and backpropagation}
 \author{Tal Linzen\\
 Slides based on Lecture
 \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/12a.neural-networks.pdf}{12a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
@@ -159,14 +147,14 @@ Instead, we're going to cover the basic idea, representation learning, and the b
 \subsection{Feature Learning}
 \begin{frame}
 {Feature engineering}
-\begin{itemize}
+    \begin{itemize}[<+->]
 \item Many problems are non-linear
 \item We can express certain non-linear models in a linear form:
 \begin{align}
 f(x) = w^T\phi(x) .
 \end{align}
-\item This model is not linear in the inputs $x$
-\item For example, we can use a feature map that define a kernel, \eg polynomial in $x$
+\item Note that this model is not linear in the inputs $x$ --- we represent the inputs differently, and the new representation is amenable to linear modeling
+\item For example, we can use a feature map that defines a kernel, \eg polynomials in $x$
 \end{itemize}
 \note[item]{How do we learn a nonlinear model in a linear form? By now we should be pretty familiar with this equation. We use nonlinear feature functions, such that our model is linear in the parameters $w$, although it's nonlinear in the inputs $x$.}
 \end{frame}
@@ -174,25 +162,41 @@ f(x) = w^T\phi(x) .
 \begin{frame}
 {Decomposing the problem}
 \begin{itemize}[<+->]
-\item Example:
+\item Example: predicting how popular a restaurant is
 \begin{description}[<.->]
 \item[Raw features] \#dishes, price, wine option, zip code, \#seats, size 
 \end{description}
-\item Decompose into subproblems:
+\item Decomposing the problem into subproblems:
 \begin{itemize}[<.->]
 \item ${\color{blue}h_1}(\pb{\text{\#dishes, price, wine option}}) = \text{food quality}$
 \item ${\color{blue}h_2}(\pb{\text{zip code}}) = \text{walkable}$
-\item ${\color{blue}h_3}(\pb{\text{\#seats, size}}) = \text{nosie}$
+\item ${\color{blue}h_3}(\pb{\text{\#seats, size}}) = \text{noisy}$
 \end{itemize}
 \item Each intermediate models solves one of the subproblems
-\item Final \textit{linear} predictor uses the \textbf{intermediate features} computed by $h_i$'s:
+\item A final \textit{linear} predictor uses the \textbf{intermediate features} computed by the $h_i$'s:
 \[
-w_1\cdot\text{food quality} + w_2\cdot\text{walkable} + w_3\cdot\text{nosie}
+w_1\cdot\text{food quality} + w_2\cdot\text{walkable} + w_3\cdot\text{noisy}
 \]
 \end{itemize}
 \note[item]{Let's consider this example. Recall that in the adaptive basis function model we talked about last time, we want to learn basis functions or the weak classifiers. Following the similar idea, let's try to design weak classifiers here.}
 \note[item]{Each weak classifier is solving a subproblem for us, which can be considered as an intermediate step towards the final prediction problem.}
 \note[item]{Given these intermediate features, we can make the final prediction using a simple linear model.}
+\end{frame}
+
+\begin{frame}{Perceptrons as logical gates}
+    \includegraphics[height=0.8\textheight]{figures/perceptron_keynote}
+\end{frame}
+
+\begin{frame}{Limitations of a perceptrons as logical gates}
+    \includegraphics[height=0.8\textheight]{figures/perceptron_limitations_keynote}
+\end{frame}
+
+\begin{frame}{Multilayer perceptron}
+    \includegraphics[height=0.8\textheight]{figures/perceptron_solution_keynote}
+\end{frame}
+
+\begin{frame}{Multilayer perceptron}
+    \includegraphics[height=0.8\textheight]{figures/perceptron_recoding}
 \end{frame}
 
 \begin{frame}
@@ -305,7 +309,7 @@ It would be desirable if we can directly learn these subproblems.}
 
 \begin{frame}
 {Neural networks}
-\textbf{Key idea}: automatically learn the intermediate features.
+\textbf{Key idea}: learn the intermediate features.
 \begin{description}[Feature engineering]
 \item<+->[Feature engineering]
 Manually specify $\phi(x)$ based on domain knowledge and learn the weights:
@@ -314,7 +318,7 @@ f(x) = {\color{red}w}^T\phi(x) .
 \end{align}
 
 \item<+->[Feature learning]
-Automatically learn both the features ($K$ hidden units) and the weights:
+Learn both the features ($K$ hidden units) and the weights:
 \begin{align}
 h(x) &= \pb{{\color{red}h_1}(x), \ldots, {\color{red}h_K}(x)} , \\
 f(x) &= {\color{red}w}^T h(x)
@@ -329,16 +333,16 @@ f(x) &= {\color{red}w}^T h(x)
 \begin{frame}
 {Activation function}
 \begin{itemize}[<+->]
-\item How should we parametrize $h_i$'s? Can it be linear?
+\item How should we parametrize the $h_i$'s? Can they be linear?
 \onslide<+->{
 \begin{align}
 h_i(x) = {\color{blue}\sigma}(v_i^T x) .
 \end{align}
 }
-\item<.-> $\sigma$ is the \emph{nonlinear} \textbf{activation function}.
-\item What might be some activation functions we want to use?
+\item<.-> $\sigma$ is a \emph{nonlinear} \textbf{activation function}
+\item Some possible activation functions:
 \begin{itemize}
-\item $\text{sign}$ function? \alarm{Non-differentiable}.
+    \item $\text{sign}$ function (as in classic perceptron)? \alarm{Non-differentiable}.
 \item \emph{Differentiable} approximations: sigmoid functions.
 \begin{itemize}[<.->]
 \item E.g., logistic function, hyperbolic tangent function.
@@ -375,9 +379,8 @@ popular:
 \[
 \sigma(x)=\max(0,x).
 \]
-\item Much \textcolor{Green}{faster} to calculate, and to calculate
-its derivatives.
-\item Also often seems to work better.
+\item Faster to calculate this function and its derivatives
+\item Often more effective in practice
 \end{itemize}
 \begin{figure}
 \includegraphics[height=0.55\textheight]{figures/activationFn-Rectified_Linear} 
@@ -388,8 +391,8 @@ its derivatives.
 \begin{frame}{Approximation Ability: $f(x)=x^{2}$}
 \begin{itemize}
 \item 3 hidden units; tanh activation functions 
-\item Blue dots are training points; Dashed lines are hidden unit outputs;
-Final output in Red.
+\item Blue dots are training points; dashed lines are hidden unit outputs;
+final output in red.
 \end{itemize}
 \centering
 \includegraphics[height=0.6\textheight]{{figures/Figure5_3a.pdf}} 
@@ -401,8 +404,8 @@ Final output in Red.
 \begin{frame}{Approximation Ability: $f(x)=\sin(x)$}
 \begin{itemize}
 \item 3 hidden units; logistic activation function
-\item Blue dots are training points; Dashed lines are hidden unit outputs;
-Final output in Red.
+\item Blue dots are training points; dashed lines are hidden unit outputs;
+final output in red.
 \end{itemize}
 \centering
 \includegraphics[height=0.6\textheight]{{figures/Figure5_3b}.pdf} 
@@ -414,8 +417,8 @@ Final output in Red.
 \begin{frame}{Approximation Ability: $f(x)=\left|x\right|$}
 \begin{itemize}
 \item 3 hidden units; logistic activation functions 
-\item Blue dots are training points; Dashed lines are hidden unit outputs;
-Final output in Red.
+\item Blue dots are training points; dashed lines are hidden unit outputs;
+final output in red.
 \end{itemize}
 \centering
 \includegraphics[height=0.6\textheight]{{figures/Figure5_3c}.pdf} 
@@ -424,22 +427,21 @@ Final output in Red.
 \note[item]{Non-smooth.}
 \end{frame}
 %
-\begin{frame}{Approximation Ability: $f(x)=\ind{x>0}$}
-\begin{itemize}
-\item 3 hidden units; logistic activation function
-\item Blue dots are training points; Dashed lines are hidden unit outputs;
-Final output in Red.
-\end{itemize}
-\centering
-\includegraphics[height=0.6\textheight]{{figures/Figure5_3d}.pdf} 
-
-\let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern Recognition and Machine Learning}, Fig 5.3 }}
-\note[item]{Not continuous}
-\end{frame}
+%\begin{frame}{Approximation Ability: $f(x)=\ind{x>0}$}
+%\begin{itemize}
+%\item 3 hidden units; logistic activation function
+%\item Blue dots are training points; Dashed lines are hidden unit outputs;
+%Final output in Red.
+%\end{itemize}
+%\centering
+%\includegraphics[height=0.6\textheight]{{figures/Figure5_3d}.pdf} 
+%
+%%%\let\thefootnote\relax\footnotetext{\tiny{From Bishop's \emph{Pattern Recognition and Machine Learning}, Fig 5.3 }}
+%\note[item]{Not continuous}
+%\end{frame}
 
 \begin{frame}
-{Universal approximation theorems}
-How much expressive power do we gain from the nonlinearity? 
+{Universal approximation theorem}
 \begin{theorem}[Universal approximation theorem]
 A neural network with one \alarm{possibly huge hidden layer} $\hat{F}(x)$ can 
 approximate \emph{any continuous function} $F(x)$ on a closed and bounded subset of $\reals^d$ under mild assumptions on the activation function, \ie $\forall \epsilon>0$, there exists an integer $N$ s.t.
@@ -448,21 +450,15 @@ approximate \emph{any continuous function} $F(x)$ on a closed and bounded subset
 \end{align}
 satisfies $\vert \hat{F}(x) - F(x)\vert < \epsilon$.
 \end{theorem}
-\begin{itemize}
-\item Number of hidden units needs to be exponential in $d$.
-\item Doesn't say how to learn these parameters.
-\item This doesn't explain why practical neural networks work, or tell us how to build them
-\end{itemize}
-\note[item]{\footnotesize{It turns out this nonlinearity gives us a lot of additional expressive power. The universal approximation theorem says that a neural network with one hidden layer can basically approximate any continuous function arbitrarily close. The number of hidden units could be huge though, more specifically it's exponential in the input dimension $d$. You can read the more formal description offline.}}
-\note[item]{Let's think about what this theorem means for a minute. Is this the reason why neural networks work so well?
-First of all, there are many other universal approximates; many non-parametric methods can approximate a function arbitrarily well, \eg kernel methods, trees, basis function methods.}
-\note[item]{Now you might say, but NN is parametric. But the theorem requires that the number of hidden units be exponential in $d$, what does that mean? It could remember all training examples, which could effectively make it behave like a non-parametric method such as nearest neighbors.}
-\note[item]{Secondly, the theorem doesn't help us deriving a practical algorithm. We cannot have such a huge hidden layer in practice, and we don't know how to learn the parameters.}
-\note[item]{So, to summarize, while the theorem holds, it doesn't provide us much guidance both theoretically and practically.}
-\note[item]{Luckily, one idea that works very well in practice is to go deeper instead of wider.}
 \end{frame}
 
-
+\begin{frame}{Universal approximation theorem}
+    \begin{itemize}[<+->]
+\item For the theorem to work, the number of hidden units needs to be exponential in $d$
+\item The theorem doesn't tell us how to find the parameters of this network
+\item It doesn't explain why practical neural networks work, or tell us how to build them
+\end{itemize}
+\end{frame}
 
 \subsection{Deep neural networks}
 \begin{frame}
@@ -523,7 +519,7 @@ First of all, there are many other universal approximates; many non-parametric m
 \note[item]{It's pretty easy to extend the two layer NN we just talked about. We can either add more hidden layers, or more hidden units in each layer. Modern neural networks usually have many hidden layers. If the nodes in any two adjacent layers are fully connected, we call it a MLP or FFNN.}
 \end{frame}
 
-\begin{frame}{Multilayer Perceptron: Standard Recipe}
+\begin{frame}{Multilayer Perceptron (MLP): formal definition}
 \begin{itemize}
 \item \textbf{Input space}: $\cx=\reals^{d}$$\qquad$\textbf{Action space}
 $\ca=\reals^{k}$ (for $k$-class classification).
@@ -546,7 +542,7 @@ its argument.
 \note[item]{Note that $\sigma$ operates on each element of the vector.}
 \end{frame}
 %
-\begin{frame}{Multilayer Perceptron: Standard Recipe}
+\begin{frame}{Multilayer Perceptron (MLP): formal definition}
 \begin{itemize}[<+->]
 \item Each subsequent hidden layer takes the \emph{output $o\in\reals^{m}$ of
 previous layer} and produces
@@ -567,16 +563,16 @@ layers:
 f(x) &= \left(a\circ h^{(L)}\circ\cdots\circ h^{(1)}\right)(x)
 \end{align}
 
-\item Last layer typically gives us a score. How do we perform classification?
+\item Typically, the last layer gives us a score. How do we perform classification?
 \end{itemize}
 \end{frame}
 %
 
-\begin{frame}{Multinomial Logistic Regression}
+\begin{frame}{What did we do in multinomial logistic regression?}
 \begin{itemize}
 \item From each $x$, we compute a linear score function for each class:
 \[
-x\mapsto\left(\left\langle w_{1},x\right\rangle ,\ldots,\left\langle w_{k},x\right\rangle \right)\in\reals^{k}
+x\mapsto\left(\left\langle w_{1},x\right\rangle ,\ldots,\left\langle w_{k},\right\rangle \right)\in\reals^{k}
 \]
 \item We need to map this $\reals^{k}$ vector into a probability vector
 $\theta$.
@@ -610,57 +606,25 @@ where $f_i$'s are the outputs of the last hidden layer of a neural network.
 \end{frame}
 
 \begin{frame}
-{Review}
-We've seen
+{Interim discussion}
 \begin{itemize}
-\item Key idea: automatically discover useful features from raw data---\emph{feature/representation learning}.
+\item With the right representations, we can turn nonlinear problems into linear ones
+\item The goal of represenation learning is to automatically discover useful features from raw data
 \item Building blocks:
 \begin{description}[Hidden layer(s)]
 \item[Input layer] no learnable parameters
-\item[Hidden layer(s)] perceptron + \emph{nonlinear} activation function
-\item[Output layer] affine (+ transformation)
+\item[Hidden layer(s)] affine + \emph{nonlinear} activation function
+\item[Output layer] affine (+ softmax)
 \end{description}
-\item A single hidden layer is sufficient to approximate any function.
-\item In practice, often have multiple hidden layers.
+\item A single, potentially huge hidden layer is sufficient to approximate any function
+\item In practice, it is often helpful to have multiple hidden layers
 \end{itemize}
-Next, how to learn the parameters.
 \end{frame}
 
 
 \section{Back-propagation}
-\begin{frame}
-{A brief history of artificial neural networks}
-\begin{simpleblock}{early 1940s--late 1960s}
-\begin{itemize}
-\item Initial idea from neuroscience: create a computational model of neural networks.
-\item Development: perceptron [Rosenblatt, 1958], networks with many layers.
-\item Optimization: automatic differentiation [Linnainmaa, 1970].
-\end{itemize}
-\end{simpleblock}
-\pause
 
-\begin{simpleblock}{late 1960s--late 1980s}
-\begin{itemize}
-\item Computers didn't have enough processing power [Minsky and Papert, 1969].
-\item Back-propagation invented [Werbos, 1975] (but still hard to train).
-\item AI research focused on expert systems and symbolic systems.
-\end{itemize}
-\end{simpleblock}
-\pause
-
-\begin{simpleblock}{late 1980s--early 2000s}
-\begin{itemize}
-\item SVMs and linear models dominated ML.
-\item Continual developments in ANN: Schmidhuber, Hinton, Lecun etc.
-\end{itemize}
-\end{simpleblock}
-\note[item]{The initial idea of an ANN started from neuroscience, but the model is not to be confused with the thing in our brain. There's very little connection, if anything at all. In the 50's and 60's, the idea got developed and NN with multiple layers were designed.}
-\note[item]{For a long time, no one knows how to train it. The Minsky and Papert paper pointed out that computers at that time aren't powerful enough. In 1975, backpropagation was invented, but there are still many problem in training these models, such as gradient vanishing.}
-\note[item]{Until early 2000's, SVM and other linear models dominated ML. But the NN research was still going on and important development comes from groups led by S, H, Y etc. Around 2006, people find that with big data and compute, training doesn't seem to be an issue any more. You know the story afterwards.}
-\note[item]{Next, let's go through the backpropagation algorithm.}
-\end{frame}
-
-\begin{frame}{Example: MLP Regression }
+\begin{frame}{Fitting the parameters of an MLP}
 \begin{itemize}
 \item \textbf{Input space}: $\cx=\reals$ 
 \item \textbf{Action Space / Output space}: $\ca=\cy=\reals$
@@ -684,51 +648,59 @@ for some fixed activation function $\sigma:\reals\to\reals$.
 \end{frame}
 %
 %
-\begin{frame}{How to choose the best hypothesis?}
+\begin{frame}{Finding the best hypothesis}
 \begin{itemize}[<+->]
-\item As usual, choose our prediction function using empirical risk minimization.
+\item As usual, we choose our prediction function using empirical risk minimization.
 \item Our hypothesis space is parameterized by
 \[
 \theta=\left(b_{1},b_{2},b_{3},v_{1},v_{2},v_{3},w_{0},w_{1},w_{2},w_{3}\right)\in\Theta=\reals^{10}
 \]
-\item For a training set $(x_{1},y_{1}),\ldots,(x_{n},y_{n})$, find
+\item For a training set $(x_{1},y_{1}),\ldots,(x_{n},y_{n})$, our goal is to find
 \[
 \hat{\theta}=\argmin_{\theta\in\reals^{10}}\frac{1}{n}\sum_{i=1}^{n}\left(f(x_{i}; \theta)-y_{i}\right)^{2}.
 \]
-\item Gradient descent:
-\begin{itemize}
-\item Is it differentiable w.r.t. $\theta$? $f(x) = {\color{blue}w_{0}}+\sum_{i=1}^{3}{\color{blue}w_{i}}\tanh({\color{blue}v_{i}}x+{\color{blue}b_{i}})$.
-\item Is it convex in $\theta$? Might converge to a local minimum.
 \end{itemize}
+\end{frame}
+
+\begin{frame}{How do we learn these parameters?}
+    \begin{itemize}
+\item For a training set $(x_{1},y_{1}),\ldots,(x_{n},y_{n})$, our goal is to find
+\[
+\hat{\theta}=\argmin_{\theta\in\reals^{10}}\frac{1}{n}\sum_{i=1}^{n}\left(f(x_{i}; \theta)-y_{i}\right)^{2}.
+\]
+\item We can use gradient descent
+\item Is $f$ differentiable w.r.t. $\theta$? $f(x) = {\color{blue}w_{0}}+\sum_{i=1}^{3}{\color{blue}w_{i}}\tanh({\color{blue}v_{i}}x+{\color{blue}b_{i}})$.
+    \pause
+\item Is the loss convex in $\theta$? 
+    \pause
+    \begin{itemize}
+    \item $\tanh$ is not convex
+    \item Regardless of nonlinearity, the composition of convex functions is not necessarily convex
+\end{itemize}
+
+\item We might converge to a local minimum.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 {Gradient descent for (large) neural networks}
 \begin{itemize}[<+->]
-\item Mathematically, it's just \emph{partial derivatives}, which you can compute by hand using the \emph{chain rule}.
+\item Mathematically, it's just \emph{partial derivatives}, which you can compute by hand using the \emph{chain rule}
 \begin{itemize}[<.->]
-\item In practice, this could be \alarm{time-consuming} and \alarm{error-prone}.
+\item In practice, this could be \alarm{time-consuming} and \alarm{error-prone}
 \end{itemize}
-\item How do we compute gradients in a systematic and efficient way?
-\begin{itemize}[<.->]
-\item \emph{Back-propagation} (a special case of automatic differentiation).
-\item Not limited to neural networks.
-\end{itemize}
-\item Visualize with \emph{computation graphs}.
-\begin{itemize}[<.->]
-\item Avoid long equations.
-\item Structure of the computation (\textcolor{Green}{modularity} and \textcolor{Green}{dependency}), which allows for modern computation frameworks such as Tensorflow/Pytorch/MXNet/etc.
-\end{itemize}
+\item Back-propagation computes gradients for neural networks (and other models) in a systematic and efficient way
+\item We can visualize the process using \emph{computation graphs}, which
+expose the structure of the computation (\textcolor{Green}{modularity} and \textcolor{Green}{dependency})
 \end{itemize}
 \end{frame}
 
 \subsection{Partial Derivatives and the Chain Rule}
 
 \begin{frame}
-{Function as a graph}
+{Functions as nodes in a graph}
 \begin{itemize}
-\item Function as a \emph{node} that takes in a set of \emph{inputs} and produces a set of \emph{outputs}.
+\item We represent each component of the network as a \emph{node} that takes in a set of \emph{inputs} and produces a set of \emph{outputs}.
 \item Example: $g:\reals^{p}\to\reals^{n}$.
 \end{itemize}
 
@@ -743,14 +715,14 @@ for some fixed activation function $\sigma:\reals\to\reals$.
 
 \column{.4\textwidth}
 \begin{itemize}
-\item Broken out into components:
+\item Broken down by component:
 \end{itemize}
 \includegraphics[scale=0.07]{figures/one-fn-comp-graph-partials}
 \end{columns}
 \note[item]{Conceptually, let's now think of functions as a graph. We have a node representing the computation happens in the function. The arrows or directed edges represent the input and output.}
 \end{frame}
 
-\begin{frame}{Partial Derivatives of an affine function}
+\begin{frame}{Partial derivatives of an affine function}
 \begin{itemize}
 \item Define the affine function $g(x)=Mx+c$, for $M\in\reals^{n\times p}$
 and $c\in\reals$.
@@ -778,8 +750,9 @@ b_i \leftarrow b_i + {\color{blue}M_{ij}\delta} .
 }
 \end{columns}
 \onslide<+->{
-Partial derivative/gradient measures \emph{sensitivity}:
-If we perturb an input a little bit, how much does an output change?
+    \vspace{-0.5cm}
+The partial derivative/gradient measures \emph{sensitivity}:
+If we perturb an input a little bit, how much does the output change?
 }
 \note[item]{Now, what is the meaning of partial derivatives on this graph. Let's consider the affine function as an example.}
 \note[item]{Write the function.}
@@ -787,7 +760,7 @@ If we perturb an input a little bit, how much does an output change?
 \note[item]{$M_{ij} = \frac{\partial b_i}{\partial a_j}$}
 \end{frame}
 
-\begin{frame}{Partial Derivatives in general}
+\begin{frame}{Partial derivatives in general}
 \begin{itemize}
 \item Consider a function $g:\reals^{p}\to\reals^{n}$.
 \end{itemize}
@@ -801,7 +774,7 @@ If we perturb an input a little bit, how much does an output change?
 \column{.5\textwidth}
 \begin{itemize}
 \item Partial derivative $\frac{\partial b_{i}}{\partial a_{j}}$ is the
-instantaneous rate of change of $b_{i}$ as we change $a_{j}$.
+rate of change of $b_{i}$ as we change $a_{j}$
 \item If we change $a_{j}$ slightly to
 \[
 a_{j}+{\color{blue}\delta} ,
@@ -816,9 +789,9 @@ b_{i}+{\color{blue}\frac{\partial b_{i}}{\partial a_{j}}\delta} .
 \end{frame}
 
 \begin{frame}
-{Compose multiple functions}
+{Composing multiple functions}
 \begin{itemize}
-\item Compose two functions $g:\reals^{p}\to\reals^{n}$ and $f:\reals^{n}\to\reals^{m}$.
+\item We have $g:\reals^{p}\to\reals^{n}$ and $f:\reals^{n}\to\reals^{m}$
 \item $b=g(a)$, $c=f(b)$.
 \end{itemize}
 \begin{columns}
@@ -830,11 +803,11 @@ b_{i}+{\color{blue}\frac{\partial b_{i}}{\partial a_{j}}\delta} .
 
 \begin{column}{0.5\textwidth}
 \begin{itemize}[<+->]
-\item How does change in $a_j$ affect $c_i$?
-\item Visualize \textbf{chain rule}:
+\item How does a small change in $a_j$ affect $c_i$?
+\item Visualizing the \textbf{chain rule}:
 \begin{itemize}[<.->]
-\item \textcolor{blue}{Sum} changes induced on all paths from $a_j$ to $c_i$.
-\item Changes on one path is the {\color{red}product} of changes on each edge along the path.
+\item We \textcolor{blue}{sum} changes induced on all paths from $a_j$ to $c_i$.
+\item The change contributed by each path is the {\color{red}product} of changes on each edge along the path.
 \onslide<+->{
 \[
 \frac{\partial c_{i}}{\partial a_{j}}={\color{blue}\sum_{k=1}^{n}}
@@ -862,26 +835,25 @@ b_{i}+{\color{blue}\frac{\partial b_{i}}{\partial a_{j}}\delta} .
 
 
 \pause{}
-\item In SGD, in each round we'd choose a random index $i\in1,\ldots,n$
+\item In SGD, in each round we choose a random training instance $i\in1,\ldots,n$
 and take a gradient step
 \begin{eqnarray*}
 w_{j} & \gets & w_{j}-\eta\frac{\partial\ell_{i}(w,b)}{\partial w_{j}}\text{, for }j=1,\ldots,d\\
 b & \gets & b-\eta\frac{\partial\ell_{i}(w,b)}{\partial b},
 \end{eqnarray*}
 for some step size $\eta>0$.
-\item Let's see how to calculate these partial derivatives on a computation graph.
+\item How do we calculate these partial derivatives on a computation graph?
 \end{itemize}
 \end{frame}
 %
-\begin{frame}{Computation Graph and Intermediate Variables}
+\begin{frame}{Computation graph and intermediate variables}
 \begin{itemize}
-\item For a generic training point $\left(x,y\right)$, denote the loss
-by 
+\item For a training point $\left(x,y\right)$, the loss is
 \[
 \ell(w,b)=\left[\left(w^{T}x+b\right)-y\right]^{2}.
 \]
 \pause
-\item Let's break this down into some intermediate computations:
+\item Let's break this down into intermediate computations:
 \begin{columns}[t]
 
 \column{.35\textwidth}
@@ -905,10 +877,10 @@ by
 \end{itemize}
 \end{frame}
 %
-\begin{frame}{Partial Derivatives on Computation Graph}
+\begin{frame}{Partial derivatives on computation graph}
 \begin{itemize}
-\item We'll work our way from graph output $\ell$ back to the parameters
-$w$ and $b$:
+\item We'll work our way from the output $\ell$ back to the parameters
+$w$ and $b$, reusing previous computations as much as possible:
 \begin{columns}[c]
 
 \column{.45\textwidth}
@@ -964,7 +936,7 @@ J(w,b)=\left[\left(w^{T}x+b\right)-y\right]^{2}+\lambda w^{T}w.
 
 \end{itemize}
 \end{frame}
-%
+
 \begin{frame}{Partial Derivatives on Computation Graph}
 \begin{itemize}
 \item We'll work our way from graph output $\ell$ back to the parameters
@@ -1053,10 +1025,10 @@ $w$ and $b$:
 
 \subsection{General Backpropagation}
 \begin{frame}
-{Backpropagation overview}
+{Backpropagation: Overview}
 \begin{itemize}
 \item \textbf{Learning}: run gradient descent to find the parameters that minimize our objective $J$.
-\item Backpropagation: compute gradient w.r.t. each (trainable) parameter $\frac{\partial J}{\partial \theta_i}$.
+\item Backpropagation: we compute the gradient w.r.t. each (trainable) parameter $\frac{\partial J}{\partial \theta_i}$.
 \end{itemize}
 
 \begin{columns}
@@ -1068,11 +1040,11 @@ $w$ and $b$:
 \item[Forward pass] Compute intermediate function values, \ie output of each node
 \item[Backward pass] Compute the partial derivative of $J$ w.r.t. all intermediate variables and the model parameters
 \end{description}
-\begin{simpleblock}{How to save computation?}
+\begin{simpleblock}{How do we minimize computation?}
 \pause
 \begin{itemize}
-\item Path sharing: each node needs to \emph{cache the intermediate results}.
-\item Think dynamic programming.
+    \item Path sharing: each node \emph{caches intermediate results}: we don't need to compute them over and over again
+\item An example of dynamic programming
 \end{itemize}
 \end{simpleblock}
 \end{column}
@@ -1117,9 +1089,9 @@ $w$ and $b$:
 \begin{frame}
 {Backward pass}
 \begin{itemize}
-\item Order nodes in \textbf{reverse topological order} (every node appear after its children)
-\item For each node, compute the partial derivative of its output w.r.t. its input, multiplied by the partial derivative from its children (chain rule).
-\item Backward at intermediate node $f_i$:
+\item Order nodes in \textbf{reverse topological order} (every node appears after its children)
+\item For each node, compute the partial derivative of its output w.r.t. its input, multiplied by the partial derivative of its children (chain rule)
+\item Backward pass at intermediate node $f_i$:
 \end{itemize}
 \begin{center}
 \begin{tikzpicture}[shorten >=1pt]
@@ -1189,19 +1161,6 @@ $w$ and $b$:
 \end{frame}
 %
 %
-\begin{frame}
-{Backpropagation in practice}
-\begin{itemize}
-\item Inputs and outputs of nodes are generally \emph{vectorized} (efficient to compute on GPUs).
-\item Computation graphs can be composed from a set of \emph{basic operation nodes}, \eg addition/multiplication, dot product, logistic function etc. 
-\item Programming paradigms:
-\begin{description}[Imperative]
-\item[Symbolic] Specify all computation before data---efficient, \eg Tensorflow.
-\item[Imperative] Specify the computation step by step---flexible/easier to write, \eg Pytorch.
-\item[Hybrid] Can use either paradigm for computation subgraphs, \eg MXNet.  
-\end{description}
-\end{itemize}
-\end{frame}
 
 \begin{frame}
 {Non-convex optimization}
@@ -1215,27 +1174,25 @@ $w$ and $b$:
 
 \begin{frame}
 {Non-convex optimization: challenges}
-\begin{simpleblock}{Optimization of neural networks is generally hard.}
 \begin{columns}
 \begin{column}{0.6\textwidth}
 \begin{itemize}
-\item Converge to a bad local minimum.
+\item What if we converge to a bad local minimum?
 \begin{itemize}
-\item Try different initialization and rerun.
+\item Rerun with a different initialization
 \end{itemize}
-\item Saddle point. 
+\item Hit a saddle point 
 \begin{itemize}
-\item Doesn't often happen with SGD. 
-\item Second partial derivative test.
+\item Doesn't often happen with SGD 
+\item Second partial derivative test
 \end{itemize}
-\item ``Flat'' region: low gradient magnitude
+\item Flat region: low gradient magnitude
 \begin{itemize}
-\item Use ReLU instead of sigmoid as activation functions.
+\item Possible solution: use ReLU instead of sigmoid 
 \end{itemize}
-\item High curvature: high gradient magnitude
+\item High curvature: large gradient magnitude
 \begin{itemize}
-\item Gradient clipping.
-\item Adaptive step sizes.
+\item Possible solutions: Gradient clipping, adaptive step sizes
 \end{itemize}
 \end{itemize}
 \end{column}
@@ -1245,17 +1202,16 @@ $w$ and $b$:
 \end{figure}
 \end{column}
 \end{columns}
-\end{simpleblock}
 \let\thefootnote\relax\footnotetext{\tiny{Reference: Chris De Sa's slides (CS6787 Lecture 7).}}
 \end{frame}
 
 \begin{frame}
 {Review}
 \begin{itemize}
-\item Backpropagation is an algorithm to compute gradient (partial derivatives + chain rule) efficiently.
-\item It is used in gradient descent optimization with neural networks.
+\item Backpropagation is an algorithm for computing the gradient (partial derivatives + chain rule) efficiently
+\item It is used in gradient descent optimization for neural networks
 \item Key idea: function composition and dynamic programming
-\item In practice, efficient software exists (backpropagation, neural network building blocks, optimization algorithms etc.).
+\item In practice, we can use existing software packages, e.g. PyTorch (backpropagation, neural network building blocks, optimization algorithms etc.)
 \end{itemize}
 \end{frame}
 
