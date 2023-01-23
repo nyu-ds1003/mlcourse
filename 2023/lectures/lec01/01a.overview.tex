@@ -1,0 +1,283 @@
+%% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\usepackage{mathptmx}
+\usepackage{eulervm}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+\usetikzlibrary{calc}
+\usepackage{pgfplots}
+%\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage{xpatch}
+
+\xpatchcmd{\itemize}
+  {\def\makelabel}
+  {\ifnum\@itemdepth=1\relax
+     \setlength\itemsep{2ex}% separation for first level
+   \else
+     \ifnum\@itemdepth=2\relax
+       \setlength\itemsep{1ex}% separation for second level
+     \else
+       \ifnum\@itemdepth=3\relax
+         \setlength\itemsep{0.5ex}% separation for third level
+   \fi\fi\fi\def\makelabel
+  }
+ {}
+ {}
+
+\ifx\hypersetup\undefined
+  \AtBeginDocument{%
+    \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+  }
+\else
+  \hypersetup{unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},pdfborderstyle={},backref=false,colorlinks=true,
+ allcolors=NYUPurple,urlcolor=LightPurple}
+\fi
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% this default might be overridden by plain title style
+\newcommand\makebeamertitle{\frame{\maketitle}}%
+% (ERT) argument for the TOC
+\AtBeginDocument{%
+  \let\origtableofcontents=\tableofcontents
+  \def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+  \def\gobbletableofcontents#1{\origtableofcontents}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usetheme{CambridgeUS} 
+\beamertemplatenavigationsymbolsempty
+
+
+% Set Color ==============================
+\definecolor{NYUPurple}{RGB}{87,6,140}
+\definecolor{LightPurple}{RGB}{165,11,255}
+
+
+\setbeamercolor{title}{fg=NYUPurple}
+\setbeamercolor{frametitle}{fg=NYUPurple}
+
+\setbeamercolor{background canvas}{fg=NYUPurple, bg=white}
+\setbeamercolor{background}{fg=black, bg=NYUPurple}
+
+\setbeamercolor{palette primary}{fg=black, bg=gray!30!white}
+\setbeamercolor{palette secondary}{fg=black, bg=gray!20!white}
+\setbeamercolor{palette tertiary}{fg=gray!20!white, bg=NYUPurple}
+
+\setbeamertemplate{headline}{}
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\normalsize}
+
+\setbeamercolor{parttitle}{fg=NYUPurple}
+\setbeamercolor{sectiontitle}{fg=NYUPurple}
+\setbeamercolor{sectionname}{fg=NYUPurple}
+\setbeamercolor{section page}{fg=NYUPurple}
+%\setbeamercolor{description item}{fg=NYUPurple}
+%\setbeamercolor{block title}{fg=NYUPurple}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamercolor{block body}{bg=normal text.bg!90!NYUPurple}
+\setbeamercolor{block title}{bg=NYUPurple!30, fg=NYUPurple}
+
+
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+\setbeamercolor{section title}{fg=NYUPurple}
+ \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+\makeatother
+
+\setlength{\parskip}{\medskipamount} 
+
+\input ../macros
+
+\begin{document}
+\input ../rosenberg-macros
+
+\title[DS-GA 1003]{Course Overview}
+\author{Ravid Shwartz-Ziv}
+\date{Jan 24, 2023}
+\institute{CDS, NYU}
+
+\makebeamertitle
+\mode<article>{Just in article version}
+
+\begin{frame}{Contents}
+\tableofcontents{}
+\end{frame}
+
+\section{Logistics}
+\begin{frame}{Course Staff}
+\begin{itemize}
+\item Instructors:
+    \begin{itemize}
+        \item Ravid Shwartz Ziv
+        \item Mengye Ren
+    \end{itemize}
+
+\item Section leaders:
+    \begin{itemize}
+        \item Colin Wan
+        \item Ying Wang
+        \item  Yanlai Yang
+    \end{itemize}
+
+\item Graders:
+    \begin{itemize}
+        \item Xiaojing Fan
+        \item Junze Li
+        \item Richard-John Lin
+        \item Ying Wang
+        \item Jerry Xue
+        \item Frances Yuan
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Logistics}
+\begin{itemize}
+\item Class webpage: \url{https://nyu-ds1003.github.io/spring2023} 
+\begin{itemize}
+    \item Course materials (lecture slides, homework assignments) will be made available on the website
+\end{itemize}
+\item Announcements via Brightspace
+\item Discussion / questions on CampusWire: \url{https://campuswire.com/c/G0F20206F/feed}
+\item Sign up to Gradescope to submit homework assignments (entry code \textbf{475536})
+\end{itemize}
+
+    \begin{itemize}
+\item Office Hours: By appointment 
+\begin{itemize}
+    \item  Ravid: Tuesday 9:00-10:00 am; Mengye: Tuesday 2:00-3:00 pm
+\item  Colin: Monday 1:00-2:00 pm; Ying :Wednsday 6:00 pm - 7:00 pm;  Yanlai : Wednsday 1:00pm-2:00 pm; Room 204, 60 5th Ave; 
+\end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Assessment}
+\begin{itemize}
+\item 7-8 assignments ($40\%$)
+\item Two tests ($60\%$)
+\begin{itemize}
+\item Midterm Exam ($30\%$)
+\item Final Exam ($30\%$)
+\end{itemize}
+
+\item Extra credits ($2\%$) answer other students' questions in a substantial and helpful way on Campuswire
+
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{Homework}
+\begin{itemize}
+    \item Submit through Gradescope as a \textbf{PDF document}
+    \item Late policy: You have seven late days in total which can be used throughout the semester without penalty (see more details on website).
+
+\item You can collaborate with other students on the homework assignments, but please:
+\begin{itemize}
+\item Write up the solutions and code on your own;
+\item And list the names of the students you discussed each problem with.
+\end{itemize}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Prerequisites}
+\begin{itemize}
+\item DS-GA 1001: Introduction to Data Science 
+\item DS-GA 1002: Statistical and Mathematical Methods
+\item Math
+\begin{itemize}
+\item Multivariate Calculus
+\item Linear Algebra
+\item Probability Theory
+\item Statistics
+\item {[}Preferred{]} Proof-based linear algebra or real analysis
+\end{itemize}
+\item Python programming (numpy)
+\end{itemize}
+\end{frame}
+
+
+\section{Course Overview and Goals}
+\begin{frame}{Syllabus (Tentative)}
+
+13 weeks of instruction + 1 week midterm exam
+\begin{itemize}
+    \item 2 weeks: introduction to \textbf{statistical learning theory}, \textbf{optimization}
+
+\item 2--3 weeks: \textbf{Linear }methods for binary classification
+and regression (also\textbf{ kernel methods)}
+
+\item 2 weeks: \textbf{Probabilistic models}, \textbf{Bayesian}
+methods
+
+\item 1 week: \textbf{Multiclass} classification and introduction to \textbf{structured
+prediction}
+
+\item 3--4 weeks: \textbf{Nonlinear} methods (\textbf{trees}, \textbf{ensemble}
+methods, and \textbf{neural networks})
+
+\item 2 weeks: \textbf{Unsupervised} learning: \textbf{clustering} and \textbf{latent variable} models
+
+\item More detailed schedule on the course website (still subject to change)
+
+\item Certain applications and practical algorithms may be covered in the labs
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{The high level goals of the class}
+\begin{itemize}
+\item Our focus will be on the fundamental building blocks of machine learning
+\item ML methods have a lot of names; our goal is for you to notice that\\
+\begin{itemize}
+\item[] \textbf{fancy new method A ``is just'' familiar thing B + familiar
+thing C + tweak D}
+\end{itemize}
+        \begin{itemize}
+\item SVM ``\textbf{is just}'' ERM with hinge loss with $\ell_{2}$ regularization
+\item Pegasos ``\textbf{is just}'' SVM with SGD with a particular step
+size rule
+\item Random forests ``\textbf{are just}'' bagging with trees, with a different
+approach to choosing splitting variables
+        \end{itemize}
+\end{itemize}
+\end{frame}
+%
+\begin{frame}{The level of the class}
+\begin{itemize}
+\item We will learn how to implement each ML algorithm \textbf{from scratch} using numpy alone, without any ML libraries.
+\item Once we have implemented an algorithm from scratch once, we will use the sklearn version.
+\end{itemize}
+\end{frame}
+\end{document}
