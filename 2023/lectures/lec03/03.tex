@@ -123,22 +123,32 @@
 \begin{document}
 \input ../rosenberg-macros
 
-\title[DS-GA 1003]{Controling Complexity: Feature Selection and Regularization\\\vspace{0.5in}\small{Based on \href{https://github.com/davidrosenberg/mlcourse}{David Rosenberg's} and He He's materials}}
-\author{Tal Linzen}
+\title[DS-GA 1003]{Controling Complexity: Feature Selection and Regularization}
+% \title[DS-GA 1003]{Controling Complexity: Feature Selection and Regularization\\\vspace{0.5in}\small{Based on \href{https://github.com/davidrosenberg/mlcourse}{David Rosenberg's} and He He's materials}}
+% \author{Tal Linzen}
+\author{}
 
-\date{Feb 8, 2022}
+\date{Feb 7, 2022}
 \institute{CDS, NYU}
+
+
+\begin{frame}
+\centering
+\includegraphics[width=0.49\textwidth,trim={0 16.5cm 0 0.5cm},clip]{figures/xkcd}
+\includegraphics[width=0.49\textwidth,trim={0 0.5cm 0 16.5cm},clip]{figures/xkcd}
+\end{frame}
 
 \makebeamertitle
 \mode<article>{Just in article version}
+
 
 \begin{frame}
     {Complexity of Hypothesis Spaces}
     What is the trade-off between approximation error and estimation error?
     \pause
     \begin{itemize}
-        \item Bigger $\sF$: better approximation but can overfit
-        \item Smaller $\sF$: less likely to overfit but can be farther from the Bayes prediction function
+        \item Bigger $\sF$: better approximation but can overfit (need more samples)
+        \item Smaller $\sF$: less likely to overfit but can be farther from the true function
     \end{itemize}
     \pause
 
@@ -190,24 +200,7 @@ $
                 $\pc{X_2}$,
                 $\pc{X_1, X_2}$, respectively
             \end{itemize}
-        \item \al{No efficient search algorithm}; iterating over all subsets becomes very expensive with a large number of features 
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-    {Complexity Penalty}
-    An objective that balances number of features and prediction performance:
-
-    \begin{align}
-        \text{score}(S) = \text{training\_loss}(S) + \lambda |S|
-    \end{align}
-    \pause
-
-    $\lambda$ balances the training loss and the number of features used:
-    \begin{itemize}
-        \item Adding an extra feature must be justified by at least $\lambda$ improvement in training loss
-        \item Larger $\lambda$ $\rightarrow$ complex models are penalized more heavily
-        \item Criteria such as AIC and BIC use different values of $\lambda$
+        \item \al{Not an efficient search algorithm}; iterating over all subsets becomes very expensive with a large number of features 
     \end{itemize}
 \end{frame}
 
@@ -244,13 +237,30 @@ $
                 \item Define a score that balances training error and complexity
                 \item Find the subset of features that maximizes the score
             \end{itemize}
-        \item The search problem over $2^k$ feature subsets is hard
-        \item Forward selection is often used in practice, but isn't guaranteed to find the best solution
-        \item Forward and backward selection do not in general result in the same subset
+        \item Forward \& backward selection do not guarantee to find the best solution.
+        \item Forward \& backward selection do not in general result in the same subset.
     \end{itemize}
 \end{frame}
 
 \section{$\ell_2$ and $\ell_1$ Regularization}
+
+
+\begin{frame}
+    {Complexity Penalty}
+    An objective that balances number of features and prediction performance:
+
+    \begin{align}
+        \text{score}(S) = \text{training\_loss}(S) + \lambda |S|
+    \end{align}
+    \pause
+
+    $\lambda$ balances the training loss and the number of features used:
+    \begin{itemize}
+        \item Adding an extra feature must be justified by at least $\lambda$ improvement in training loss
+        \item Larger $\lambda$ $\rightarrow$ complex models are penalized more heavily
+        % \item Criteria such as AIC and BIC use different values of $\lambda$
+    \end{itemize}
+\end{frame}
 
 \begin{frame}
     {Complexity Penalty}
@@ -277,12 +287,16 @@ Number of features as complexity measure is hard to optimize---other measures?
 
 \begin{frame}
     {Weight Shrinkage: Intuition}
+    \begin{figure}
+        % \includegraphics[height=3cm,trim={7cm 5.9cm 11cm 0},clip]{figures/poly-regression}
+        \includegraphics[height=3cm]{figures/smaller_weights}
+    \end{figure}
     \begin{itemize}[<+->]
-        \item (Draw on board)
+        % \item (Draw on board)
         \item Why would we prefer a regression line with \hl{smaller slope} (unless the data strongly supports a larger slope)?
         \item More conservative: small change in the input does not cause large change in the output
         \item If we push the estimated weights to be small, re-estimating them on a new dataset wouldn't cause the prediction function to change dramatically (\hl{less sensitive to noise in data})
-        \item Bayesian intuition: pull the regression weights towards a prior centered at 0
+        % \item Bayesian intuition: our ``prior'' intuition is that weights are small and centered at 0. Pull the regression weights towards a prior centered at 0
     \end{itemize}
 \end{frame}
 
@@ -395,6 +409,16 @@ of $\hat{f}$.
 \begin{frame}{Ridge Regression: Regularization Path}
     %\textbf{Regulariztion path} shows how the weights vary as we change the regularization strength
 
+% There are five predictors: 
+% - annual police funding in dollars per resident (funding)
+% - percent of people 25 years and older with four years of high school (hs)
+% - percent of 16- to 19-year olds not in high school and not high school graduates (not-hs)
+% - percent of 18- to 24-year olds in college (college)
+% - percent of people 25 years and older with at least four years of college. (college4)
+% This small example is for illustration only, but helps to demonstrate the nature of the
+% lasso solutions. Typically the lasso is most useful for much larger problems,
+% including “wide” data for which p >> N.
+
 \let\thefootnote\relax\footnotetext{\tiny{Modified from Hastie, Tibshirani, and Wainwright's \emph{Statistical Learning with Sparsity}, Fig 2.1. About predicting crime in 50 US cities.}}
 \begin{center}
 \includegraphics[height=0.7\textheight]{figures/ridge-regularization-HTW-Fig21-LATEX.png} 
@@ -403,7 +427,7 @@ of $\hat{f}$.
 
 \begin{frame}{Lasso Regression}
     Penalize the $\ell_1$ norm of the weights:
-\begin{block}{Lasso Regression (Tikhonov Form)}
+\begin{block}{Lasso Regression (Tikhonov Form, soft penalty)}
 \[
 \hat{w}=\argmin_{w\in\reals^{d}}\frac{1}{n}\sum_{i=1}^{n}\left\{ w^{T}x_{i}-y_{i}\right\} ^{2}+\lambda\|w\|_{1},
 \]
@@ -435,9 +459,9 @@ The coefficient for a feature is $0$ $\implies$ the feature is not needed for pr
 
 \item Interpretability: identifies the important features
 
-\item Prediction function may generalize better
+\item Prediction function may generalize better (model is less complex)
 
-\item Feature-selection step for training a slower non-linear model
+% \item Feature-selection step for training a slower non-linear model
 \end{itemize}
 \end{frame}
 
@@ -451,7 +475,7 @@ For complexity measure $\Omega:\cf\to[0,\infty)$ and fixed $r\ge0$,
 \end{align*}
 \end{block}
 
-\begin{block}{Lasso Regression (Ivanov Form)}
+\begin{block}{Lasso Regression (Ivanov Form, hard constraint)}
 The lasso regression solution for complexity parameter $r\ge0$ is
 \[
 \hat{w}=\argmin_{\|w\|_{1}\le r}\frac{1}{n}\sum_{i=1}^{n}\left\{ w^{T}x_{i}-y_{i}\right\} ^{2}.
