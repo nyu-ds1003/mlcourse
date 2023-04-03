@@ -1070,50 +1070,48 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 \end{itemize}
 \end{itemize}
 \end{frame}
-%
-%\begin{frame}{Adaboost: Example Reweighting}
-%\begin{itemize}
-%\item Any misclassified point has weight adjusted as $w_{i}\gets w_{i}\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
-%\end{itemize}
-%\begin{center}
-%\includegraphics[clip,height=0.6\textheight]{figures/adaboostWeightUpdate}
-%\par\end{center}
-%\begin{itemize}
-%\item The smaller $\err_{m}$, the more we increase weight of misclassified
-%points.
-%\end{itemize}
-%\end{frame}
-%
-%\begin{frame}{AdaBoost: Algorithm}
 
-%Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
-%\begin{enumerate}
-%\item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
+% \begin{frame}{AdaBoost: Example Reweighting}
+% \begin{itemize}
+% \item Any misclassified point has weight adjusted as $w_{i}\gets w_{i}\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
+% \end{itemize}
+% \begin{center}
+% \includegraphics[clip,height=0.6\textheight]{figures/adaboostWeightUpdate}
+% \par\end{center}
+% \begin{itemize}
+% \item The smaller $\text{err}_{m}$, the more we increase weight of misclassified
+% points.
+% \end{itemize}
+% \end{frame}
 
-%\pause{}
-%\item For $m=1$ to $M$:
-%\begin{enumerate}
-%\item Base learner fits weighted training data and returns $G_{m}(x)$
+\begin{frame}{AdaBoost: Algorithm}
 
-%\pause{}
-%\item Compute \emph{weighted empirical 0-1 risk}:
-%\[
-%\mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
-%\]
+Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
+\begin{enumerate}
+\item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
 
+\pause{}
+\item For $m=1$ to $M$:
+\begin{enumerate}
+\item Base learner fits weighted training data and returns $G_{m}(x)$
 
-%\pause{}
-%\item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
+\pause{}
+\item Compute \emph{weighted empirical 0-1 risk}:
+\[
+\mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
+\]
+\pause{}
+\item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
 
-%\pause{}
-%\item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
+\pause{}
+\item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
 
-%\pause{}
-%\end{enumerate}
-%\item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
-%\end{enumerate}
-%\end{frame}
-%
+\pause{}
+\end{enumerate}
+\item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
+\end{enumerate}
+\end{frame}
+
 \begin{frame}{AdaBoost with Decision Stumps}
 \begin{itemize}
 \item After 1 round:
@@ -1181,15 +1179,101 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{AdaBoost for Face Detection}
+\begin{itemize}
+\item  Famous application of boosting: detecting faces in images (Viola \& Jones, 2001)
+\item A few twists on standard algorithm
+\begin{itemize}
+    \onslide<2->\item Pre-define weak classifiers, so optimization=selection
+    % \onslide<3->\item Change loss function for weak learners: false positives less costly than misses
+    \onslide<3->\item Smart way to do inference in real-time (in 2001 hardware)
+\end{itemize}
+\begin{center}
+    \includegraphics[width=0.4\linewidth]{figures/violajones.pdf} 
+\end{center}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Harr wavelet basis functions}
+\begin{itemize}
+    \item A simple way to generate rectangular weights.
+    \item Over 180,000 filters on a small image (subwindow) of 24x24.
+\end{itemize}
+\begin{center}
+    \includegraphics[width=0.4\linewidth]{figures/harr-wavelet.png} 
+\end{center}
+\end{frame}
+
+\begin{frame}{Integral image}
+\begin{itemize}
+    \item Harr Filter * Image means compute the sum of an area of the image.
+    \item Compute an ``integral image''
+    \item Store a 2-D array: S[i, j] = Sum of the image from (0,0) to (i,j).
+    \item D = ABCD - AB - AC + A
+\end{itemize}
+\begin{center}
+    \includegraphics[width=0.4\linewidth, trim={0 9cm 0 0},clip]{figures/integral-image.png} 
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Learning Procedure (AdaBoost)}
+\begin{itemize}
+    \item Review AdaBoost again here, with a slightly different but equivalent setup.
+    \item Given example images $(x_1, y_1), \dots, (x_n, y_n)$ where $y_i=0,1$ for negative and positive.
+    \item Initialize example weights $w_{1,i} = \frac{1}{2m}, \frac{1}{2l}$ for $y_i=0,1$ respectively, where $m$ and $l$ are the number of negatives and positives.
+    \item For $t = 1, \dots, T$:
+    \begin{enumerate}
+        \item Normalize the example weights, $w_{t,i} \gets \frac{w_{t,i}}{\sum_{i'=1}^n w_{t,i'}}$
+        \item For each feature $j$, train a classifier $h_j$. Evaluate weighted error $\epsilon_j = \sum_i w_i |h_j(x_i) - y_i|$.
+        \item Choose the classifier $h_t$, with the lowest error $\epsilon_t$.
+        \item Update the example weights:
+        $w_{t+1} = w_{t,i} \beta_t^{1-e_i}$, $\beta_t = \frac{\epsilon_t}{1-\epsilon_t}, e_i=0\text{ if correct else } 1$,
+        \item Final classifier
+        $h(x) = \begin{cases}
+        1\text{ if } \sum_t \alpha_t h_t(x) > \frac{1}{2} \sum_t \alpha_t \\
+        0\text{ otherwise},
+        \end{cases}
+        \alpha_t = -\log \beta_t
+        $
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cascaded Processing for Faster Speed}
+\begin{itemize}
+    \item Object detection: A large number of subwindows to process.
+    \item Do we need to run all the weak classifiers at test time?
+    \item Threshold can be adjusted so that there is almost no false negative.
+    \item False positive is ok. We can reject the windows later.
+    \item Stop processing if one weak classifier says no.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.35\textwidth]{figures/cascade.png}
+\end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{AdaBoost Face Detection Results}
+\vspace{-0.2cm}
+\begin{center}
+\includegraphics[width=0.5\linewidth]{figures/adaboost_facedetection} 
+\end{center}
+\end{frame}
+
 \begin{frame}
 {Summary}
     \begin{itemize}[<+->]
 \item Boosting is used to reduce bias from shallow decision trees
+\item Each classifier is trained to reduce errors of its previous ensemble.
 \item AdaBoost is a very powerful off-the-self classifier!
 \item Next week
 \begin{itemize}
 \item What is the objective function of AdaBoost?
-\item Generalizations to other loss functions 
+\item Generalizations to other loss functions
+\item Gradient Boosting
 \end{itemize}
 \end{itemize}
 \end{frame}
