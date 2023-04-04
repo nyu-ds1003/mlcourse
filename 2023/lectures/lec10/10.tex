@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -262,11 +262,12 @@ s_{j}\in\left\{ \frac{1}{2}\left(x_{j(r)}+x_{j(r+1)}\right)\mid r=1,\ldots,n-1\r
 \end{itemize}
 
 \item When should we stop splitting? (Controlling the complexity of the hypothesis space)
-\begin{itemize}[<.->]
+\begin{itemize}
 \item Limit total number of nodes.
 \item Limit number of terminal nodes.
 \item Limit tree depth.
 \item Require minimum number of data points in a terminal node.
+\pause
 \item \textbf{Backward pruning} (the approach used in \textbf{CART}; Breiman et al 1984): 
 \begin{enumerate}
 \item Build a really big tree (e.g. until all regions have $\le5$ points).
@@ -318,11 +319,12 @@ Intuition: we want to produce \emph{pure} nodes,
 \item Let's consider the multiclass classification case: $\cy=\left\{ 1,2,\ldots,K\right\} $.
 
 \item Let node $m$ represent region $R_{m}$, with $N_{m}$ observations
+\pause
 \item We denote the proportion of observations in $R_{m}$ with class $k$ by
 \[
 \hat{p}_{mk}=\frac{1}{N_{m}}\sum_{\left\{ i:x_{i}\in R_{m}\right\} }\ind{y_{i}=k}.
 \]
-
+\pause
 \item We predict the majority class in node $m$: 
     \[ 
         k(m)=\argmax_{k}\hat{p}_{mk} 
@@ -338,22 +340,22 @@ Intuition: we want to produce \emph{pure} nodes,
 \begin{itemize}[<+->]
 \item Three measures of \textbf{node impurity} for leaf node
 $m$:
-\begin{description}[<+->][Misclassification error]
-\item[Misclassification error]
+\begin{itemize}[<+->]
+\item Misclassification error
 \[
 1 -  \hat{p}_{mk(m)}.
 \]
 
-\item[The Gini index] encourages $\hat{p}_{mk}$ to be close to 0 or 1
+\item The Gini index encourages $\hat{p}_{mk}$ to be close to 0 or 1
 \[
-\sum_{k=1}^{K}\hat{p}_{mk}(1-\hat{p}_{mk})
+\sum_{k=1}^{K}\hat{p}_{mk}(1-\hat{p}_{mk}).
 \]
 
-\item[Entropy / Information gain]
+\item Entropy / Information gain
 \[
 -\sum_{k=1}^{K}\hat{p}_{mk}\log\hat{p}_{mk}.
 \]
-\end{description}
+\end{itemize}
 \item The Gini index and entropy are numerically similar to each other, and both work better in practice than the misclassification error.
 
 \note[item]{We would like a metric that gives high scores to nodes containing examples from many different classes, and low scores to nodes with few or a single class of examples.}
@@ -384,8 +386,10 @@ Scoring a potential split that produces the nodes $R_{L}$ and $R_{R}$:
 \begin{itemize}
 \item Suppose we have $N_{L}$ points in $R_{L}$ and $N_{R}$ points in
 $R_{R}$.
+\pause
 
 \item Let $Q(R_{L})$ and $Q(R_{R})$ be the node impurity measures for each node.
+\pause
 
 \item We aim to find a split that minimizes the \emph{weighted average of node
 impurities}:
@@ -949,7 +953,7 @@ prediction functions
 \end{itemize} 
 \end{frame}
 
-\subsection{Adaboost: The Algorithm}
+\subsection{AdaBoost: The Algorithm}
 \begin{frame}{AdaBoost: Setting}
 
 \begin{itemize}[<+->]
@@ -1043,7 +1047,7 @@ Each base learner is trained on weighted data.
 
 \end{frame}
 %
-\begin{frame}{Adaboost: Example Reweighting}
+\begin{frame}{AdaBoost: Example Reweighting}
 \begin{itemize}
     \item We train $G_{m}$ to minimize weighted error; the resulting error rate is $\text{err}_{m}$
 
@@ -1070,19 +1074,6 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 \end{itemize}
 \end{itemize}
 \end{frame}
-
-% \begin{frame}{AdaBoost: Example Reweighting}
-% \begin{itemize}
-% \item Any misclassified point has weight adjusted as $w_{i}\gets w_{i}\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
-% \end{itemize}
-% \begin{center}
-% \includegraphics[clip,height=0.6\textheight]{figures/adaboostWeightUpdate}
-% \par\end{center}
-% \begin{itemize}
-% \item The smaller $\text{err}_{m}$, the more we increase weight of misclassified
-% points.
-% \end{itemize}
-% \end{frame}
 
 \begin{frame}{AdaBoost: Algorithm}
 
