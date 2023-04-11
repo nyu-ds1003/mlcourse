@@ -1,6 +1,8 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
 \documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\usepackage{xcolor}
+
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -24,7 +26,6 @@
 \usepackage{pgfpages}
 
 \newcommand{\commenteq}[1]{{\color{brown}#1}}
-\newcommand{\alarm}[1]{{\color{red}#1}}
 
 
 
@@ -134,11 +135,11 @@
 %\setbeameroption{show notes on second screen}
 
 \title[DS-GA 1003]{Gradient Boosting}
-\author{He He \\
+\author{Ravid Shwartz Ziv \\
 Slides based on Lecture
 \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/11c.gradient-boosting.pdf}{11c} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
 }
-\date{April 12, 2022}
+\date{April 11, 2023}
 \institute{CDS, NYU}
 
 \makebeamertitle
@@ -882,10 +883,7 @@ direction.
 \note[item]{So the problem now becomes finding a function in $\sH$ whose values at $x_i$'s are closest to the gradient vector, which is basically a regression problem.}
 \end{frame}
 
-\begin{frame}
-{Explain by figure}
-\note[item]{Draw function fits 1D data. Show the residual and the regression problem.}
-\end{frame}
+
 
 \begin{frame}
 {Recap}
