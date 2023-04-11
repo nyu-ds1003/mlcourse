@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -130,11 +130,11 @@
 %\setbeameroption{show notes on second screen}
 
 \title[DS-GA 1003]{Decision Trees}
-\author{Tal Linzen\\
-Slides based on Lecture
-\href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/10.trees.pdf}{10} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
-}
-\date{April 5, 2022}
+% \author{Tal Linzen\\
+% Slides based on Lecture
+% \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/10.trees.pdf}{10} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
+% }
+\date{April 4, 2022}
 \institute{CDS, NYU}
 
 \makebeamertitle
@@ -262,11 +262,12 @@ s_{j}\in\left\{ \frac{1}{2}\left(x_{j(r)}+x_{j(r+1)}\right)\mid r=1,\ldots,n-1\r
 \end{itemize}
 
 \item When should we stop splitting? (Controlling the complexity of the hypothesis space)
-\begin{itemize}[<.->]
+\begin{itemize}
 \item Limit total number of nodes.
 \item Limit number of terminal nodes.
 \item Limit tree depth.
 \item Require minimum number of data points in a terminal node.
+\pause
 \item \textbf{Backward pruning} (the approach used in \textbf{CART}; Breiman et al 1984): 
 \begin{enumerate}
 \item Build a really big tree (e.g. until all regions have $\le5$ points).
@@ -318,11 +319,12 @@ Intuition: we want to produce \emph{pure} nodes,
 \item Let's consider the multiclass classification case: $\cy=\left\{ 1,2,\ldots,K\right\} $.
 
 \item Let node $m$ represent region $R_{m}$, with $N_{m}$ observations
+\pause
 \item We denote the proportion of observations in $R_{m}$ with class $k$ by
 \[
 \hat{p}_{mk}=\frac{1}{N_{m}}\sum_{\left\{ i:x_{i}\in R_{m}\right\} }\ind{y_{i}=k}.
 \]
-
+\pause
 \item We predict the majority class in node $m$: 
     \[ 
         k(m)=\argmax_{k}\hat{p}_{mk} 
@@ -338,22 +340,22 @@ Intuition: we want to produce \emph{pure} nodes,
 \begin{itemize}[<+->]
 \item Three measures of \textbf{node impurity} for leaf node
 $m$:
-\begin{description}[<+->][Misclassification error]
-\item[Misclassification error]
+\begin{itemize}[<+->]
+\item Misclassification error
 \[
 1 -  \hat{p}_{mk(m)}.
 \]
 
-\item[The Gini index] encourages $\hat{p}_{mk}$ to be close to 0 or 1
+\item The Gini index encourages $\hat{p}_{mk}$ to be close to 0 or 1
 \[
-\sum_{k=1}^{K}\hat{p}_{mk}(1-\hat{p}_{mk})
+\sum_{k=1}^{K}\hat{p}_{mk}(1-\hat{p}_{mk}).
 \]
 
-\item[Entropy / Information gain]
+\item Entropy / Information gain
 \[
 -\sum_{k=1}^{K}\hat{p}_{mk}\log\hat{p}_{mk}.
 \]
-\end{description}
+\end{itemize}
 \item The Gini index and entropy are numerically similar to each other, and both work better in practice than the misclassification error.
 
 \note[item]{We would like a metric that gives high scores to nodes containing examples from many different classes, and low scores to nodes with few or a single class of examples.}
@@ -384,8 +386,10 @@ Scoring a potential split that produces the nodes $R_{L}$ and $R_{R}$:
 \begin{itemize}
 \item Suppose we have $N_{L}$ points in $R_{L}$ and $N_{R}$ points in
 $R_{R}$.
+\pause
 
 \item Let $Q(R_{L})$ and $Q(R_{R})$ be the node impurity measures for each node.
+\pause
 
 \item We aim to find a split that minimizes the \emph{weighted average of node
 impurities}:
@@ -949,7 +953,7 @@ prediction functions
 \end{itemize} 
 \end{frame}
 
-\subsection{Adaboost: The Algorithm}
+\subsection{AdaBoost: The Algorithm}
 \begin{frame}{AdaBoost: Setting}
 
 \begin{itemize}[<+->]
@@ -1043,7 +1047,7 @@ Each base learner is trained on weighted data.
 
 \end{frame}
 %
-\begin{frame}{Adaboost: Example Reweighting}
+\begin{frame}{AdaBoost: Example Reweighting}
 \begin{itemize}
     \item We train $G_{m}$ to minimize weighted error; the resulting error rate is $\text{err}_{m}$
 
@@ -1070,50 +1074,35 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 \end{itemize}
 \end{itemize}
 \end{frame}
-%
-%\begin{frame}{Adaboost: Example Reweighting}
-%\begin{itemize}
-%\item Any misclassified point has weight adjusted as $w_{i}\gets w_{i}\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
-%\end{itemize}
-%\begin{center}
-%\includegraphics[clip,height=0.6\textheight]{figures/adaboostWeightUpdate}
-%\par\end{center}
-%\begin{itemize}
-%\item The smaller $\err_{m}$, the more we increase weight of misclassified
-%points.
-%\end{itemize}
-%\end{frame}
-%
-%\begin{frame}{AdaBoost: Algorithm}
 
-%Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
-%\begin{enumerate}
-%\item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
+\begin{frame}{AdaBoost: Algorithm}
 
-%\pause{}
-%\item For $m=1$ to $M$:
-%\begin{enumerate}
-%\item Base learner fits weighted training data and returns $G_{m}(x)$
+Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n}\right)\right\} $.
+\begin{enumerate}
+\item Initialize observation weights $w_{i}=1$, $i=1,2,\ldots,n$.
 
-%\pause{}
-%\item Compute \emph{weighted empirical 0-1 risk}:
-%\[
-%\mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
-%\]
+\pause{}
+\item For $m=1$ to $M$:
+\begin{enumerate}
+\item Base learner fits weighted training data and returns $G_{m}(x)$
 
+\pause{}
+\item Compute \emph{weighted empirical 0-1 risk}:
+\[
+\mbox{err}_{m}=\frac{1}{W}\sum_{i=1}^{n}w_{i}\ind{y_{i}\neq G_{m}(x_{i})}\quad\text{where }W=\sum_{i=1}^{n}w_{i}.
+\]
+\pause{}
+\item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
 
-%\pause{}
-%\item Compute  \emph{classifier weight}: $\alpha_{m}=\ln\left(\frac{1-\text{err}_{m}}{\text{err}_{m}}\right)$.
+\pause{}
+\item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
 
-%\pause{}
-%\item Update \emph{example weight}: $w_{i}\gets w_{i}\cdot\exp\left[\alpha_{m}\ind{y_{i}\neq G_{m}(x_{i})}\right]$
+\pause{}
+\end{enumerate}
+\item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
+\end{enumerate}
+\end{frame}
 
-%\pause{}
-%\end{enumerate}
-%\item Return \emph{voted classifier}: $G(x)=\sign\left[\sum_{m=1}^{M}\alpha_{m}G_{m}(x)\right]$.
-%\end{enumerate}
-%\end{frame}
-%
 \begin{frame}{AdaBoost with Decision Stumps}
 \begin{itemize}
 \item After 1 round:
@@ -1181,15 +1170,101 @@ w_{i} & \gets & w_{i}e^{\alpha_{m}}\\
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{AdaBoost for Face Detection}
+\begin{itemize}
+\item  Famous application of boosting: detecting faces in images (Viola \& Jones, 2001)
+\item A few twists on standard algorithm
+\begin{itemize}
+    \onslide<2->\item Pre-define weak classifiers, so optimization=selection
+    % \onslide<3->\item Change loss function for weak learners: false positives less costly than misses
+    \onslide<3->\item Smart way to do inference in real-time (in 2001 hardware)
+\end{itemize}
+\begin{center}
+    \includegraphics[width=0.4\linewidth]{figures/violajones.pdf} 
+\end{center}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Harr wavelet basis functions}
+\begin{itemize}
+    \item A simple way to generate rectangular weights.
+    \item Over 180,000 filters on a small image (subwindow) of 24x24.
+\end{itemize}
+\begin{center}
+    \includegraphics[width=0.4\linewidth]{figures/harr-wavelet.png} 
+\end{center}
+\end{frame}
+
+\begin{frame}{Integral image}
+\begin{itemize}
+    \item Harr Filter * Image means compute the sum of an area of the image.
+    \item Compute an ``integral image''
+    \item Store a 2-D array: S[i, j] = Sum of the image from (0,0) to (i,j).
+    \item D = ABCD - AB - AC + A
+\end{itemize}
+\begin{center}
+    \includegraphics[width=0.4\linewidth, trim={0 9cm 0 0},clip]{figures/integral-image.png} 
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Learning Procedure (AdaBoost)}
+\begin{itemize}
+    \item Review AdaBoost again here, with a slightly different but equivalent setup.
+    \item Given example images $(x_1, y_1), \dots, (x_n, y_n)$ where $y_i=0,1$ for negative and positive.
+    \item Initialize example weights $w_{1,i} = \frac{1}{2m}, \frac{1}{2l}$ for $y_i=0,1$ respectively, where $m$ and $l$ are the number of negatives and positives.
+    \item For $t = 1, \dots, T$:
+    \begin{enumerate}
+        \item Normalize the example weights, $w_{t,i} \gets \frac{w_{t,i}}{\sum_{i'=1}^n w_{t,i'}}$
+        \item For each feature $j$, train a classifier $h_j$. Evaluate weighted error $\epsilon_j = \sum_i w_i |h_j(x_i) - y_i|$.
+        \item Choose the classifier $h_t$, with the lowest error $\epsilon_t$.
+        \item Update the example weights:
+        $w_{t+1} = w_{t,i} \beta_t^{1-e_i}$, $\beta_t = \frac{\epsilon_t}{1-\epsilon_t}, e_i=0\text{ if correct else } 1$,
+        \item Final classifier
+        $h(x) = \begin{cases}
+        1\text{ if } \sum_t \alpha_t h_t(x) > \frac{1}{2} \sum_t \alpha_t \\
+        0\text{ otherwise},
+        \end{cases}
+        \alpha_t = -\log \beta_t
+        $
+    \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Cascaded Processing for Faster Speed}
+\begin{itemize}
+    \item Object detection: A large number of subwindows to process.
+    \item Do we need to run all the weak classifiers at test time?
+    \item Threshold can be adjusted so that there is almost no false negative.
+    \item False positive is ok. We can reject the windows later.
+    \item Stop processing if one weak classifier says no.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.35\textwidth]{figures/cascade.png}
+\end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{AdaBoost Face Detection Results}
+\vspace{-0.2cm}
+\begin{center}
+\includegraphics[width=0.5\linewidth]{figures/adaboost_facedetection} 
+\end{center}
+\end{frame}
+
 \begin{frame}
 {Summary}
     \begin{itemize}[<+->]
 \item Boosting is used to reduce bias from shallow decision trees
+\item Each classifier is trained to reduce errors of its previous ensemble.
 \item AdaBoost is a very powerful off-the-self classifier!
 \item Next week
 \begin{itemize}
 \item What is the objective function of AdaBoost?
-\item Generalizations to other loss functions 
+\item Generalizations to other loss functions
+\item Gradient Boosting
 \end{itemize}
 \end{itemize}
 \end{frame}

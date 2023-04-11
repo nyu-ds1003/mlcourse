@@ -23,6 +23,7 @@
 \usepackage{multirow}
 \usepackage{colortbl}
 \usepackage{pgfpages}
+\usepackage{bbm}
 
 
 \xpatchcmd{\itemize}
@@ -131,30 +132,41 @@
 %\setbeameroption{show notes on second screen}
 
 \title[DS-GA 1003]{Multiclass Classification}
-\author{He He \\
-Slides based on Lecture
-\href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/09.multiclass.pdf}{09} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
-}
-\date{March 29, 2022}
+% \author{He He \\
+% Slides based on Lecture
+% \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/09.multiclass.pdf}{09} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
+% }
+\date{March 28, 2023}
 \institute{CDS, NYU}
 
 \makebeamertitle
 \mode<article>{Just in article version}
-
-\begin{frame}
-    {Logistics}
-    Office hour moved to Wed 5:00-6:00pm
-\end{frame}
 
 \section{Overview}
 \begin{frame}
 {Motivation}
 \begin{itemize}
 \item So far, most algorithms we've learned are designed for binary classification.
+  \begin{itemize}
+  \item Sentiment analysis (positive vs. negative)
+  \item Spam filter (spam vs. non-spam)
+  \end{itemize}
 \note[item]{Which ones we've learned can handle more than 2 classes? Multinomial logistic regression, naive Bayes. Next, trees and random forests.}
+\pause
 \item Many real-world problems have more than two classes.
+\begin{itemize}
+  \item Document classification (over 10 classes)
+  \item Object recognition (over 20k classes)
+  \item Face recognition (millions of classes)
+\end{itemize}
 \note[item]{Examples? Text classification, object recognition (ImageNet has more than 20k classes).}
+\pause
 \item<2-> What are some potential issues when we have a large number of classes?
+\begin{itemize}
+  \item Computation cost
+  \item Class imbalance
+  \item Different cost of errors
+\end{itemize}
 \note<2->[item]{Class imbalance, computation cost for both training and testing, different cost of errors etc.}
 \end{itemize}
 \end{frame}
@@ -163,10 +175,24 @@ Slides based on Lecture
 {Today's lecture}
 \begin{itemize}
 \item How to \emph{reduce} multiclass classification to binary classification?
+\begin{itemize}
+  \item We can think of binary classifier or linear regression as a black box. Naive ways:
+  \item E.g. multiple binary classifiers produce a binary code for each class (000, 001, 010)
+  \item E.g. a linear regression produces a numerical value for each class (1.0, 2.0, 3.0)
+\end{itemize}
+\pause
 \note[item]{Think of binary classification or linear regression as black-box predictors and start from there.}
 \item How do we \emph{generalize} binary classification algorithm to the multiclass setting?
-\note[item]{What needs to be changed here? The loss function.}
+\begin{itemize}
+  \item We also need to think about the loss function.
+\end{itemize}
+\pause
+% \note[item]{What needs to be changed here? The loss function.}
 \item Example of very large output space: structured prediction.
+\begin{itemize}
+  \item Multi-class: Mutually exclusive class structure.
+  \item Text: Temporal relational structure.
+\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -201,7 +227,7 @@ h(x)=\argmax_{i\in\left\{ 1,\ldots,k\right\} }h_{i}(x)
 %
 
 \begin{frame}
-{OvA: 3-class example}
+{OvA: 3-class example (linear classifier)}
 \begin{columns}
 \begin{column}{0.4\textwidth}
 \begin{simpleblock}<1->
@@ -229,7 +255,7 @@ Ideal case: only target class has positive score.
 \end{frame}
 
 \begin{frame}
-{OvA: 4-class non-separable example}
+{OvA: 4-class non linearly separable example}
 \begin{columns}
 \begin{column}{0.4\textwidth}
 Consider a dataset with four classes:
@@ -343,109 +369,109 @@ Lack theoretical justification but simple to implement and works well in practic
 
 \subsection{Error correcting output codes}
 
-%\begin{frame}
-%{Code word for labels}
-%Using the reduction approach, can you train fewer than $k$ binary classifiers?
-%\pause
-%
-%\textbf{Key idea}: Encode labels as binary codes and predict the code bits directly.
-%\pause
-%
-%OvA encoding:
-%\begin{table}
-%\begin{tabular}{|c|c|c|c|c|}
-%\hline
-%class & $h_1$ & $h_2$ & $h_3$ & $h_4$ \\
-%\hline
-%1 & 1 & 0 & 0 & 0 \\
-%\hline
-%2 & 0 & 1 & 0 & 0\\
-%\hline
-%3 & 0 & 0 & 1 & 0\\
-%\hline
-%4 & 0 & 0 & 0 & 1\\
-%\hline
-%\end{tabular}
-%\end{table}
-%\pause
-%
-%OvA uses $k$ bits to encode each label, what's the minimal number of bits you can use?
-%\end{frame}
+\begin{frame}
+{Code word for labels}
+Using the reduction approach, can you train fewer than $k$ binary classifiers?
+\pause
 
-%\begin{frame}
-%{Error correcting output codes (ECOC)}
-%\begin{columns}
-%\begin{column}{0.4\textwidth}
-%Example: 8 classes, 6-bit code
-%\begin{table}
-%\begin{tabular}{|c|c|c|c|c|c|c|}
-%\hline
-%class & $h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
-%\hline
-%1 & 0 & 0 & 0 & 1 & 0 & 0 \\
-%\hline
-%2 & 1 & 0 & 0 & 0 & 0 & 0 \\
-%\hline
-%\rowcolor{red!20}
-%3 & 0 & 1 & 1 & 0 & 1 & 0\\
-%\hline
-%4 & 1 & 1 & 0 & 0 & 0 & 0 \\
-%\hline
-%5 & 1 & 1 & 0 & 0 & 1 & 0 \\
-%\hline
-%6 & 0 & 0 & 1 & 1 & 0 & 1 \\
-%\hline
-%7 & 0 & 0 & 1 & 0 & 0 & 0 \\
-%\hline
-%8 & 0 & 1 & 0 & 1 & 0 & 0 \\
-%\hline
-%\end{tabular}
-%\end{table}
-%\end{column}
-%%
-%\begin{column}{0.6\textwidth}
-%\begin{description}
-%\item<1->[Training]
-%Binary classifier $h_i$: 
-%\begin{itemize}
-%\item +1: classes whose $i$-th bit is 1
-%\item -1: classes whose $i$-th bit is 0
-%\end{itemize}
-%\item<2->[Prediction]
-%Closest label in terms of Hamming distance.
-%\begin{table}
-%\begin{tabular}{{|c|c|c|c|c|c|}}
-%\hline
-%$h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
-%\hline
-%0 & 1 & 1 & 0 & 1 & 1 \\
-%\hline
-%\end{tabular}
-%\end{table}
-%\item<3->[Code design]
-%Want good binary classifiers.
-%\note<3->[item]{Random or depending on domain knowledge}
-%\end{description}
-%\end{column}
-%\end{columns}
-%\end{frame}
+\textbf{Key idea}: Encode labels as binary codes and predict the code bits directly.
+\pause
+
+OvA encoding:
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+class & $h_1$ & $h_2$ & $h_3$ & $h_4$ \\
+\hline
+1 & 1 & 0 & 0 & 0 \\
+\hline
+2 & 0 & 1 & 0 & 0\\
+\hline
+3 & 0 & 0 & 1 & 0\\
+\hline
+4 & 0 & 0 & 0 & 1\\
+\hline
+\end{tabular}
+\end{table}
+\pause
+
+OvA uses $k$ bits to encode each label, what's the minimal number of bits you can use?
+\end{frame}
+
+\begin{frame}
+{Error correcting output codes (ECOC)}
+\begin{columns}
+\begin{column}{0.4\textwidth}
+Example: 8 classes, 6-bit code
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+class & $h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
+\hline
+1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+\hline
+2 & 1 & 0 & 0 & 0 & 0 & 0 \\
+\hline
+\rowcolor{red!20}
+3 & 0 & 1 & 1 & 0 & 1 & 0\\
+\hline
+4 & 1 & 1 & 0 & 0 & 0 & 0 \\
+\hline
+5 & 1 & 1 & 0 & 0 & 1 & 0 \\
+\hline
+6 & 0 & 0 & 1 & 1 & 0 & 1 \\
+\hline
+7 & 0 & 0 & 1 & 0 & 0 & 0 \\
+\hline
+8 & 0 & 1 & 0 & 1 & 0 & 0 \\
+\hline
+\end{tabular}
+\end{table}
+\end{column}
 %
-%\begin{frame}
-%{Error correcting output codes: summary}
-%\begin{itemize}
-%\item Computationally more efficient than OvA (a special case of ECOC). Better for large $k$.
-%\item Why not use the minimal number of bits ($\log_2k$)?
-%\pause
-%\begin{itemize}
-%\item If the minimum Hamming distance between any pair of code word is $d$, then it can correct $\left \lfloor \frac{d-1}{2} \right \rfloor$ errors.
-%\item In plain words, if rows are far from each other, ECOC is robust to errors.
-%\end{itemize}
-%\pause
-%\item Trade-off between code distance and binary classification performance.
-%\note<2>[item]{Larger distance -> more binary problems -> more likely to have hard binary problems.}
-%\item Nice theoretical results \href{http://www.jmlr.org/papers/volume1/allwein00a/allwein00a.pdf}{[Allwein et al., 2000]} (also incoporates AvA).
-%\end{itemize}
-%\end{frame}
+\begin{column}{0.6\textwidth}
+\begin{description}
+\item<1->[Training]
+Binary classifier $h_i$: 
+\begin{itemize}
+\item +1: classes whose $i$-th bit is 1
+\item -1: classes whose $i$-th bit is 0
+\end{itemize}
+\item<2->[Prediction]
+Closest label in terms of Hamming distance.
+\begin{table}
+\begin{tabular}{{|c|c|c|c|c|c|}}
+\hline
+$h_1$ & $h_2$ & $h_3$ & $h_4$ &  $h_5$ & $h_6$\\
+\hline
+0 & 1 & 1 & 0 & 1 & 1 \\
+\hline
+\end{tabular}
+\end{table}
+\item<3->[Code design]
+Want good binary classifiers.
+\note<3->[item]{Random or depending on domain knowledge}
+\end{description}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+{Error correcting output codes: summary}
+\begin{itemize}
+\item Computationally more efficient than OvA (a special case of ECOC). Better for large $k$.
+\item Why not use the minimal number of bits ($\log_2k$)?
+\pause
+\begin{itemize}
+\item If the minimum Hamming distance between any pair of code word is $d$, then it can correct $\left \lfloor \frac{d-1}{2} \right \rfloor$ errors.
+\item In plain words, if rows are far from each other, ECOC is robust to errors.
+\end{itemize}
+\pause
+\item Trade-off between code distance and binary classification performance.
+\note<2>[item]{Larger distance -> more binary problems -> more likely to have hard binary problems.}
+\item Nice theoretical results \href{http://www.jmlr.org/papers/volume1/allwein00a/allwein00a.pdf}{[Allwein et al., 2000]} (also incoporates AvA).
+\end{itemize}
+\end{frame}
 
 \begin{frame}
 {Review}
@@ -467,11 +493,45 @@ generalize previous algorithms to multiclass settings.
 \note<2->[item]{What needs to be changed? The loss function.}
 \end{frame}
 
-\section{Multiclass loss}
+\section{Multiclass Loss}
 
-\subsection{Multiclass perceptron}
+\begin{frame}{Binary Logistic Regression}
+\begin{itemize}
+\item Given an input x, we would like to output a classification between (0,1).
+\begin{align}
+f(x) = sigmoid(z) = \frac{1}{1+ \exp(-z)}= \frac{1}{1 + \exp(- w^\top x-b)}.
+\end{align}
+\pause
+\item The other class is represented in $1 - f(x)$:
+\begin{align}
+1 - f(x) &= \frac{\exp(-w^\top x-b)}{1 + \exp(-w^\top x-b)} = \frac{1}{1+ \exp(w^\top x +b)} = sigmoid(-z).
+\end{align}
+\pause
+\item Another way to view: one class has $(+w, +b)$ and the other class has $(-w, -b)$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Multi-class Logistic Regression}
+\begin{itemize}
+  \item Now what if we have one $w_c$ for each class $c$?
+
+  \pause
+ \begin{align}
+  f_c(x) = \frac{\exp(w_c^\top x) + b_c}{\sum_c \exp(w_c^\top x + b_c)}
+  \end{align}
+  \item Also called ``softmax'' in neural networks.
+
+  \pause
+  \item Loss function:
+  $L = \sum_i -y_c^{(i)} \log f_c(x^{(i)})$
+
+  \pause
+  \item Gradient: $\frac{\partial L}{\partial z} = f - y$. Recall: MSE loss.
+\end{itemize}
+\end{frame}
+
 \begin{frame}
-{OvA revisit}
+{Comparison to OvA}
 \begin{itemize}
 \item \textbf{Base Hypothesis Space}: $\ch=\left\{ h:\cx\to\reals\right\} $
 (\textcolor{blue}{score functions}).
@@ -495,9 +555,10 @@ h_i(x) > h_j(x) \qquad \forall j \neq i .
 \end{frame}
 
 \begin{frame}
-{Multiclass perceptron}
+{Multiclass Perceptron}
 \begin{itemize}
 \item Base linear predictors: $h_i(x) = w_i^Tx$ ($w\in \bR^d$).
+\pause
 \item Multiclass perceptron:
 \begin{algorithm}[H]
 	Given a multiclass dataset $\sD=\pc{(x, y)}$\;
@@ -516,39 +577,39 @@ h_i(x) > h_j(x) \qquad \forall j \neq i .
 \end{itemize}
 \end{frame}
 
-%\begin{frame}{Side note: Linear Binary Classifier Review}
-%
-%\begin{itemize}
-%\item Input Space: $\cx=\reals^{d}$
-%\item Output Space: $\cy=\left\{ -1,1\right\} $ 
-%\end{itemize}
-%
-%\begin{itemize}
-%\item Linear classifier score function:
-%\begin{eqnarray*}
-%f(x) & = & \left\langle w,x\right\rangle =w^{T}x
-%\end{eqnarray*}
-%
-%\pause{}
-%\item Final classification prediction: $\sign\left(f(x)\right)$
-%\item Geometrically, when are $\sign\left(f(x)\right)=+1$ and $\sign\left(f(x)\right)=-1$? 
-%\end{itemize}
-%\end{frame}
-%%
-%\begin{frame}{Side note: Linear Binary Classifier Review}
-%
-%\begin{center}
-%\includegraphics[height=0.45\textheight]{figures/linear-separator}
-%\par\end{center}
-%
-%Suppose $\|w\|>0$ and $\|x\|>0$: 
-%\begin{eqnarray*}
-%f(x) & = & \left\langle w,x\right\rangle =\|w\|\|x\|\cos\theta\\
+% \begin{frame}{Linear Binary Classifier Review}
+
+% \begin{itemize}
+% \item Input Space: $\cx=\reals^{d}$
+% \item Output Space: $\cy=\left\{ -1,1\right\} $ 
+% \end{itemize}
+
+% \begin{itemize}
+% \item Linear classifier score function:
+% \begin{eqnarray*}
+% f(x) & = & \left\langle w,x\right\rangle =w^{T}x
+% \end{eqnarray*}
+
+% \pause{}
+% \item Final classification prediction: $\sign\left(f(x)\right)$
+% \item Geometrically, when are $\sign\left(f(x)\right)=+1$ and $\sign\left(f(x)\right)=-1$? 
+% \end{itemize}
+% \end{frame}
+% %
+% \begin{frame}{Linear Binary Classifier Review}
+
+% \begin{center}
+% \includegraphics[height=0.45\textheight]{figures/linear-separator}
+% \par\end{center}
+
+% Suppose $\|w\|>0$ and $\|x\|>0$: 
+% \begin{eqnarray*}
+% f(x) & = & \left\langle w,x\right\rangle =\|w\|\|x\|\cos\theta\\
 % f(x)>0 & \iff & \cos\theta>0 \iff\theta\in\left(-90^{\circ},90^{\circ}\right)\\
 % f(x)<0 & \iff & \cos\theta<0 \iff\theta\not\in[-90^{\circ},90^{\circ}]
-%\end{eqnarray*}
-% 
-%\end{frame}
+% \end{eqnarray*}
+
+% \end{frame}
 
 \begin{frame}
 {Rewrite the scoring function}
@@ -581,7 +642,7 @@ How to construct the feature map $\psi$?
 w=\left(\underbrace{-\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2}}_{w_{1}},\underbrace{0,1}_{w_{2}},\underbrace{\frac{\sqrt{2}}{2},\frac{\sqrt{2}}{2}}_{w_{3}}\right)
 \]
 \end{itemize}
-
+\pause
 \begin{itemize}
 \item And then do the following: $\Psi:\reals^{2}\times\left\{ 1,2,3\right\} \to\reals^{6}$
 defined by
@@ -590,7 +651,7 @@ defined by
 \Psi(x,2) & := & \left(0,0,x_{1},x_{2},0,0\right)\\
 \Psi(x,3) & := & \left(0,0,0,0,x_{1},x_{2}\right)
 \end{eqnarray*}
-
+\pause
 \item Then $\left\langle w,\Psi(x,y)\right\rangle =\left\langle w_{y},x\right\rangle $,
 which is what we want. 
 \end{itemize}
@@ -615,13 +676,10 @@ Multiclass perceptron using the multivector construction.
   	}
   	}
 \end{algorithm}
+\pause
 \textcolor{Green}{Exercise}: What is the base binary classification problem in multiclass perceptron?
 \note{$w^T(\phi(x,i)-\phi(x,j)) > 0$.}
 \end{frame}
-
-%\begin{frame}
-%    {\dis Geometric interpretation}
-%\end{frame}
 
 \begin{frame}
 {Features}
@@ -810,7 +868,7 @@ m_{n,y}(w)&\eqdef \underbrace{\left\langle w,\Psi(\xn,\yn)\right\rangle}_{\text{
 \left\langle w, \p{\Psi(x, {y}) - \Psi(x, {y'}}) \right\rangle
 }
 \end{align}
-\note<+->{When $y'=y$, $\ell_{\text{hinge}}=0$.}
+% \note<+->{When $y'=y$, $\ell_{\text{hinge}}=0$.}
 \end{itemize}
 \end{frame}
 
@@ -1140,15 +1198,15 @@ where $L$ is the sequence length.
 \textcolor{Green}{Exercise}:
 \begin{itemize}
 \item Write down the objective of structured SVM using the structured hinge loss.
+
 \item Stochastic sub-gradient descent for structured SVM (similar to HW3 P3)
 \item Compare with the structured perceptron algorithm
 \end{itemize}
 \end{frame}
 
-
 \begin{frame}
 {The argmax problem for sequences}
-\pause
+% \pause
 \begin{description}[<+->]
 \item[Problem]
 To compute predictions, we need to find 
@@ -1166,30 +1224,152 @@ What's the running time?
 \let\thefootnote\relax\footnotetext{\tiny{Figure by Daum\'e III. A course in machine learning. Figure 17.1}.}
 \end{frame}
 
-\begin{frame}
-{The argmax problem in general}
-Efficient problem-specific algorithms:
-\begin{table}
-\begin{tabular}{llll}
-\toprule
-problem & structure & algorithm \\
-\midrule
-constituent parsing & binary trees with context-free features & CYK  \\
-dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
-image segmentation & 2d with adjacent-pixel features & graph cuts \\
-\bottomrule
-\end{tabular}
-\end{table}
-\pause
+% \begin{frame}
+% {The argmax problem in general}
+% Efficient problem-specific algorithms:
+% \begin{table}
+% \begin{tabular}{llll}
+% \toprule
+% problem & structure & algorithm \\
+% \midrule
+% constituent parsing & binary trees with context-free features & CYK  \\
+% dependency parsing & spanning trees with edge features & Chu-Liu-Edmonds \\
+% image segmentation & 2d with adjacent-pixel features & graph cuts \\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+% \pause
 
-General algorithm:
+% General algorithm:
+% \begin{itemize}
+% \item Integer linear programming (ILP)
+% \begin{align}
+% \max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
+% \end{align}
+% \item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
+% \item constraints: $z$ must correspond to a valid structure
+% \end{itemize}
+% \end{frame}
+
+% Additional resource:
+% https://people.cs.umass.edu/~mccallum/papers/crf-tutorial.pdf
+\begin{frame}{Conditional random field (CRF)}
 \begin{itemize}
-\item Integer linear programming (ILP)
+\item Recall that we can write logistic regression in a general form:
+\[
+p(y|x) = \frac{1}{Z(x)} \exp(w^\top \psi(x, y)).
+\]
+\item $Z$ is normalization constant: $Z(x) = \sum_{y \in Y} \exp(w^\top \psi(x, y))$.
+\pause
+\item Example: linear chain $\{y_t\}$
+\item We can incorporate unary and Markov features:
+$p(y|x) = \frac{1}{Z(x)} \exp(\sum_t w^\top \psi(x, y_t, y_{t-1}))$
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figures/crf.png}
+\end{center}
+% \item Unary energy
+% \item Pairwise energy
+% \item Total energy
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item Compared to Structured SVM, CRF has a probabilistic interpretation.
+  \item We can draw samples in the output space.
+  \pause
+  \item How do we learn $w$? Maximum log likelihood, and regularization term: $\lambda \lVert w \rVert^2$
+  \item Loss function:
+  \begin{align*}
+  l(w) &= - \frac{1}{N} \sum_{i=1}^{N} \log p(y^{(i)} | x^{(i)}) + \frac{1}{2} \lambda \lVert w \rVert^2 \\
+  &= - \frac{1}{N} \sum_i \sum_t \sum_k w_k \psi_k(y^{(i)}_t, y^{(i)}_{t-1}) + \frac{1}{N} \sum_{i} \log Z(x^{(i)}) + \frac{1}{2}  \sum_k \lambda w_k^2
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item Loss function:
+  \[
+  l(w)= - \frac{1}{N} \sum_i \sum_t \sum_k w_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1}) + \frac{1}{N} \sum_{i} \log Z(x^{(i)}) +\frac{1}{2} \sum_k  \lambda w_k^2
+  \]
+\item Gradient:
 \begin{align}
-\max_z\; a^Tz \quad \text{s.t. linear constraints on $z$}
+\frac{\partial l(w)}{\partial w_k} &= -\frac{1}{N} \sum_i \sum_t \sum_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1}) \\
+& + \frac{1}{N} \sum_{i} \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y'_t, y'_{t-1})) + \sum_k \lambda w_k
 \end{align}
-\item $z$: indicator of substructures, \eg $\1\pc{y_i=\text{article and }y_{i+1}=\text{noun}}$
-\item constraints: $z$ must correspond to a valid structure
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item What is $\frac{1}{N} \sum_i \sum_t \sum_k \psi_k(x^{(i)}, y^{(i)}_t, y^{(i)}_{t-1})$?
+  \pause
+
+  \item It is the expectation $\psi_k (x^{(i)}, y_t, y_{t-1})$ under the empirical distribution $\tilde{p}(x, y) = \frac{1}{N} \sum_i \mathbbm{1} [x = x^{(i)}] \mathbbm{1} [y = y^{(i)}]$.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item What is $\frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))$?
+  \pause
+  \begin{align}
+  & \frac{1}{N} \sum_i \frac{\partial}{\partial w_k} \log \sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\\
+  &= \frac{1}{N} \sum_i \left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t', y_{t-1}'))\right]^{-1}\\
+  &\left[\sum_{y' \in Y} \exp(\sum_t \sum_{k'} w_{k'} \psi_{k'}(x^{(i)}, y_t^{(i)}, y_{t-1}^{(i)})) \sum_t \psi_k(x^{(i)}, y_t', y_{t-1}') \right] \\
+  &= \frac{1}{N} \sum_i \sum_t \sum_{y'\in Y} p(y'_t, y_{t-1}' | x) \psi_k (x^{(i)}, y'_t, y'_{t-1})
+  \end{align}
+  \pause
+  \item It is the expectation of $\psi_k (x^{(i)}, y'_t, y'_{t-1})$ under the model distribution $p(y'_t, y_{t-1}' | x)$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conditional random field (CRF)}
+\begin{itemize}
+  \item To compute the gradient, we need to infer expectation under the model distribution $p(y|x)$.
+  \pause
+  \item Compare the learning algorithms: in structured SVM we need to compute the argmax, whereas in CRF we need to compute the model expectation.
+  \pause
+  \item Both problems are NP-hard for general graphs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{CRF Inference}
+\begin{itemize}
+  \item In the linear chain structure, we can use the forward-backward algorithm for inference, similar to Viterbi.
+  \pause
+  \item Initiate $\alpha_j(1) = \exp (w^\top \psi(y_1=j, x_1))$
+  \pause
+  \item Recursion: $\alpha_j(t) = \sum_i \alpha_i (t-1) \exp(w^\top \psi(y_t=j, y_{t-1}=i, x_t))$
+  \pause
+  \item Result: $Z(x) = \sum_j \alpha_j(T)$
+  \pause
+  \item Similar for the backward direction.
+  \pause
+  \item Test time, again use Viterbi algorithm to infer argmax.
+  \pause
+  \item The inference algorithm can be generalized to belief propagation (BP) in a tree structure (exact inference).
+  \pause
+  \item In general graphs, we rely on approximate inference (e.g. loopy belief propagation).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Examples}
+\begin{itemize}
+  \item POS tag
+  Relationship between constituents, e.g. NP is likely to be followed by a VP.
+  \pause
+
+  \item Semantic segmentation
+  
+  Relationship between pixels, e.g. a grass pixel is likely to be next to another grass pixel, and a sky pixel is likely to be above a grass pixel.
+  \pause
+
+  \item Multi-label learning
+
+  An image may contain multiple class labels, e.g. a bus is likely to co-occur with a car.
 \end{itemize}
 \end{frame}
 
@@ -1197,15 +1377,20 @@ General algorithm:
 {Conclusion}
 Multiclass algorithms
 \begin{itemize}
-\item Reduce to binary classification, \eg OvA, AvA, ECCO
+\item Reduce to binary classification, \eg OvA, AvA
 \begin{itemize}
 \item Good enough for simple multiclass problems
+\item They don't scale and have simplified assumptions
 \end{itemize}
+\pause
 \item Generalize binary classification algorithms using multiclass loss
 \begin{itemize}
-\item Useful for problems with extremely large output space, \eg structured prediction
-\item Related problems: ranking, multi-label classification
+\item Multi-class perceptron, multi-class logistics regression, multi-class SVM
+% \item Useful for problems with extremely large output space, \eg structured prediction
+% \item Related problems: ranking, multi-label classification
 \end{itemize}
+\pause
+\item Structured prediction: Structured SVM, CRF. Data containing structure. Extremely large output space. Text and image applications.
 \end{itemize}
 \end{frame}
 
