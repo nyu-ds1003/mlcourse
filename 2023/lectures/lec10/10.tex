@@ -1,6 +1,6 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -403,19 +403,18 @@ impurities}:
 \note[item]{$Q_1 = 1/4, Q_2=1/4, w_1 = 10/15=2/3, w_2 = 1/3.$}
 \end{frame}
 
+% \begin{frame}
+% {Regression trees}
+% \begin{itemize}
+% \item Squared loss as the node impurity measure.
+% %\item Everything else remains the same as classification trees.
+% \end{itemize}
 
-%\begin{frame}
-%{Regression trees}
-%\begin{itemize}
-%\item Squared loss as the node impurity measure.
-%%\item Everything else remains the same as classification trees.
-%\end{itemize}
-
-%\note[item]{How do we apply the same splitting strategy for regression problems? What needs to be changed?}
-%\note[item]{First, instead of predicting the majority class, we predict the mean.}
-%\note[item]{Impurity is easier---just squared loss, i.e. how much the values deviate from the mean.}
-%\note[item]{So, to recap, to grow a basic decision tree, we pick an impurity measure and a stopping criterion, start from the root node, then recursively split until a stop criteria is reached. Next, let's consider some practical matters.}
-%\end{frame}
+% \note[item]{How do we apply the same splitting strategy for regression problems? What needs to be changed?}
+% \note[item]{First, instead of predicting the majority class, we predict the mean.}
+% \note[item]{Impurity is easier---just squared loss, i.e. how much the values deviate from the mean.}
+% \note[item]{So, to recap, to grow a basic decision tree, we pick an impurity measure and a stopping criterion, start from the root node, then recursively split until a stop criteria is reached. Next, let's consider some practical matters.}
+% \end{frame}
 
 %\subsection{Trees in General}
 %\begin{frame}
@@ -553,9 +552,10 @@ of $\theta$ if $\hat{\theta}\approx\theta$
         We are \emph{taking expectation over $\cd$.}}
 %\end{itemize}
 \item<+-> Why does variance matter if an estimator is unbiased?
-%\begin{itemize}
-    \note[item]{$\hat{\theta}(\sD) = x_1$ is an unbiased estimator of the mean of a Gaussian, but would be farther away from $\theta$ than the sample mean.}
-%\end{itemize}
+\pause
+\begin{itemize}
+    \item {$\hat{\theta}(\sD) = x_1$ is an unbiased estimator of the mean of a Gaussian, but would be farther away from $\theta$ than the sample mean.}
+\end{itemize}
 \end{itemize}
 \note[item]{Next let's look at how we can reduce variance of an estimator.}
 \end{frame}
@@ -678,14 +678,17 @@ independent samples from $P$ by taking $B$ bootstrap samples from
 the sample $\cd_{n}$.
 
 \end{definition}
+\pause
 
 \begin{itemize}
 \item Given original data $\cd_{n}$, compute $B$ bootstrap samples $D_{n}^{1},\ldots,D_{n}^{B}$.
 
+\pause
 \item For each bootstrap sample, compute some function
 \[
 \phi(D_{n}^{1}),\ldots,\phi(D_{n}^{B})
 \]
+\pause
 
 \item Use these values as though $D_{n}^{1},\ldots,D_{n}^{B}$ were
 i.i.d. samples from $P$.
@@ -810,7 +813,7 @@ S_{i}=\left\{ b\mid D^{b}\text{ does not contain }i\text{th point}\right\}
 \[
 \hat{f}_{\text{OOB}}(x_{i})=\frac{1}{\left|S_{i}\right|}\sum_{b\in S_{i}}\hat{f}_{b}(x_{i})
 \]
-
+\pause
 \item The OOB error is a good estimate of the test error
 
 \item Similar to cross validation error: both are computed
@@ -1199,7 +1202,7 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
 
 \begin{frame}{Integral image}
 \begin{itemize}
-    \item Harr Filter * Image means compute the sum of an area of the image.
+    \item How to efficiently compute [image * weights] (hint: the sum of an area of the image).
     \item Compute an ``integral image''
     \item Store a 2-D array: S[i, j] = Sum of the image from (0,0) to (i,j).
     \item D = ABCD - AB - AC + A
@@ -1214,14 +1217,20 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
 \begin{itemize}
     \item Review AdaBoost again here, with a slightly different but equivalent setup.
     \item Given example images $(x_1, y_1), \dots, (x_n, y_n)$ where $y_i=0,1$ for negative and positive.
+    \pause
     \item Initialize example weights $w_{1,i} = \frac{1}{2m}, \frac{1}{2l}$ for $y_i=0,1$ respectively, where $m$ and $l$ are the number of negatives and positives.
+    \pause
     \item For $t = 1, \dots, T$:
     \begin{enumerate}
         \item Normalize the example weights, $w_{t,i} \gets \frac{w_{t,i}}{\sum_{i'=1}^n w_{t,i'}}$
+    \pause
         \item For each feature $j$, train a classifier $h_j$. Evaluate weighted error $\epsilon_j = \sum_i w_i |h_j(x_i) - y_i|$.
+    \pause
         \item Choose the classifier $h_t$, with the lowest error $\epsilon_t$.
+    \pause
         \item Update the example weights:
         $w_{t+1} = w_{t,i} \beta_t^{1-e_i}$, $\beta_t = \frac{\epsilon_t}{1-\epsilon_t}, e_i=0\text{ if correct else } 1$,
+    \pause
         \item Final classifier
         $h(x) = \begin{cases}
         1\text{ if } \sum_t \alpha_t h_t(x) > \frac{1}{2} \sum_t \alpha_t \\
@@ -1237,8 +1246,10 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
 \begin{itemize}
     \item Object detection: A large number of subwindows to process.
     \item Do we need to run all the weak classifiers at test time?
+    \pause
     \item Threshold can be adjusted so that there is almost no false negative.
     \item False positive is ok. We can reject the windows later.
+    \pause
     \item Stop processing if one weak classifier says no.
 \end{itemize}
 \begin{center}
@@ -1259,7 +1270,8 @@ Given training set $\cd=\left\{ \left(x_{1},y_{1}\right),\ldots,\left(x_{n},y_{n
     \begin{itemize}[<+->]
 \item Boosting is used to reduce bias from shallow decision trees
 \item Each classifier is trained to reduce errors of its previous ensemble.
-\item AdaBoost is a very powerful off-the-self classifier!
+\item AdaBoost is a very powerful off-the-self classifier.
+\item A real-time face detection algorithm made by AdaBoost.
 \item Next week
 \begin{itemize}
 \item What is the objective function of AdaBoost?
