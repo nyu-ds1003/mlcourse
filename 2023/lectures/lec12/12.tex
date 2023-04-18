@@ -1198,10 +1198,16 @@ $w$ and $b$:
 
 \begin{frame}{Why backward?}
 \begin{itemize}
-    \item We can write the gradient in terms of chain rule.
+    \item<+-> We can write the gradient in terms of chain rule.
     \begin{align}
-    a
+    y &= y(c(b(a)))\\
+    \frac{\partial y}{\partial a} &= \frac{\partial b}{\partial a}\frac{\partial c}{\partial b}\frac{\partial y}{\partial c}\\
+    \frac{\partial y}{\partial a} &= \frac{\partial b}{\partial a}\left(\frac{\partial c}{\partial b}\frac{\partial y}{\partial c}\right)\\
+    \frac{\partial y}{\partial a} &= \left(\frac{\partial b}{\partial a}\frac{\partial c}{\partial b}\right)\frac{\partial y}{\partial c}
     \end{align}
+    \item<+->  The reverse order (backprop) is faster since we have a scalar output and a vector input, and it works well on most neural networks.
+    \item<+->  Forward order could be faster if we have a scalar input and a vector output (less memory).
+    \item<+->  Optimal ordering = matrix chain ordering problem.
 \end{itemize}
 \end{frame}
 
