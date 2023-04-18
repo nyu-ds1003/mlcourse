@@ -1,6 +1,7 @@
-%% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
+% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+% \documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -23,9 +24,6 @@
 \usepackage{multirow}
 \usepackage{colortbl}
 \usepackage{pgfpages}
-
-
-
 
 \xpatchcmd{\itemize}
   {\def\makelabel}
@@ -121,11 +119,11 @@
 %\setbeameroption{show notes on second screen}
 
 \title[DS-GA 1003]{Feature learning, neural networks and backpropagation}
-\author{Tal Linzen\\
-Slides based on Lecture
-\href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/12a.neural-networks.pdf}{12a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
-}
-\date{April 26, 2022}
+% \author{Tal Linzen\\
+% Slides based on Lecture
+% \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/12a.neural-networks.pdf}{12a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
+% }
+\date{April 18, 2022}
 \institute{CDS, NYU}
 
 \makebeamertitle
@@ -330,16 +328,52 @@ f(x) &= {\color{red}w}^T h(x)
 \note[item]{But we haven't parametrized $h$ yet.}
 \end{frame}
 
+\begin{frame}{Feature learning example}
+\begin{itemize}
+    \item<1-> A filter convolves over the image and looks for the highest pattern match.
+    \item<2-> Traditionally, people use Gabor filters or other image feature extractors, e.g. SIFT, SURF, etc, and an SVM on top for image classification.
+    \item<3-> Neural networks take in images and can learn the filters that are the most useful for solving the tasks. Likely more efficient than hand engineered features.
+\end{itemize}
+\begin{center}
+\includegraphics[height=3cm]{figures/gabor.png}
+\includegraphics[height=3cm]{figures/alexnet.jpg}
+\end{center}
+\end{frame}
+
+\begin{frame}{Inspiration: The brain}
+\begin{itemize}
+\item Our brain has about 100 billion ($10^{11}$) neurons, each of which communicates (is connected) to $\sim 10^4$ other neurons, with non-linear computations.
+\end{itemize}
+\vspace{0.2cm}
+\begin{figure}
+\includegraphics[width=0.76\linewidth]{figures/brain_neuron}
+\caption{The basic computational unit of the brain:  Neuron}
+\end{figure}
+% \end{itemize}
+\end{frame}
+
+\begin{frame}{Inspiration: The brain}
+  \begin{itemize}
+    \item Neurons receive input signals and accumulate voltage. After some threshold they will fire spiking responses.
+  \end{itemize}
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{figures/what-is-action-potential.jpg}
+  \end{figure}
+\end{frame}
+
 \begin{frame}
 {Activation function}
 \begin{itemize}[<+->]
-\item How should we parametrize the $h_i$'s? Can they be linear?
+% \item How should we parametrize the $h_i$'s? Can they be linear?
+\item We can model a simpler computation by using ``activation function''.
+\item It applies a non-linearity on the inputs and ``fires'' after some threshold.
 \onslide<+->{
 \begin{align}
 h_i(x) = {\color{blue}\sigma}(v_i^T x) .
 \end{align}
 }
-\item<.-> $\sigma$ is a \emph{nonlinear} \textbf{activation function}
+% \item<.-> $\sigma$ is a \emph{nonlinear} \textbf{activation function}
 \item Some possible activation functions:
 \begin{itemize}
     \item $\text{sign}$ function (as in classic perceptron)? \alarm{Non-differentiable}.
@@ -1162,6 +1196,15 @@ $w$ and $b$:
 %
 %
 
+\begin{frame}{Why backward?}
+\begin{itemize}
+    \item We can write the gradient in terms of chain rule.
+    \begin{align}
+    a
+    \end{align}
+\end{itemize}
+\end{frame}
+
 \begin{frame}
 {Non-convex optimization}
 \begin{figure}
@@ -1205,15 +1248,48 @@ $w$ and $b$:
 \let\thefootnote\relax\footnotetext{\tiny{Reference: Chris De Sa's slides (CS6787 Lecture 7).}}
 \end{frame}
 
-\begin{frame}
-{Review}
+\begin{frame}{Learning rate}
 \begin{itemize}
-\item Backpropagation is an algorithm for computing the gradient (partial derivatives + chain rule) efficiently
-\item It is used in gradient descent optimization for neural networks
-\item Key idea: function composition and dynamic programming
-\item In practice, we can use existing software packages, e.g. PyTorch (backpropagation, neural network building blocks, optimization algorithms etc.)
+\item One of the most important hyperparameter.
+\item Start with a higher learning rate then decay towards zero.
+\item Classic theory: convergence guarantee for stochastic gradient descent. Otherwise the update step has a noise term dominated by the noise of data sample.
+\item Other explanation: Loss surface, avoidance of local minima, avoidance of memorization of noisy samples
+\item Learning rate decay (staircase 10x, cosine, etc.)
 \end{itemize}
 \end{frame}
 
+\begin{frame}{More in-depth topics}
+\begin{itemize}
+    \item<+-> Neural networks have been a popular machine learning model in the past decade, due to its learning capability.
+    \item<+-> Today: MLP + SGD
+    \item<+-> Adding structures: weight-sharing, convolution, recurrent, residual connection, attention
+    \item<+-> Learning conditioning: normalization, optimizers
+    \item<+-> System: GPU/TPU, parallel computing, gradient aggregation
+    \item<+-> Some topics covered in DS-GA 1008 Deep Learning
+    \item<+-> Most of the advances built on top of backpropagation
+\end{itemize}
+\end{frame}
+
+\begin{frame}{A side note}
+\begin{itemize}
+    \item<+-> Backprop is used to train the overwhelming majority of neural nets today.
+    \item<+-> Despite its practical success, backprop is believed to be neurally implausible.
+    \item<+-> No evidence for biological signals analogous to error derivatives.
+    \item<+-> Forward \& backward weights are tied in backprop.
+    \item<+-> Backprop requires synchronous update (1 forward followed by 1 backward).
+    \item<+-> Biologically plausible alternatives we know about learn much more slowly on computers.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+{Review}
+\begin{itemize}
+\item<+-> Backpropagation is an algorithm for computing the gradient (partial derivatives + chain rule) efficiently
+\item<+-> It is used in gradient descent optimization for neural networks
+\item<+-> Key idea: function composition and the chain rule
+% \item Key idea: function composition and dynamic programming
+\item<+-> In practice, we can use existing software packages, e.g. PyTorch (backpropagation, neural network building blocks, optimization algorithms etc.)
+\end{itemize}
+\end{frame}
 
 \end{document}
