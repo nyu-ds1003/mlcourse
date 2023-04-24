@@ -1,7 +1,7 @@
 % LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
-% \documentclass[english,dvipsnames,aspectratio=169]{beamer}
+% \documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -1230,19 +1230,23 @@ $w$ and $b$:
 \begin{itemize}
 \item Rerun with a different initialization
 \end{itemize}
+\pause
 \item Hit a saddle point 
 \begin{itemize}
 \item Doesn't often happen with SGD 
 \item Second partial derivative test
 \end{itemize}
+\pause
 \item Flat region: low gradient magnitude
 \begin{itemize}
 \item Possible solution: use ReLU instead of sigmoid 
 \end{itemize}
+\pause
 \item High curvature: large gradient magnitude
 \begin{itemize}
 \item Possible solutions: Gradient clipping, adaptive step sizes
 \end{itemize}
+\pause
 \end{itemize}
 \end{column}
 \begin{column}{0.4\textwidth}
@@ -1258,21 +1262,23 @@ $w$ and $b$:
 \begin{itemize}
 \item One of the most important hyperparameter.
 \item Start with a higher learning rate then decay towards zero.
+\pause
 \item Classic theory: convergence guarantee for stochastic gradient descent. Otherwise the update step has a noise term dominated by the noise of data sample.
 \item Other explanation: Loss surface, avoidance of local minima, avoidance of memorization of noisy samples
-\item Learning rate decay (staircase 10x, cosine, etc.)
+\pause
+\item Learning rate decay (staircase 10x, cosine, etc.), speeds up convergence
 \end{itemize}
 \end{frame}
 
 \begin{frame}{More in-depth topics}
 \begin{itemize}
     \item<+-> Neural networks have been a popular machine learning model in the past decade, due to its learning capability.
-    \item<+-> Today: MLP + SGD
+    \item<+-> Today: MLP + SGD (backprop)
     \item<+-> Adding structures: weight-sharing, convolution, recurrent, residual connection, attention
     \item<+-> Learning conditioning: normalization, optimizers
+    \item<+-> Learning tasks: generative modeling, 3D perception, planning \& control
     \item<+-> System: GPU/TPU, parallel computing, gradient aggregation
     \item<+-> Some topics covered in DS-GA 1008 Deep Learning
-    \item<+-> Most of the advances built on top of backpropagation
 \end{itemize}
 \end{frame}
 
@@ -1290,8 +1296,8 @@ $w$ and $b$:
 \begin{frame}
 {Review}
 \begin{itemize}
-\item<+-> Backpropagation is an algorithm for computing the gradient (partial derivatives + chain rule) efficiently
-\item<+-> It is used in gradient descent optimization for neural networks
+\item<+-> Backpropagation is an algorithm for computing the gradient (partial derivatives + chain rule) efficiently.
+\item<+-> It is used in gradient descent optimization for neural networks.
 \item<+-> Key idea: function composition and the chain rule
 % \item Key idea: function composition and dynamic programming
 \item<+-> In practice, we can use existing software packages, e.g. PyTorch (backpropagation, neural network building blocks, optimization algorithms etc.)

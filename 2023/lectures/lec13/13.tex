@@ -131,12 +131,12 @@
 
 %\setbeameroption{show notes on second screen}
 
-\title[DS-GA 1003]{$k$-Means Clustering}
-\author{He He \\
-Slides based on Lecture
-\href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/13a.k-means.pdf}{13a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
-}
-\date{April 26, 2022}
+\title[DS-GA 1003]{Clustering and EM}
+% \author{He He \\
+% Slides based on Lecture
+% \href{https://github.com/davidrosenberg/mlcourse/blob/gh-pages/Lectures/13a.k-means.pdf}{13a} from David Rosenberg's course materials (\url{https://github.com/davidrosenberg/mlcourse})
+% }
+\date{April 25, 2022}
 \institute{CDS, NYU}
 
 \makebeamertitle
@@ -146,11 +146,9 @@ Slides based on Lecture
     {Logistics}
     Final exam\\
     \begin{itemize}
-        \item Period: 6:00pm EST, May 12 -- 8:00pm EST, May 12
-        \item Format: on Gradescope, same as midterm
-        \item Coverage: mainly about material from week 6 onwards but can overlap with basic concepts before midterm 
-        \item Submission: 
-            \textcolor{red}{Make sure you leave enough time for submission!}
+        \item Period: May 15 4:00-5:50pm EST
+        \item Format: in person, closed book
+        \item Coverage: mainly about material from week 6 onwards but can overlap with basic concepts before midterm
     \end{itemize}
 \end{frame}
 
@@ -1216,6 +1214,17 @@ J(\theta^{\mbox{new}})>J(\theta^{\mbox{old}}).
 \[
 q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
 \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Today's Summary}
+\begin{itemize}
+  \item Motivation: Unsupervised learning
+  \item K-means: A simple algorithm for discovering clusters 
+  \item Making k-means probabilistic: Gaussian mixture models
+  \item More generally: Latent variable models
+  \item Learning of latent variable models: EM
+  \item Underlying principle: Maximizing ELBO
 \end{itemize}
 \end{frame}
 
