@@ -1,6 +1,7 @@
 %% LyX 2.3.4.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,dvipsnames,aspectratio=169, handout]{beamer}
+\documentclass[english,dvipsnames,aspectratio=169]{beamer}
+% \documentclass[english,dvipsnames,aspectratio=169,handout]{beamer}
 \usepackage{mathptmx}
 \usepackage{eulervm}
 \usepackage[T1]{fontenc}
@@ -893,9 +894,13 @@ with equality iff $p(x)=q(x)$ for all $x\in\cx$.
 
 \begin{eqnarray*}
 \kl(p\|q) & = & \ex_{p}\left[-\log\left(\frac{q(x)}{p(x)}\right)\right]\\
+ \pause
  & \ge & -\log\left[\ex_{p}\left(\frac{q(x)}{p(x)}\right)\right]\mbox{\qquad\text{(Jensen's)}}\\
+ \pause
  & = & -\log\left[\sum_{\left\{ x\mid p(x)>0\right\} }p(x)\frac{q(x)}{p(x)}\right]\\
+ \pause
  & = & -\log\left[\sum_{x\in\cx}q(x)\right]\\
+ \pause
  & = & -\log1=0.
 \end{eqnarray*}
 
@@ -917,14 +922,17 @@ is a constant, which implies $q=p$ .
 
 \begin{frame}
     {Lower bound of the marginal log-likelihood}
-    \begin{align*}
-        \log p(x;\theta) &= \log \sum_{z\in\sZ} p(x,z;\theta) \\
-        &= \log \sum_{z\in\sZ} q(z) \frac{p(x,z;\theta)}{q(z)}\\
+    \begin{eqnarray*}
+        \log p(x;\theta) & = & \log \sum_{z\in\sZ} p(x,z;\theta) \\
+        \pause
+        &=& \log \sum_{z\in\sZ} q(z) \frac{p(x,z;\theta)}{q(z)}\\
+        \pause
         %\quad {\color{brown}= \log \BE_z\pb{p(x,z;\theta)}}\\
-        &\ge \sum_{z\in\sZ} q(z) \log \frac{p(x,z;\theta)}{q(z)}\\
+        &\ge& \sum_{z\in\sZ} q(z) \log \frac{p(x,z;\theta)}{q(z)}\\
+        \pause
         %\quad {\color{brown}= \BE_z\pb{\log p(x,z;\theta)}} \\
-        &\eqdef \sL(q, \theta)
-    \end{align*}
+        &\eqdef& \sL(q, \theta)
+    \end{eqnarray*}
     \vspace{-2em}
     \begin{itemize}
         \setlength\itemsep{2pt}
@@ -1227,5 +1235,4 @@ q^{*}=\argmin_{q\in\cq}\kl[q(z),p(z\mid x,\theta^{\text{old}})]
   \item Underlying principle: Maximizing ELBO
 \end{itemize}
 \end{frame}
-
 \end{document}
